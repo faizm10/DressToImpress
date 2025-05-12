@@ -22,7 +22,22 @@ export const data = {
   },
   navMain: [
     {
-      title: "Dashboard",
+      title: "Admin",
+      url: "#",
+      icon: IconDashboard,
+    },
+    {
+      title: "Upload",
+      url: "#",
+      icon: IconDashboard,
+    },
+    {
+      title: "Edit",
+      url: "#",
+      icon: IconDashboard,
+    },
+    {
+      title: "Delete",
       url: "#",
       icon: IconDashboard,
     },
@@ -92,5 +107,4 @@ export const data = {
       icon: IconSearch,
     },
   ],
-  
 };
