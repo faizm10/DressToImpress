@@ -1,19 +1,27 @@
 import {
   IconCamera,
-  IconChartBar,
   IconDashboard,
-  IconDatabase,
   IconFileAi,
   IconFileDescription,
-  IconFileWord,
-  IconFolder,
   IconHelp,
-  IconListDetails,
-  IconReport,
   IconSearch,
   IconSettings,
-  IconUsers,
 } from "@tabler/icons-react";
+
+export const shoppingCategories = [
+  // "All",
+  // "Lighting",
+  // "Kitchenware",
+  // "Home Decor",
+  // "Plants",
+  // "Office",
+  // "Textiles",
+];
+
+export const categories = {
+  women: ["Dresses", "Tops", "Bottoms", "Outerwear", "Accessories"],
+  men: ["Shirts", "Pants", "Outerwear", "Shoes", "Accessories"],
+};
 export const data = {
   user: {
     name: "shadcn",

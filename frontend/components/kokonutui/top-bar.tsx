@@ -4,22 +4,12 @@ import { Search, ShoppingBag, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
-
+import { shoppingCategories } from "@/lib/data";
 interface TopBarProps {
   cartItemCount: number;
   onCartClick: () => void;
   onSearch: (query: string) => void;
 }
-
-const categories = [
-  "All",
-  "Lighting",
-  "Kitchenware",
-  "Home Decor",
-  "Plants",
-  "Office",
-  "Textiles",
-];
 
 export function TopBar({ cartItemCount, onCartClick, onSearch }: TopBarProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -61,7 +51,7 @@ export function TopBar({ cartItemCount, onCartClick, onSearch }: TopBarProps) {
         </Link>
 
         <div className="flex-1 px-8 overflow-x-auto flex items-center justify-center gap-6 scrollbar-none">
-          {categories.map((category) => (
+          {shoppingCategories.map((category) => (
             <button
               type="button"
               key={category}
