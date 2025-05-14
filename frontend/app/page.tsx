@@ -31,7 +31,7 @@ export default function Home() {
             >
               Men
             </Link>
-           
+
             <Link
               href="#"
               className="text-sm font-medium hover:text-[#E51937] transition-colors"
@@ -150,12 +150,14 @@ export default function Home() {
               Join thousands of professionals who rent instead of buy. Save
               money, reduce waste, and always look your best.
             </p>
-            <Button
-              size="lg"
-              className="bg-[#FFC429] text-[#000000] hover:bg-[#FFC429]/80"
-            >
-              Start Browsing Now
-            </Button>
+            <Link href="/browse">
+              <Button
+                size="lg"
+                className="bg-[#FFC429] text-[#000000] hover:bg-[#FFC429]/80"
+              >
+                Start Browsing Now
+              </Button>
+            </Link>
           </div>
         </section>
       </main>
