@@ -130,7 +130,7 @@ export default function AttireUploadForm() {
   };
 
   return (
-    <Card className="max-w-lg w-full mx-auto">
+    <Card className="max-w-2xl w-full mx-auto">
       <CardHeader>
         <CardTitle>Upload Attire</CardTitle>
         <CardDescription>
