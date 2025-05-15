@@ -17,11 +17,11 @@ export const data = {
       url: "/dashboard",
       icon: IconDashboard,
     },
-    {
-      title: "Add Attires",
-      url: "/dashboard/add",
-      icon: IconPlus,
-    },
+    // {
+    //   title: "Add Attires",
+    //   url: "/dashboard/add",
+    //   icon: IconPlus,
+    // },
   ],
   navClouds: [
     {
