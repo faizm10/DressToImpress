@@ -1,11 +1,10 @@
 import React from "react";
-import { Header } from "@/components/header";
 import MinimalShop from "@/components/kokonutui/minimal-shop";
 
 const Browse = () => {
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      {/* <Header /> */}
       <main className="flex-1">
         <section>
           <MinimalShop />

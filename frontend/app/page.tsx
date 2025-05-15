@@ -4,18 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Search, Clock, Package, ArrowRight } from "lucide-react";
 import { Header } from "@/components/header";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { TopBar } from "@/components/kokonutui/top-bar";
 
 export default function Home() {
+  
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
       <Header />
       <main className="flex-1">
-        {/* Hero Section */}
         <section className="py-12 md:py-0">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row md:items-center">
-              {/* Left side - Content */}
               <div className="md:w-1/2 text-black md:py-20 dark:text-white">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
                   Dress to Impress Program
@@ -42,8 +41,6 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-
-              {/* Right side - Image */}
               <div className="md:w-1/2 mt-8 md:mt-0 h-[50vh] md:h-[70vh] relative">
                 <Image
                   src="/hero.svg"
@@ -56,8 +53,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* How It Works */}
         <section className="py-16">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-4">

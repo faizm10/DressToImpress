@@ -104,7 +104,11 @@ export const Header = () => {
                 )}
               </AnimatePresence>
             </div>
-
+            <div className="relative group">
+                <a href="/browse">
+                Browse
+                </a>
+            </div>
             <div className="relative group">
               <button
                 onClick={() => handleDropdown("women")}

@@ -5,6 +5,8 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { shoppingCategories } from "@/lib/data";
+import Image from "next/image";
+import { Button } from "../ui/button";
 interface TopBarProps {
   cartItemCount: number;
   onCartClick: () => void;
@@ -41,15 +43,15 @@ export function TopBar({ cartItemCount, onCartClick, onSearch }: TopBarProps) {
       } backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800`}
     >
       <div className="flex items-center justify-between px-3 h-12">
-        <Link
-          href="https://kokonutui.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm font-medium shrink-0"
-        >
-          Shop
+        <Link href="/" className="flex items-center gap-2">
+          <Image
+            src="/logos/logo4.png"
+            alt="Dress for Success Logo"
+            width={150}
+            height={24}
+            className="dark:invert"
+          />
         </Link>
-
         <div className="flex-1 px-8 overflow-x-auto flex items-center justify-center gap-6 scrollbar-none">
           {shoppingCategories.map((category) => (
             <button
@@ -65,6 +67,7 @@ export function TopBar({ cartItemCount, onCartClick, onSearch }: TopBarProps) {
               {category}
             </button>
           ))}
+          <a href="/">Home</a>
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0">
@@ -128,6 +131,9 @@ export function TopBar({ cartItemCount, onCartClick, onSearch }: TopBarProps) {
               </motion.span>
             )}
           </button>
+          <Link href="/auth/login">
+            <Button className="bg-[#E51937]">Admin Dashboard</Button>
+          </Link>
         </div>
       </div>
     </div>
