@@ -64,47 +64,11 @@ export default function AttireUploadForm() {
     setMsg("");
     setStatus("idle");
 
-    // Get image dimensions
-    let width = 0;
-    let height = 0;
-    try {
-      await new Promise<void>((resolve, reject) => {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          if (!ev.target?.result) return reject("No image data");
-          img.src = ev.target.result as string;
-        };
-        img.onload = () => {
-          width = img.width;
-          height = img.height;
-          resolve();
-        };
-        reader.onerror = reject;
-        if (file) {
-          reader.readAsDataURL(file);
-        } else {
-          reject("No file selected");
-        }
-      });
-    } catch (err) {
-      console.error(err);
-      setMsg("Failed to read image dimensions");
-      setStatus("error");
-      setUploading(false);
-      return;
-    }
-
     // Insert metadata - the file is already being uploaded by the Dropzone component
     const { error: insertError } = await supabase.from("attires").insert({
       name,
       size,
       file_name: fileName,
-      size_kb: file ? (file.size / 1024).toFixed(2) : "0",
-      type: file ? file.type : "",
-      width,
-      height,
       gender,
       category,
     });
@@ -168,7 +132,6 @@ export default function AttireUploadForm() {
               </Select>
               <Label htmlFor="gender">Gender</Label>
               <Select
-                // id="gender"
                 value={gender}
                 onValueChange={(val) => {
                   setGender(val);

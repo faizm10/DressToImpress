@@ -20,7 +20,8 @@ export function AttireUpload({ onFileUpload }: AttireUploadProps) {
   const dropzoneProps = useSupabaseUpload({
     bucketName: "attires",
     maxFiles: 1,
-    maxFileSize: 5 * 1024 * 1024, // 5MB
+    // maxFileSize: 5 * 1024 * 1024, // 5MB
+    maxFileSize: Number.MAX_SAFE_INTEGER,
     allowedMimeTypes: ["image/*"],
     upsert: true,
     // If the hook accepts a path parameter, provide it here

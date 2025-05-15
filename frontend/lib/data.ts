@@ -3,45 +3,8 @@ import {
   IconDashboard,
   IconFileAi,
   IconFileDescription,
-  IconHelp,
-  IconSearch,
-  IconSettings,
+  IconPlus,
 } from "@tabler/icons-react";
-
-export const shoppingCategories = [
-  // "All",
-  // "Lighting",
-  // "Kitchenware",
-  // "Home Decor",
-  // "Plants",
-  // "Office",
-  // "Textiles",
-];
-export const menCategories = [
-  "Dress Pants",
-  " Dress Shirts",
-  "Suit Jackets",
-  "Suits",
-  "Shoes",
-  "Ties",
-];
-
-export const womenCategories = [
-  "Blazers",
-  "Blouses & Tops",
-  "Cardigans",
-  "Dresses",
-  "Jackets",
-  "Pants",
-  "Skirts",
-  "Pant Suits",
-  "Shoes",
-  "Bags",
-];
-// export const categories = {
-//   women: ["Dresses", "Tops", "Bottoms", "Outerwear", "Accessories"],
-//   men: ["Shirts", "Pants", "Outerwear", "Shoes", "Accessories"],
-// };
 export const data = {
   user: {
     name: "shadcn",
@@ -50,24 +13,14 @@ export const data = {
   },
   navMain: [
     {
-      title: "Admin",
-      url: "#",
+      title: "Dashboard",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
-      title: "Upload",
-      url: "#",
-      icon: IconDashboard,
-    },
-    {
-      title: "Edit",
-      url: "#",
-      icon: IconDashboard,
-    },
-    {
-      title: "Delete",
-      url: "#",
-      icon: IconDashboard,
+      title: "Add Attires",
+      url: "/dashboard/add",
+      icon: IconPlus,
     },
   ],
   navClouds: [
@@ -118,21 +71,39 @@ export const data = {
       ],
     },
   ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: IconSettings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
-  ],
 };
+
+export const shoppingCategories = [
+  // "All",
+  // "Lighting",
+  // "Kitchenware",
+  // "Home Decor",
+  // "Plants",
+  // "Office",
+  // "Textiles",
+];
+export const menCategories = [
+  "Dress Pants",
+  " Dress Shirts",
+  "Suit Jackets",
+  "Suits",
+  "Shoes",
+  "Ties",
+];
+
+export const womenCategories = [
+  "Blazers",
+  "Blouses & Tops",
+  "Cardigans",
+  "Dresses",
+  "Jackets",
+  "Pants",
+  "Skirts",
+  "Pant Suits",
+  "Shoes",
+  "Bags",
+];
+// export const categories = {
+//   women: ["Dresses", "Tops", "Bottoms", "Outerwear", "Accessories"],
+//   men: ["Shirts", "Pants", "Outerwear", "Shoes", "Accessories"],
+// };
