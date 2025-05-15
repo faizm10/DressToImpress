@@ -17,11 +17,31 @@ export const shoppingCategories = [
   // "Office",
   // "Textiles",
 ];
+export const menCategories = [
+  "Dress Pants",
+  " Dress Shirts",
+  "Suit Jackets",
+  "Suits",
+  "Shoes",
+  "Ties",
+];
 
-export const categories = {
-  women: ["Dresses", "Tops", "Bottoms", "Outerwear", "Accessories"],
-  men: ["Shirts", "Pants", "Outerwear", "Shoes", "Accessories"],
-};
+export const womenCategories = [
+  "Blazers",
+  "Blouses & Tops",
+  "Cardigans",
+  "Dresses",
+  "Jackets",
+  "Pants",
+  "Skirts",
+  "Pant Suits",
+  "Shoes",
+  "Bags",
+];
+// export const categories = {
+//   women: ["Dresses", "Tops", "Bottoms", "Outerwear", "Accessories"],
+//   men: ["Shirts", "Pants", "Outerwear", "Shoes", "Accessories"],
+// };
 export const data = {
   user: {
     name: "shadcn",

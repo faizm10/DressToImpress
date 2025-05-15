@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Upload, Check, AlertCircle } from "lucide-react";
 import {
@@ -25,18 +25,24 @@ import {
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AttireUpload } from "./attire-upload1";
-
+import { menCategories, womenCategories } from "@/lib/data";
 export default function AttireUploadForm() {
   const supabase = createClient();
 
   const [name, setName] = useState("");
   const [size, setSize] = useState("");
+  const [gender, setGender] = useState("");
+  const [category, setCategory] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-
+  const categoryOptions = useMemo(() => {
+    if (gender === "Men") return menCategories;
+    if (gender === "Female") return womenCategories;
+    return [];
+  }, [gender]);
   const handleFileUpload = (
     uploadedFileName: string,
     uploadedFile: File | null
@@ -48,7 +54,7 @@ export default function AttireUploadForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name || !size || !fileName || !file) {
+    if (!name || !size || !fileName || !file || !gender || !category) {
       setMsg("Please fill all fields and upload an image.");
       setStatus("error");
       return;
@@ -99,6 +105,8 @@ export default function AttireUploadForm() {
       type: file ? file.type : "",
       width,
       height,
+      gender,
+      category,
     });
 
     if (insertError) {
@@ -114,13 +122,15 @@ export default function AttireUploadForm() {
     setStatus("success");
     setName("");
     setSize("");
+    setCategory("");
+    setGender("");
     setFile(null);
     setFileName("");
     setUploading(false);
   };
 
   return (
-    <Card className="max-w-md w-full mx-auto">
+    <Card className="max-w-lg w-full mx-auto">
       <CardHeader>
         <CardTitle>Upload Attire</CardTitle>
         <CardDescription>
@@ -142,19 +152,63 @@ export default function AttireUploadForm() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="size">Size</Label>
-            <Select value={size} onValueChange={setSize} required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select size" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="S">Small (S)</SelectItem>
-                <SelectItem value="M">Medium (M)</SelectItem>
-                <SelectItem value="L">Large (L)</SelectItem>
-                <SelectItem value="XL">Extra Large (XL)</SelectItem>
-                <SelectItem value="No Size">No Size</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex space-x-2">
+              <Label htmlFor="size">Size</Label>
+              <Select value={size} onValueChange={setSize} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select size" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="S">Small (S)</SelectItem>
+                  <SelectItem value="M">Medium (M)</SelectItem>
+                  <SelectItem value="L">Large (L)</SelectItem>
+                  <SelectItem value="XL">Extra Large (XL)</SelectItem>
+                  <SelectItem value="No Size">No Size</SelectItem>
+                </SelectContent>
+              </Select>
+              <Label htmlFor="gender">Gender</Label>
+              <Select
+                // id="gender"
+                value={gender}
+                onValueChange={(val) => {
+                  setGender(val);
+                  setCategory(""); // reset category whenever gender changes
+                }}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Men">Men</SelectItem>
+                  <SelectItem value="Female">Female</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Label htmlFor="category">Category</Label>
+              <Select
+                // id="category"
+                value={category}
+                onValueChange={setCategory}
+                required
+                disabled={!gender} // optional: disable until gender is picked
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={
+                      gender ? "Select Category" : "Pick gender first"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {categoryOptions.map((opt) => (
+                    <SelectItem key={opt} value={opt}>
+                      {opt}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">

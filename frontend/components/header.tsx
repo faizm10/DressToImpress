@@ -7,7 +7,7 @@ import { ModeToggle } from "./theme-switcher";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { usePathname } from "next/navigation";
-import { categories } from "@/lib/data";
+// import { categories } from "@/lib/data";
 import { Button } from "./ui/button";
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -68,7 +68,7 @@ export const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
-            <div className="relative group">
+            {/* <div className="relative group">
               <button
                 onClick={() => handleDropdown("men")}
                 className="flex items-center gap-1 px-3 py-2 text-sm font-medium hover:text-[#E51937] transition-colors"
@@ -103,13 +103,11 @@ export const Header = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </div> */}
             <div className="relative group">
-                <a href="/browse">
-                Browse
-                </a>
+              <a href="/browse">Browse</a>
             </div>
-            <div className="relative group">
+            {/* <div className="relative group">
               <button
                 onClick={() => handleDropdown("women")}
                 className="flex items-center gap-1 px-3 py-2 text-sm font-medium hover:text-[#E51937] transition-colors"
@@ -144,7 +142,7 @@ export const Header = () => {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </div> */}
 
             {/* <Link
               href="/how-it-works"
@@ -182,7 +180,7 @@ export const Header = () => {
           >
             <div className="container mx-auto px-4 py-4 space-y-4">
               <div className="space-y-1">
-                <div className="border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                {/* <div className="border-b border-zinc-200 dark:border-zinc-800 pb-2">
                   <button
                     onClick={() => handleDropdown("mobile-women")}
                     className="flex items-center justify-between w-full py-2 text-sm font-medium"
@@ -208,8 +206,8 @@ export const Header = () => {
                       ))}
                     </div>
                   )}
-                </div>
-
+                </div> */}
+                {/* 
                 <div className="border-b border-zinc-200 dark:border-zinc-800 pb-2">
                   <button
                     onClick={() => handleDropdown("mobile-men")}
@@ -236,7 +234,7 @@ export const Header = () => {
                       ))}
                     </div>
                   )}
-                </div>
+                </div> */}
 
                 {/* <Link
                   href="/how-it-works"
