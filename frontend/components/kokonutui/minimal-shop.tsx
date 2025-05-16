@@ -1,39 +1,43 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import { useState } from "react";
-import { ProductGrid } from "./product-grid";
+import { AttireGrid } from "./product-grid";
 import { CartDrawer } from "./cart-drawer";
-import { ProductModal } from "./product-modal";
+import { AttireModel } from "./product-modal";
 import { TopBar } from "./top-bar";
-import { type Product, type CartItem, products } from "./data";
-
+import { type CartItem, Attire } from "./data";
+import { useAttires } from "@/hooks/use-attires";
+import { AttireWithUrl } from "@/hooks/use-attires";
 export default function MinimalShop() {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const { attires, loading, error } = useAttires();
 
-  const addToCart = (product: Product, quantity: number = 1) => {
+  const [selectedAttire, setSelectedAttire] = useState<AttireWithUrl | null>(
+    null
+  );
+
+  const addToCart = (attire: Attire, quantity: number = 1) => {
     setCart((prev) => {
-      const exists = prev.find((item) => item.id === product.id);
+      const exists = prev.find((item) => item.id === attire.id);
       if (exists) {
         return prev.map((item) =>
-          item.id === product.id
+          item.id === attire.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prev, { ...product, quantity }];
+      return [...prev, { ...attire, quantity }];
     });
   };
-
-  const removeFromCart = (productId: string) => {
-    setCart((prev) => prev.filter((item) => item.id !== productId));
+  const removeFromCart = (attireID: string) => {
+    setCart((prev) => prev.filter((item) => item.id !== attireID));
   };
 
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredAttires = attires.filter((attire) =>
+    attire.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -45,20 +49,20 @@ export default function MinimalShop() {
       />
 
       <div className="mx-auto px-2 pt-12 pb-16">
-        <ProductGrid
-          products={filteredProducts}
-          onProductSelect={setSelectedProduct}
+        <AttireGrid
+          attires={filteredAttires}
+          onAttireSelect={setSelectedAttire}
         />
       </div>
 
       <AnimatePresence>
-        {selectedProduct && (
-          <ProductModal
-            product={selectedProduct}
-            onClose={() => setSelectedProduct(null)}
-            onAddToCart={(product) => {
-              addToCart(product);
-              setSelectedProduct(null);
+        {selectedAttire && (
+          <AttireModel
+            attire={selectedAttire}
+            onClose={() => setSelectedAttire(null)}
+            onAddToCart={(attire) => {
+              addToCart(attire);
+              setSelectedAttire(null);
               setIsCartOpen(true);
             }}
           />
