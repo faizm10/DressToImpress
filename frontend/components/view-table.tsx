@@ -12,19 +12,8 @@ import {
 } from "@/components/ui/table";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "./ui/button";
+import { Attire, AttireWithUrl } from "@/hooks/use-attires";
 
-interface Attire {
-  id: string;
-  name: string;
-  gender: string;
-  size: string;
-  category: string;
-  file_name: string; // ← this is your UUID-based folder name
-}
-
-interface AttireWithUrl extends Attire {
-  imageUrl: string | null;
-}
 
 export default function ViewTable() {
   const supabase = createClient();

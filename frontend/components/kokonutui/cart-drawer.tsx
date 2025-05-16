@@ -5,7 +5,7 @@ import { type CartItem } from "./data";
 interface CartDrawerProps {
   cart: CartItem[];
   onClose: () => void;
-  onRemoveFromCart: (productId: string) => void;
+  onRemoveFromCart: (attireId: string) => void;
 }
 
 export function CartDrawer({
@@ -13,8 +13,6 @@ export function CartDrawer({
   onClose,
   onRemoveFromCart,
 }: CartDrawerProps) {
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-
   return (
     <>
       <motion.div
@@ -42,44 +40,41 @@ export function CartDrawer({
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {cart.map((item) => (
-              <div
-                key={item.id}
-                className="flex gap-4 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg"
-              >
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-24 h-24 object-cover rounded-md"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-base font-medium truncate">
-                      {item.name}
-                    </h3>
-                    <button
-                      onClick={() => onRemoveFromCart(item.id)}
-                      className="p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-full ml-2"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+            {cart.map((item) => {
+              const itemWithImage = item as CartItem & { imageUrl?: string };
+
+              return (
+                <div
+                  key={item.id}
+                  className="flex gap-4 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg"
+                >
+                  <img
+                    src={itemWithImage.imageUrl ?? "/placeholder.png"}
+                    alt={item.name}
+                    className="w-24 h-24 object-cover rounded-md"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-base font-medium truncate">
+                        {item.name}
+                      </h3>
+                      <h1 className="text-base font-medium truncate">
+                        {item.size}
+                      </h1>
+                      <button
+                        onClick={() => onRemoveFromCart(item.id)}
+                        className="p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-full ml-2"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
-                    Qty: {item.quantity}
-                  </p>
-                  <p className="text-base font-medium mt-1">
-                    ${item.price * item.quantity}
-                  </p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
-            <div className="flex justify-between mb-4">
-              <span className="text-base">Total</span>
-              <span className="text-base font-medium">${total}</span>
-            </div>
             <button className="w-full py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-base font-medium rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors">
               Checkout
             </button>

@@ -1,21 +1,21 @@
 "use client";
 
 import { motion } from "motion/react";
-import { X, Plus, Minus } from "lucide-react";
+import { X } from "lucide-react";
 import { useState } from "react";
-import { type Product } from "./data";
+import { AttireWithUrl } from "@/hooks/use-attires"; // use correct path
 
-interface ProductModalProps {
-  product: Product;
+interface AttireModelProps {
+  attire: AttireWithUrl;
   onClose: () => void;
-  onAddToCart: (product: Product) => void;
+  onAddToCart: (attire: AttireWithUrl) => void;
 }
 
-export function ProductModal({
-  product,
+export function AttireModel({
+  attire,
   onClose,
   onAddToCart,
-}: ProductModalProps) {
+}: AttireModelProps) {
   const [quantity, setQuantity] = useState(1);
 
   return (
@@ -28,14 +28,14 @@ export function ProductModal({
         onClick={onClose}
       />
       <motion.div
-        layoutId={`product-${product.id}`}
+        layoutId={`product-${attire.id}`}
         className="fixed inset-x-4 bottom-0 md:inset-[25%] z-50 bg-white dark:bg-zinc-900 rounded-t-xl md:rounded-xl overflow-hidden max-h-[80vh] md:max-h-[500px]"
       >
         <div className="h-full md:flex">
           <div className="relative md:w-2/5">
             <img
-              src={product.image}
-              alt={product.name}
+              src={attire.imageUrl ?? "/placeholder.png"}
+              alt={attire.name}
               className="w-full h-[200px] md:h-full object-cover"
             />
             <button
@@ -50,25 +50,25 @@ export function ProductModal({
             <div className="flex-1">
               <div className="flex justify-between items-start mb-2">
                 <div>
-                  <h2 className="text-sm font-medium">{product.name}</h2>
+                  <h2 className="text-sm font-medium">{attire.name}</h2>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    {product.category}
+                    {attire.category}
                   </p>
                 </div>
-                <p className="text-sm font-medium">${product.price}</p>
+                <p className="text-sm font-medium">{attire.gender}</p>
               </div>
               <div className="space-y-2">
                 <p className="text-xs text-zinc-600 dark:text-zinc-300">
-                  {product.description}
+                  {attire.size}
                 </p>
-                <div className="text-xs space-y-1">
+                {/* <div className="text-xs space-y-1">
                   <p className="text-zinc-500">SKU: {product.id}</p>
                   <p className="text-zinc-500">Stock: Available</p>
-                </div>
+                </div> */}
               </div>
             </div>
             <button
-              onClick={() => onAddToCart(product)}
+              onClick={() => onAddToCart(attire)}
               className="w-full mt-3 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-medium rounded-md hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors"
             >
               Add to Cart
