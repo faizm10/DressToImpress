@@ -157,6 +157,7 @@ export function EditStudentModal({
             <div className="grid gap-2">
               <Label htmlFor="status">Status</Label>
               <Select
+                defaultValue={student.status}
                 value={formData.status}
                 onValueChange={(value) => handleSelectChange("status", value)}
               >
@@ -165,7 +166,7 @@ export function EditStudentModal({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Inactive">Inactive</SelectItem>
+                  <SelectItem value="Pending">Pending</SelectItem>
                   <SelectItem value="Suspended">Suspended</SelectItem>
                 </SelectContent>
               </Select>

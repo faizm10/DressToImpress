@@ -1,14 +1,29 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, ChevronLeft, ChevronRight, PlusCircle, Trash2, MoreHorizontal, Download } from 'lucide-react'
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  PlusCircle,
+  Trash2,
+  MoreHorizontal,
+  Download,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +31,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { AddStudentModal } from "./add-student-modal"
-import { EditStudentModal } from "./edit-student-modal"
+} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AddStudentModal } from "./add-student-modal";
+import { EditStudentModal } from "./edit-student-modal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,178 +44,146 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { toast } from "sonner"
-import { OrderItemsDisplay } from "./order-items-display"
-import type { Student } from "@/types/students"
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { OrderItemsDisplay } from "./order-items-display";
+import type { Student } from "@/types/students";
 
 export function StudentsTable() {
-  const supabase = createClient()
-  const [students, setStudents] = useState<Student[]>([])
-  const [selectedStudents, setSelectedStudents] = useState<string[]>([])
-  const [searchQuery, setSearchQuery] = useState("")
-  const [page, setPage] = useState(1)
-  const [limit] = useState(10)
-  const [totalCount, setTotalCount] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [addModalOpen, setAddModalOpen] = useState(false)
-  const [editModalOpen, setEditModalOpen] = useState(false)
-  const [currentStudent, setCurrentStudent] = useState<Student | null>(null)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [studentToDelete, setStudentToDelete] = useState<string | null>(null)
-  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false)
+  const supabase = createClient();
+  const [students, setStudents] = useState<Student[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [currentStudent, setCurrentStudent] = useState<Student | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
 
   // Fetch students from Supabase
   const fetchStudents = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       // Calculate range for pagination
-      const from = (page - 1) * limit
-      const to = from + limit - 1
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
 
       // Build query
-      let query = supabase.from("students").select("*", { count: "exact" })
+      let query = supabase.from("students").select("*", { count: "exact" });
 
       // Add search if provided
       if (searchQuery) {
         query = query.or(
-          `first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,student_id.ilike.%${searchQuery}%`,
-        )
+          `first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,student_id.ilike.%${searchQuery}%`
+        );
       }
 
       // Add pagination
-      const { data, error, count } = await query.order("created_at", { ascending: false }).range(from, to)
+      const { data, error, count } = await query
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setStudents(data as Student[])
-      if (count !== null) setTotalCount(count)
+      setStudents(data as Student[]);
+      if (count !== null) setTotalCount(count);
     } catch (error: any) {
-      toast("Error fetching students")
+      toast("Error fetching students");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Initial fetch and refetch on page/search change
   useEffect(() => {
-    fetchStudents()
-  }, [page, searchQuery])
+    fetchStudents();
+  }, [page, searchQuery]);
 
   // Handle select all checkbox
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedStudents(students.map((student) => student.id))
+      setSelectedStudents(students.map((student) => student.id));
     } else {
-      setSelectedStudents([])
+      setSelectedStudents([]);
     }
-  }
+  };
 
   // Handle individual checkbox selection
   const handleSelectStudent = (studentId: string, checked: boolean) => {
     if (checked) {
-      setSelectedStudents([...selectedStudents, studentId])
+      setSelectedStudents([...selectedStudents, studentId]);
     } else {
-      setSelectedStudents(selectedStudents.filter((id) => id !== studentId))
+      setSelectedStudents(selectedStudents.filter((id) => id !== studentId));
     }
-  }
+  };
 
   // Handle search
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    setPage(1) // Reset to first page on new search
-    fetchStudents()
-  }
+    e.preventDefault();
+    setPage(1); // Reset to first page on new search
+    fetchStudents();
+  };
 
   // Delete a student
   const deleteStudent = async (id: string) => {
     try {
-      const { error } = await supabase.from("students").delete().eq("id", id)
+      const { error } = await supabase.from("students").delete().eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      toast("Student deleted successfully"
-      )
+      toast("Student deleted successfully");
 
-      fetchStudents()
+      fetchStudents();
     } catch (error: any) {
-      toast("Error deleting student")
+      toast("Error deleting student");
     }
-  }
+  };
 
   // Delete multiple students
   const deleteMultipleStudents = async () => {
     try {
-      const { error } = await supabase.from("students").delete().in("id", selectedStudents)
+      const { error } = await supabase
+        .from("students")
+        .delete()
+        .in("id", selectedStudents);
 
-      if (error) throw error
+      if (error) throw error;
 
-      toast(`${selectedStudents.length} students deleted successfully`
-      )
+      toast(`${selectedStudents.length} students deleted successfully`);
 
-      setSelectedStudents([])
-      fetchStudents()
+      setSelectedStudents([]);
+      fetchStudents();
     } catch (error: any) {
-      toast("Error deleting students")
+      toast("Error deleting students");
     }
-  }
+  };
 
   // Handle delete confirmation
   const confirmDelete = () => {
     if (studentToDelete) {
-      deleteStudent(studentToDelete)
-      setStudentToDelete(null)
-      setDeleteDialogOpen(false)
+      deleteStudent(studentToDelete);
+      setStudentToDelete(null);
+      setDeleteDialogOpen(false);
     }
-  }
+  };
 
   // Handle bulk delete confirmation
   const confirmBulkDelete = () => {
     if (selectedStudents.length > 0) {
-      deleteMultipleStudents()
-      setBulkDeleteDialogOpen(false)
+      deleteMultipleStudents();
+      setBulkDeleteDialogOpen(false);
     }
-  }
-
-  // Export to CSV
-  const exportToCsv = () => {
-    // Create CSV content
-    const headers = ["Student ID", "First Name", "Last Name", "Email", "Status", "Order Items", "Created At"]
-    const csvRows = [
-      headers.join(","),
-      ...students.map((student) => {
-        const orderItemsCount = student.order_items ? student.order_items.length : 0
-        return [
-          student.student_id,
-          student.first_name,
-          student.last_name,
-          student.email,
-          student.status,
-          `${orderItemsCount} items`,
-          new Date(student.created_at).toLocaleDateString(),
-        ].join(",")
-      }),
-    ]
-
-    const csvContent = csvRows.join("\n")
-
-    // Create download link
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.setAttribute("href", url)
-    link.setAttribute("download", `students-export-${new Date().toISOString().split("T")[0]}.csv`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-
-    toast(`${students.length} records exported to CSV`)
-  }
+  };
 
   // Calculate pagination info
-  const totalPages = Math.ceil(totalCount / limit)
-  const startItem = (page - 1) * limit + 1
-  const endItem = Math.min(page * limit, totalCount)
+  const totalPages = Math.ceil(totalCount / limit);
+  const startItem = (page - 1) * limit + 1;
+  const endItem = Math.min(page * limit, totalCount);
 
   return (
     <div className="space-y-4">
@@ -220,7 +203,7 @@ export function StudentsTable() {
             Search
           </Button>
         </div>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
@@ -231,36 +214,40 @@ export function StudentsTable() {
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Selected
           </Button>
-          <Button variant="outline" size="sm" className="h-9" onClick={exportToCsv} disabled={students.length === 0}>
-            <Download className="mr-2 h-4 w-4" />
-            Export CSV
-          </Button>
-          <Button size="sm" className="h-9" onClick={() => setAddModalOpen(true)}>
+         
+          <Button
+            size="sm"
+            className="h-9"
+            onClick={() => setAddModalOpen(true)}
+          >
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Student
           </Button>
-        </div>
+        </div> */}
       </div>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[50px]">
+              {/* <TableHead className="w-[50px]">
                 <Checkbox
-                  checked={selectedStudents.length === students.length && students.length > 0}
+                  checked={
+                    selectedStudents.length === students.length &&
+                    students.length > 0
+                  }
                   onCheckedChange={handleSelectAll}
                   aria-label="Select all students"
                 />
-              </TableHead>
-              <TableHead>Student ID</TableHead>
+              </TableHead> */}
+              <TableHead className="w-[80px]">Student ID</TableHead>
               <TableHead>First Name</TableHead>
               <TableHead>Last Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Order Items</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created At</TableHead>
-              <TableHead className="w-[80px]"></TableHead>
+              <TableHead className="w-[80px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -300,13 +287,15 @@ export function StudentsTable() {
             ) : students.length > 0 ? (
               students.map((student) => (
                 <TableRow key={student.id}>
-                  <TableCell>
+                  {/* <TableCell>
                     <Checkbox
                       checked={selectedStudents.includes(student.id)}
-                      onCheckedChange={(checked) => handleSelectStudent(student.id, !!checked)}
+                      onCheckedChange={(checked) =>
+                        handleSelectStudent(student.id, !!checked)
+                      }
                       aria-label={`Select ${student.first_name} ${student.last_name}`}
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>{student.student_id}</TableCell>
                   <TableCell>{student.first_name}</TableCell>
                   <TableCell>{student.last_name}</TableCell>
@@ -319,15 +308,17 @@ export function StudentsTable() {
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                         student.status === "Active"
                           ? "bg-green-100 text-green-800"
-                          : student.status === "Inactive"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
+                          : student.status === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-800"
                       }`}
                     >
                       {student.status}
                     </span>
                   </TableCell>
-                  <TableCell>{new Date(student.created_at).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    {new Date(student.created_at).toLocaleDateString()}
+                  </TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -341,22 +332,22 @@ export function StudentsTable() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           onClick={() => {
-                            setCurrentStudent(student)
-                            setEditModalOpen(true)
+                            setCurrentStudent(student);
+                            setEditModalOpen(true);
                           }}
                         >
                           Edit student
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        {/* <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="text-red-600"
                           onClick={() => {
-                            setStudentToDelete(student.id)
-                            setDeleteDialogOpen(true)
+                            setStudentToDelete(student.id);
+                            setDeleteDialogOpen(true);
                           }}
                         >
                           Delete student
-                        </DropdownMenuItem>
+                        </DropdownMenuItem> */}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -377,17 +368,28 @@ export function StudentsTable() {
       {!loading && totalPages > 0 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            Showing <strong>{startItem}</strong> to <strong>{endItem}</strong> of <strong>{totalCount}</strong> students
+            Showing <strong>{startItem}</strong> to <strong>{endItem}</strong>{" "}
+            of <strong>{totalCount}</strong> students
           </p>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page === 1}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(page - 1)}
+              disabled={page === 1}
+            >
               <ChevronLeft className="h-4 w-4" />
               <span className="sr-only">Previous page</span>
             </Button>
             <div className="text-sm font-medium">
               Page {page} of {totalPages}
             </div>
-            <Button variant="outline" size="sm" onClick={() => setPage(page + 1)} disabled={page === totalPages}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(page + 1)}
+              disabled={page === totalPages}
+            >
               <ChevronRight className="h-4 w-4" />
               <span className="sr-only">Next page</span>
             </Button>
@@ -396,7 +398,11 @@ export function StudentsTable() {
       )}
 
       {/* Add Student Modal */}
-      <AddStudentModal open={addModalOpen} onOpenChange={setAddModalOpen} onSuccess={fetchStudents} />
+      <AddStudentModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        onSuccess={fetchStudents}
+      />
 
       {/* Edit Student Modal */}
       {currentStudent && (
@@ -414,12 +420,16 @@ export function StudentsTable() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the student record.
+              This action cannot be undone. This will permanently delete the
+              student record.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -427,22 +437,29 @@ export function StudentsTable() {
       </AlertDialog>
 
       {/* Bulk Delete Confirmation Dialog */}
-      <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+      <AlertDialog
+        open={bulkDeleteDialogOpen}
+        onOpenChange={setBulkDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete {selectedStudents.length} student records.
+              This action cannot be undone. This will permanently delete{" "}
+              {selectedStudents.length} student records.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmBulkDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               Delete Selected
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

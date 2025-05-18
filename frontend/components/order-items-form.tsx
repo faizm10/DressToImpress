@@ -96,7 +96,7 @@ export function OrderItemsForm({ orderItems, onChange }: OrderItemsFormProps) {
         </ScrollArea>
       )}
 
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <div className="grid grid-cols-2 gap-2">
           <div>
             <Label htmlFor="item_name" className="text-xs">
@@ -162,7 +162,7 @@ export function OrderItemsForm({ orderItems, onChange }: OrderItemsFormProps) {
           <Plus className="mr-2 h-4 w-4" />
           Add Item
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 }

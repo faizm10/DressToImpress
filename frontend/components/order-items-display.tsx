@@ -45,7 +45,7 @@ export function OrderItemsDisplay({ orderItems }: OrderItemsDisplayProps) {
                   key={index}
                   className="flex items-start space-x-4 rounded-lg border p-4"
                 >
-                  <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border">
+                  {/* <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border">
                     {item.file ? (
                       <Image
                         src={`/api/file-proxy?file=${encodeURIComponent(
@@ -61,14 +61,14 @@ export function OrderItemsDisplay({ orderItems }: OrderItemsDisplayProps) {
                         <Package className="h-8 w-8 text-gray-400" />
                       </div>
                     )}
-                  </div>
+                  </div> */}
                   <div className="flex-1">
                     <h4 className="text-sm font-medium">{item.item_name}</h4>
                     <div className="mt-1 flex items-center space-x-2">
                       <Badge variant="outline">{item.size}</Badge>
-                      <span className="text-xs text-muted-foreground">
+                      {/* <span className="text-xs text-muted-foreground">
                         ID: {item.item_id}
-                      </span>
+                      </span> */}
                     </div>
                   </div>
                 </div>
