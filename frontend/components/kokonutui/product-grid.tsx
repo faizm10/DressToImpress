@@ -1,11 +1,7 @@
 import { motion } from "motion/react";
 
-// import { AttireWithUrl } from "@/hooks/use-attires";
-// interface ProductGridProps {
-//   products: Product[];
-//   onProductSelect: (product: Product) => void;
-// }
-import { Attire, AttireWithUrl } from "@/hooks/use-attires";
+
+import { AttireWithUrl } from "@/hooks/use-attires";
 
 interface AttireGridProps {
   attires: AttireWithUrl[];
