@@ -4,6 +4,7 @@ import {
   IconFileAi,
   IconFileDescription,
   IconPlus,
+  IconRecordMail
 } from "@tabler/icons-react";
 export const data = {
   user: {
@@ -17,11 +18,11 @@ export const data = {
       url: "/dashboard",
       icon: IconDashboard,
     },
-    // {
-    //   title: "Add Attires",
-    //   url: "/dashboard/add",
-    //   icon: IconPlus,
-    // },
+    {
+      title: "Student's Attire",
+      url: "/students-record",
+      icon: IconRecordMail,
+    },
   ],
   navClouds: [
     {
