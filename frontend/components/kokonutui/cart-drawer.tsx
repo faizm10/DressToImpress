@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@supabase/supabase-js";
-// import { useToast } from "@/hooks/use-toast";
 
 interface CartDrawerProps {
   cart: CartItem[];
@@ -28,7 +27,6 @@ export function CartDrawer({
   onClose,
   onRemoveFromCart,
 }: CartDrawerProps) {
-  // const { toast } = useToast();
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -39,13 +37,11 @@ export function CartDrawer({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // Initialize Supabase client
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || "",
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
   );
 
-  // Close drawer when escape key is pressed
   useEffect(() => {
     const handleEscKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();

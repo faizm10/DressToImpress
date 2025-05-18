@@ -7,7 +7,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TopBar } from "@/components/kokonutui/top-bar";
 
 export default function Home() {
-  
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
