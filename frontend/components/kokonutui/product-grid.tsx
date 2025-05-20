@@ -1,6 +1,5 @@
 import { motion } from "motion/react";
 
-
 import { AttireWithUrl } from "@/hooks/use-attires";
 
 interface AttireGridProps {
@@ -29,7 +28,11 @@ export function AttireGrid({ attires, onAttireSelect }: AttireGridProps) {
             />
           </div>
           <div className="mt-1.5 space-y-0.5">
-            <h3 className="text-xs font-medium truncate">{attire.name}</h3>
+            <div className="flex justify-between items-center">
+              <h3 className="text-xs font-medium truncate">{attire.name}</h3>
+              <h3 className="text-xs font-medium truncate">{attire.status ?? "Available"}</h3>
+            </div>
+
             <div className="flex justify-between items-center">
               <p className="text-xs text-zinc-500 dark:text-zinc-400">
                 {attire.gender}

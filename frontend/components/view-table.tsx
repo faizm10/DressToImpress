@@ -14,7 +14,6 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "./ui/button";
 import { Attire, AttireWithUrl } from "@/hooks/use-attires";
 
-
 export default function ViewTable() {
   const supabase = createClient();
   const [attires, setAttires] = useState<AttireWithUrl[]>([]);
@@ -98,11 +97,10 @@ export default function ViewTable() {
               ) : (
                 "No image"
               )}
-            </TableCell >
+            </TableCell>
             <TableCell className="space-x-2 w-[50]">
-              <Button>IDK</Button>
-              <Button>IDK</Button>
-
+              <Button>Edit</Button>
+              <Button>Delete</Button>
             </TableCell>
           </TableRow>
         ))}

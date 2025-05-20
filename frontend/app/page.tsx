@@ -1,10 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Search, Clock, Package, ArrowRight } from "lucide-react";
 import { Header } from "@/components/header";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { TopBar } from "@/components/kokonutui/top-bar";
 
 export default function Home() {
   return (
@@ -16,7 +14,7 @@ export default function Home() {
             <div className="flex flex-col md:flex-row md:items-center">
               <div className="md:w-1/2 text-black md:py-20 dark:text-white">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-                  Dress to Impress Program
+                  Dress to Impress: Sustainability Styled For Success
                 </h1>
                 <p className="text-lg md:text-xl mb-8">
                   Have an interview or presentation coming up but nothing to
@@ -26,17 +24,12 @@ export default function Home() {
                   search needs.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
+                  <p>Ready To Dress to Impress?</p>
                   <Button
                     size="lg"
                     className="bg-[#E51937] hover:bg-[#E51937]/80 text-white"
                   >
-                    Explore Collection
-                  </Button>
-                  <Button
-                    size="lg"
-                    className="bg-[#FFC429] text-[#000000] hover:bg-[#FFC429]/80"
-                  >
-                    How It Works
+                    Start Browsing Now
                   </Button>
                 </div>
               </div>
@@ -137,15 +130,13 @@ export default function Home() {
         {/* CTA Section */}
         <section className="py-16 bg-[#E51937] text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">
-              Ready to Dress for Success?
-            </h2>
-            <p className="max-w-2xl mx-auto mb-8 text-white/80">
+            <h2 className="text-3xl font-bold mb-4">Contribute </h2>
+            {/* <p className="max-w-2xl mx-auto mb-8 text-white/80">
               This sustainable initiative helps B.Comm students put their best
               foot forward, thanks to generous clothing donations from the Lang
               community.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
+            </p>  */}
+            {/* <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="/browse">
                 <Button
                   size="lg"
@@ -154,7 +145,7 @@ export default function Home() {
                   Start Browsing Now
                 </Button>
               </Link>
-            </div>
+            </div> */}
             <div className="mt-8 p-4 bg-white/10 rounded-lg inline-block">
               <p className="text-white font-medium">
                 Looking to donate clothes to the program? Email{" "}

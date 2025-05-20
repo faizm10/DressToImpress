@@ -8,6 +8,7 @@ export interface Attire {
   size: string;
   category: string;
   file_name: string;
+  status: string;
 }
 
 export interface AttireWithUrl extends Attire {
@@ -25,7 +26,7 @@ export function useAttires() {
       // 1) fetch rows from your DB
       const { data, error: dbError } = await supabase
         .from<"attires", Attire>("attires")
-        .select("id, name, gender, size, category, file_name");
+        .select("id, name, gender, size, category, file_name, status");
 
       if (dbError) {
         setError(dbError.message);
@@ -68,7 +69,7 @@ export function useAttires() {
     async function fetchAttires() {
       const { data, error: dbError } = await supabase
         .from<"attires", Attire>("attires")
-        .select("id, name, gender, size, category, file_name");
+        .select("id, name, gender, size, category, file_name, status");
 
       if (dbError) {
         setError(dbError.message);

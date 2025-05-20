@@ -118,6 +118,20 @@ export function CartDrawer({
           },
         ])
         .select();
+      const updates = await Promise.all(
+        cart.map((item) =>
+          supabase
+            .from("attires")
+            .update({ status: "pending" })
+            .eq("file_name", item.file_name)
+        )
+      );
+
+      const updateErrors = updates.filter((res: any) => res.error);
+      if (updateErrors.length > 0) {
+        console.error("One or more updates failed:", updateErrors);
+        throw new Error("Failed to update item statuses");
+      }
 
       if (error) throw error;
 

@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { AttireWithUrl } from "@/hooks/use-attires"; // use correct path
+import { Badge } from "../ui/badge";
 
 interface AttireModelProps {
   attire: AttireWithUrl;
@@ -56,15 +57,14 @@ export function AttireModel({
                   </p>
                 </div>
                 <p className="text-sm font-medium">{attire.gender}</p>
+                <Badge className="bg-green-500">
+                  {attire.status ?? "Available"}
+                </Badge>
               </div>
               <div className="space-y-2">
                 <p className="text-xs text-zinc-600 dark:text-zinc-300">
                   {attire.size}
                 </p>
-                {/* <div className="text-xs space-y-1">
-                  <p className="text-zinc-500">SKU: {product.id}</p>
-                  <p className="text-zinc-500">Stock: Available</p>
-                </div> */}
               </div>
             </div>
             <button

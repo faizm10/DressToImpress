@@ -19,7 +19,7 @@ export const data = {
       icon: IconDashboard,
     },
     {
-      title: "Student's Attire",
+      title: "Student's Records",
       url: "/students-record",
       icon: IconRecordMail,
     },
