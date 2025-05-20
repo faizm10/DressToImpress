@@ -3,7 +3,9 @@
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import { useState } from "react";
-import { AttireWithUrl } from "@/hooks/use-attires"; // use correct path
+import { AttireWithUrl } from "@/hooks/use-attires";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 
 interface AttireModelProps {
   attire: AttireWithUrl;
@@ -56,23 +58,33 @@ export function AttireModel({
                   </p>
                 </div>
                 <p className="text-sm font-medium">{attire.gender}</p>
+                <Badge className="bg-green-500">
+                  {attire.status ?? "Available"}
+                </Badge>
               </div>
               <div className="space-y-2">
                 <p className="text-xs text-zinc-600 dark:text-zinc-300">
                   {attire.size}
                 </p>
-                {/* <div className="text-xs space-y-1">
-                  <p className="text-zinc-500">SKU: {product.id}</p>
-                  <p className="text-zinc-500">Stock: Available</p>
-                </div> */}
               </div>
             </div>
-            <button
+            <Button
               onClick={() => onAddToCart(attire)}
-              className="w-full mt-3 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-medium rounded-md hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors"
+              disabled={attire.status === "Unavailable"}
+              className={`
+    w-full mt-3 py-2 
+    bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 
+    text-xs font-medium rounded-md 
+    transition-colors
+    ${
+      attire.status === "Unavailable"
+        ? "opacity-50 cursor-not-allowed"
+        : "hover:bg-zinc-800 dark:hover:bg-zinc-100"
+    }
+  `}
             >
               Add to Cart
-            </button>
+            </Button>
           </div>
         </div>
       </motion.div>
