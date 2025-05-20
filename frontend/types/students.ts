@@ -3,6 +3,7 @@ export interface OrderItem {
   size: string
   item_id: string
   item_name: string
+  status: string
 }
 
 export interface Student {

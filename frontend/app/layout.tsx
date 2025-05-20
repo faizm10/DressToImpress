@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-providers";
-import { ApolloClientProvider } from "@/lib/apollo-provider";
 import { Toaster } from "@/components/ui/sonner";
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dress To Success",
+  title: "Dress To Impress",
   description:
     "The Dress to Impress program allows Lang students to borrow business casual attire for all of their academic and job search needs.",
 };

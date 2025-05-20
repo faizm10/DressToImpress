@@ -34,7 +34,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <a href="#">
                 <img src="/logos/logo4.png" width={75} height={50}></img>
                 <span className="text-base font-semibold">
-                  Dress For Success
+                  Dress To Impress
                 </span>
               </a>
             </SidebarMenuButton>

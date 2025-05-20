@@ -3,8 +3,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Package, Plus, Trash2, X } from "lucide-react";
+import { Package } from "lucide-react";
 import type { OrderItem } from "@/types/students";
+import { Select } from "@radix-ui/react-select";
+import {
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
+);
 
 interface OrderItemsFormProps {
   orderItems: OrderItem[];
@@ -17,41 +30,25 @@ export function OrderItemsForm({ orderItems, onChange }: OrderItemsFormProps) {
     size: "No Size",
     item_id: "",
     item_name: "",
+    status: "",
   });
 
-  const handleAddItem = () => {
-    if (!newItem.item_name || !newItem.item_id) return;
-
-    const updatedItems = [
-      ...orderItems,
-      {
-        file: newItem.file || "",
-        size: newItem.size || "No Size",
-        item_id: newItem.item_id,
-        item_name: newItem.item_name,
-      },
-    ];
-
-    onChange(updatedItems);
-
-    // Reset form
-    setNewItem({
-      file: "",
-      size: "No Size",
-      item_id: "",
-      item_name: "",
-    });
-  };
-
-  const handleRemoveItem = (index: number) => {
+  const handleStatusChange = async (index: number, newStatus: string) => {
     const updatedItems = [...orderItems];
-    updatedItems.splice(index, 1);
+    const itemToUpdate = updatedItems[index];
+    itemToUpdate.status = newStatus;
     onChange(updatedItems);
-  };
 
-  const handleItemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setNewItem((prev) => ({ ...prev, [name]: value }));
+    if (!itemToUpdate.item_id) return;
+    //call the supabase to update the item's status seperately
+    const { error } = await supabase
+      .from("attires")
+      .update({ status: newStatus })
+      .eq("file_name", itemToUpdate.file);
+
+    if (error) {
+      console.error("Failed to update status:", error);
+    }
   };
 
   return (
@@ -82,87 +79,24 @@ export function OrderItemsForm({ orderItems, onChange }: OrderItemsFormProps) {
                     </p>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleRemoveItem(index)}
-                  className="h-8 w-8 text-red-500"
+                <Select
+                  value={item.status}
+                  onValueChange={(value) => handleStatusChange(index, value)}
                 >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                  <SelectTrigger>
+                    <SelectValue>{item.status || "Select status"}</SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Available">Available</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Unavailable">Unavailable</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             ))}
           </div>
         </ScrollArea>
       )}
-
-      {/* <div className="space-y-2">
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <Label htmlFor="item_name" className="text-xs">
-              Item Name
-            </Label>
-            <Input
-              id="item_name"
-              name="item_name"
-              value={newItem.item_name}
-              onChange={handleItemChange}
-              placeholder="Dress Pants"
-              className="h-8"
-            />
-          </div>
-          <div>
-            <Label htmlFor="size" className="text-xs">
-              Size
-            </Label>
-            <Input
-              id="size"
-              name="size"
-              value={newItem.size}
-              onChange={handleItemChange}
-              placeholder="No Size"
-              className="h-8"
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <Label htmlFor="item_id" className="text-xs">
-              Item ID
-            </Label>
-            <Input
-              id="item_id"
-              name="item_id"
-              value={newItem.item_id}
-              onChange={handleItemChange}
-              placeholder="Item ID"
-              className="h-8"
-            />
-          </div>
-          <div>
-            <Label htmlFor="file" className="text-xs">
-              File (Optional)
-            </Label>
-            <Input
-              id="file"
-              name="file"
-              value={newItem.file}
-              onChange={handleItemChange}
-              placeholder="File UUID"
-              className="h-8"
-            />
-          </div>
-        </div>
-        <Button
-          type="button"
-          size="sm"
-          onClick={handleAddItem}
-          className="w-full"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Add Item
-        </Button>
-      </div> */}
     </div>
   );
 }

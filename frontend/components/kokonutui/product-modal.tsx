@@ -3,8 +3,9 @@
 import { motion } from "motion/react";
 import { X } from "lucide-react";
 import { useState } from "react";
-import { AttireWithUrl } from "@/hooks/use-attires"; // use correct path
+import { AttireWithUrl } from "@/hooks/use-attires";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 
 interface AttireModelProps {
   attire: AttireWithUrl;
@@ -67,12 +68,23 @@ export function AttireModel({
                 </p>
               </div>
             </div>
-            <button
+            <Button
               onClick={() => onAddToCart(attire)}
-              className="w-full mt-3 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-xs font-medium rounded-md hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors"
+              disabled={attire.status === "Unavailable"}
+              className={`
+    w-full mt-3 py-2 
+    bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 
+    text-xs font-medium rounded-md 
+    transition-colors
+    ${
+      attire.status === "Unavailable"
+        ? "opacity-50 cursor-not-allowed"
+        : "hover:bg-zinc-800 dark:hover:bg-zinc-100"
+    }
+  `}
             >
               Add to Cart
-            </button>
+            </Button>
           </div>
         </div>
       </motion.div>

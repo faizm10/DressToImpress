@@ -154,22 +154,42 @@ export function EditStudentModal({
                 required
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="status">Status</Label>
+            <div className="grid grid-row-2 gap-2">
+              <div>
+                <Label htmlFor="status">Student's Status</Label>
+                <Select
+                  defaultValue={student.status}
+                  value={formData.status}
+                  onValueChange={(value) => handleSelectChange("status", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Active">Active</SelectItem>
+                    <SelectItem value="Pending">Pending</SelectItem>
+                    <SelectItem value="Suspended">Suspended</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* <div>
+              <Label htmlFor="status">Item's Status</Label>
               <Select
-                defaultValue={student.status}
+                defaultValue={}
                 value={formData.status}
                 onValueChange={(value) => handleSelectChange("status", value)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
+                  <SelectValue placeholder="Select item's status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Active">Active</SelectItem>
+                  <SelectItem value="Available">Available</SelectItem>
                   <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="Suspended">Suspended</SelectItem>
+                  <SelectItem value="Unavailable">Unavailable</SelectItem>
                 </SelectContent>
               </Select>
+
+              </div> */}
             </div>
             <div className="border-t pt-4">
               <OrderItemsForm
