@@ -40,7 +40,7 @@ interface FormErrors {
   lastName?: string;
   studentId?: string;
   email?: string;
-  dateRange?: DateRange;
+  dateRange?: string; // error message for date range selection
 }
 
 export function CartDrawer({
