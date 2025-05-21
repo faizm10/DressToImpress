@@ -3,11 +3,23 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { X, Check, Loader2 } from "lucide-react";
-import { type CartItem } from "./data";
+import type { CartItem } from "./data";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@supabase/supabase-js";
+import * as React from "react";
+import { addDays, format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import type { DateRange } from "react-day-picker";
+
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface CartDrawerProps {
   cart: CartItem[];
@@ -20,6 +32,15 @@ interface FormData {
   lastName: string;
   studentId: string;
   email: string;
+  date: DateRange | undefined;
+}
+
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  studentId?: string;
+  email?: string;
+  dateRange?: DateRange;
 }
 
 export function CartDrawer({
@@ -27,11 +48,16 @@ export function CartDrawer({
   onClose,
   onRemoveFromCart,
 }: CartDrawerProps) {
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: new Date(),
+    to: addDays(new Date(), 5),
+  });
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
     studentId: "",
     email: "",
+    date,
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,6 +77,10 @@ export function CartDrawer({
     return () => window.removeEventListener("keydown", handleEscKey);
   }, [onClose]);
 
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, date }));
+  }, [date]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
@@ -62,7 +92,7 @@ export function CartDrawer({
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<FormData> = {};
+    const newErrors: FormErrors = {};
 
     if (!formData.firstName.trim()) {
       newErrors.firstName = "First name is required";
@@ -84,6 +114,10 @@ export function CartDrawer({
       newErrors.email = "Email must end with uoguelph.ca";
     }
 
+    if (!date?.from || !date?.to) {
+      newErrors.dateRange = "Please select a date range";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -96,7 +130,7 @@ export function CartDrawer({
     setIsSubmitting(true);
 
     try {
-      // Create order items array from cart
+      //create the order by mapping thru the customer's item and adding each details to it
       const orderItems = cart.map((item) => ({
         item_id: item.id,
         item_name: item.name,
@@ -104,8 +138,8 @@ export function CartDrawer({
         file: item.file_name,
       }));
 
-      // Insert student data into Supabase
-      const { data, error } = await supabase
+      //insert student's data
+      const { data: studentData, error: studentError } = await supabase
         .from("students")
         .insert([
           {
@@ -118,6 +152,31 @@ export function CartDrawer({
           },
         ])
         .select();
+
+      if (studentError) throw studentError;
+
+      // fetch the student ID so we can map the attires to student id when inserting with the dates
+      const studentId = studentData?.[0]?.id;
+
+      if (!studentId) throw new Error("Failed to get student ID");
+
+      //create the request for each attires by user's ID
+      const attireRequests = cart.map((item) => ({
+        student_id: studentId,
+        attire_id: item.id,
+        status: "pending",
+        use_start_date: date?.from ? format(date.from, "yyyy-MM-dd") : null,
+        use_end_date: date?.to ? format(date.to, "yyyy-MM-dd") : null,
+      }));
+
+      // Insert attire requests
+      const { error: attireRequestError } = await supabase
+        .from("attire_requests")
+        .insert(attireRequests);
+
+      if (attireRequestError) throw attireRequestError;
+
+      // Update attire status
       const updates = await Promise.all(
         cart.map((item) =>
           supabase
@@ -133,14 +192,8 @@ export function CartDrawer({
         throw new Error("Failed to update item statuses");
       }
 
-      if (error) throw error;
-
       setIsSubmitted(true);
-      // toast({
-      //   title: "Order submitted",
-      //   description: "Your order is pending approval",
-      // });
-      cart;
+      // Clear cart after successful submission
       cart.forEach((item) => onRemoveFromCart(item.id));
     } catch (error) {
       console.error("Error submitting form:", error);
@@ -158,7 +211,9 @@ export function CartDrawer({
     formData.firstName.trim() !== "" &&
     formData.lastName.trim() !== "" &&
     /^\d+$/.test(formData.studentId) &&
-    formData.email.endsWith("uoguelph.ca");
+    formData.email.endsWith("uoguelph.ca") &&
+    date?.from &&
+    date?.to;
 
   return (
     <>
@@ -201,10 +256,7 @@ export function CartDrawer({
                     className="flex gap-4 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg"
                   >
                     <img
-                      src={
-                        itemWithImage.imageUrl ??
-                        "/placeholder.svg?height=96&width=96"
-                      }
+                      src={itemWithImage.imageUrl ?? "/placeholder.svg"}
                       alt={item.name}
                       className="w-24 h-24 object-cover rounded-md"
                     />
@@ -339,6 +391,47 @@ export function CartDrawer({
                         {errors.email}
                       </p>
                     )}
+                  </div>
+                </div>
+                <div className="flex space-x-2">
+                  <Label>Dates</Label>
+                  <div className={cn("grid gap-2")}>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          id="date"
+                          variant={"outline"}
+                          className={cn(
+                            "w-[300px] justify-start text-left font-normal",
+                            !date && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon />
+                          {date?.from ? (
+                            date.to ? (
+                              <>
+                                {format(date.from, "LLL dd, y")} -{" "}
+                                {format(date.to, "LLL dd, y")}
+                              </>
+                            ) : (
+                              format(date.from, "LLL dd, y")
+                            )
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          initialFocus
+                          mode="range"
+                          defaultMonth={date?.from}
+                          selected={date}
+                          onSelect={setDate}
+                          numberOfMonths={2}
+                        />
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
                 {/* Checkout button */}

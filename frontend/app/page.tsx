@@ -25,12 +25,14 @@ export default function Home() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <p>Ready To Dress to Impress?</p>
+                  <a href="/browse">
                   <Button
                     size="lg"
                     className="bg-[#E51937] hover:bg-[#E51937]/80 text-white"
                   >
                     Start Browsing Now
                   </Button>
+                  </a>
                 </div>
               </div>
               <div className="md:w-1/2 mt-8 md:mt-0 h-[50vh] md:h-[70vh] relative">
