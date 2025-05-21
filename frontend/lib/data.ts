@@ -6,6 +6,7 @@ import {
   IconPlus,
   IconRecordMail
 } from "@tabler/icons-react";
+import { Calendar } from "lucide-react";
 export const data = {
   user: {
     name: "shadcn",
@@ -22,6 +23,11 @@ export const data = {
       title: "Student's Records",
       url: "/students-record",
       icon: IconRecordMail,
+    },
+    {
+      title: "Calendar View",
+      url: "/calendar-view",
+      icon: Calendar,
     },
   ],
   navClouds: [
