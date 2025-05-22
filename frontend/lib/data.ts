@@ -24,11 +24,11 @@ export const data = {
       url: "/students-record",
       icon: IconRecordMail,
     },
-    {
-      title: "Calendar View",
-      url: "/calendar-view",
-      icon: Calendar,
-    },
+    // {
+    //   title: "Calendar View",
+    //   url: "/calendar-view",
+    //   icon: Calendar,
+    // },
   ],
   navClouds: [
     {
