@@ -11,6 +11,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "./ui/button";
 import type { Attire, AttireWithUrl } from "@/hooks/use-attires";
@@ -126,14 +137,34 @@ export default function ViewTable() {
               )}
             </TableCell>
             <TableCell className="space-x-2 w-[50]">
-              <Button className="bg-yellow-300 text-black">
-                {" "}
-                <Edit2 /> Edit
-              </Button>
-              <Button variant={"destructive"}>
-                {" "}
-                <Trash2 /> Delete
-              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Edit</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Edit Item's Details</DialogTitle>
+                    <DialogDescription>
+                      In Progress
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Delete</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      your account and remove your data from our servers.
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
             </TableCell>
           </TableRow>
         ))}

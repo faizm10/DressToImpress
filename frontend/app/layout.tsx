@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-providers";
 import { Toaster } from "@/components/ui/sonner";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -18,7 +19,6 @@ export const metadata: Metadata = {
   description:
     "The Dress to Impress program allows Lang students to borrow business casual attire for all of their academic and job search needs.",
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,6 +37,7 @@ export default function RootLayout({
         >
           {/* <ApolloClientProvider> */}
           {children}
+
           <Toaster />
 
           {/* </ApolloClientProvider> */}
