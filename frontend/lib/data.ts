@@ -3,10 +3,8 @@ import {
   IconDashboard,
   IconFileAi,
   IconFileDescription,
-  IconPlus,
   IconRecordMail
 } from "@tabler/icons-react";
-import { Calendar } from "lucide-react";
 export const data = {
   user: {
     name: "shadcn",
