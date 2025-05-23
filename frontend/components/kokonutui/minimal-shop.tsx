@@ -2,13 +2,15 @@
 
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
+
 import { AttireGrid } from "./product-grid";
 import { CartDrawer } from "./cart-drawer";
 import { AttireModel } from "./product-modal";
 import { TopBar } from "./top-bar";
-import { type CartItem, Attire } from "./data";
-import { useAttires } from "@/hooks/use-attires";
-import { AttireWithUrl } from "@/hooks/use-attires";
+import type { CartItem } from "./cart-drawer";
+import { useAttires, type AttireWithUrl } from "@/hooks/use-attires";
+import type { DateRange } from "@/components/ui/custom-calendar";
+
 export default function MinimalShop() {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -18,20 +20,37 @@ export default function MinimalShop() {
   const [selectedAttire, setSelectedAttire] = useState<AttireWithUrl | null>(
     null
   );
-
-  const addToCart = (attire: Attire, quantity: number = 1) => {
+  const addToCart = (attire: AttireWithUrl, dateRange?: DateRange) => {
     setCart((prev) => {
       const exists = prev.find((item) => item.id === attire.id);
       if (exists) {
         return prev.map((item) =>
           item.id === attire.id
-            ? { ...item, quantity: item.quantity + quantity }
+            ? {
+                ...item,
+                quantity: item.quantity + 1,
+                dateRange: dateRange || item.dateRange,
+              }
             : item
         );
       }
-      return [...prev, { ...attire, quantity }];
+
+      const newItem: CartItem = {
+        id: attire.id,
+        name: attire.name,
+        gender: attire.gender,
+        size: attire.size,
+        category: attire.category,
+        file_name: attire.file_name,
+        imageUrl: attire.imageUrl || undefined,
+        quantity: 1,
+        dateRange,
+      };
+
+      return [...prev, newItem];
     });
   };
+
   const removeFromCart = (attireID: string) => {
     setCart((prev) => prev.filter((item) => item.id !== attireID));
   };
@@ -60,8 +79,8 @@ export default function MinimalShop() {
           <AttireModel
             attire={selectedAttire}
             onClose={() => setSelectedAttire(null)}
-            onAddToCart={(attire) => {
-              addToCart(attire);
+            onAddToCart={(attire, dateRange) => {
+              addToCart(attire, dateRange);
               setSelectedAttire(null);
               setIsCartOpen(true);
             }}

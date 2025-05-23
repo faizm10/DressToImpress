@@ -1,25 +1,29 @@
 "use client";
 
+import type React from "react";
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { X, Check, Loader2 } from "lucide-react";
-import type { CartItem } from "./data";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@supabase/supabase-js";
-import * as React from "react";
-import { addDays, format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import type { DateRange } from "react-day-picker";
+import { format } from "date-fns";
+import type { DateRange } from "@/components/ui/custom-calendar";
 
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+// Update CartItem to include dateRange
+export interface CartItem {
+  id: string;
+  name: string;
+  size: string;
+  gender: string;
+  category: string;
+  file_name: string;
+  quantity: number;
+  imageUrl?: string;
+  dateRange?: DateRange;
+}
 
 interface CartDrawerProps {
   cart: CartItem[];
@@ -32,7 +36,6 @@ interface FormData {
   lastName: string;
   studentId: string;
   email: string;
-  date: DateRange | undefined;
 }
 
 interface FormErrors {
@@ -40,7 +43,6 @@ interface FormErrors {
   lastName?: string;
   studentId?: string;
   email?: string;
-  dateRange?: string; // error message for date range selection
 }
 
 export function CartDrawer({
@@ -48,16 +50,11 @@ export function CartDrawer({
   onClose,
   onRemoveFromCart,
 }: CartDrawerProps) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 5),
-  });
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
     studentId: "",
     email: "",
-    date,
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,10 +73,6 @@ export function CartDrawer({
     window.addEventListener("keydown", handleEscKey);
     return () => window.removeEventListener("keydown", handleEscKey);
   }, [onClose]);
-
-  useEffect(() => {
-    setFormData((prev) => ({ ...prev, date }));
-  }, [date]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -114,10 +107,6 @@ export function CartDrawer({
       newErrors.email = "Email must end with uoguelph.ca";
     }
 
-    if (!date?.from || !date?.to) {
-      newErrors.dateRange = "Please select a date range";
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -148,7 +137,6 @@ export function CartDrawer({
             student_id: formData.studentId,
             email: formData.email,
             order_items: orderItems,
-            status: "pending",
           },
         ])
         .select();
@@ -164,9 +152,13 @@ export function CartDrawer({
       const attireRequests = cart.map((item) => ({
         student_id: studentId,
         attire_id: item.id,
-        status: "pending",
-        use_start_date: date?.from ? format(date.from, "yyyy-MM-dd") : null,
-        use_end_date: date?.to ? format(date.to, "yyyy-MM-dd") : null,
+        // status: "pending",
+        use_start_date: item.dateRange?.from
+          ? format(item.dateRange.from, "yyyy-MM-dd")
+          : null,
+        use_end_date: item.dateRange?.to
+          ? format(item.dateRange.to, "yyyy-MM-dd")
+          : null,
       }));
 
       // Insert attire requests
@@ -177,31 +169,20 @@ export function CartDrawer({
       if (attireRequestError) throw attireRequestError;
 
       // Update attire status
-      const updates = await Promise.all(
-        cart.map((item) =>
-          supabase
-            .from("attires")
-            .update({ status: "pending" })
-            .eq("file_name", item.file_name)
-        )
-      );
+      // const updates = await Promise.all(
+      //   cart.map((item) => supabase.from("attires").update({ status: "pending" }).eq("file_name", item.file_name)),
+      // )
 
-      const updateErrors = updates.filter((res: any) => res.error);
-      if (updateErrors.length > 0) {
-        console.error("One or more updates failed:", updateErrors);
-        throw new Error("Failed to update item statuses");
-      }
+      // const updateErrors = updates.filter((res: any) => res.error)
+      // if (updateErrors.length > 0) {
+      //   console.error("One or more updates failed:", updateErrors)
+      //   throw new Error("Failed to update item statuses")
+      // }
 
       setIsSubmitted(true);
-      // Clear cart after successful submission
       cart.forEach((item) => onRemoveFromCart(item.id));
     } catch (error) {
       console.error("Error submitting form:", error);
-      // toast({
-      //   title: "Error",
-      //   description: "There was an error submitting your order. Please try again.",
-      //   variant: "destructive",
-      // });
     } finally {
       setIsSubmitting(false);
     }
@@ -212,8 +193,7 @@ export function CartDrawer({
     formData.lastName.trim() !== "" &&
     /^\d+$/.test(formData.studentId) &&
     formData.email.endsWith("uoguelph.ca") &&
-    date?.from &&
-    date?.to;
+    cart.length > 0;
 
   return (
     <>
@@ -247,38 +227,40 @@ export function CartDrawer({
                 Your cart is empty
               </div>
             ) : (
-              cart.map((item) => {
-                const itemWithImage = item as CartItem & { imageUrl?: string };
-
-                return (
-                  <div
-                    key={item.id}
-                    className="flex gap-4 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg"
-                  >
-                    <img
-                      src={itemWithImage.imageUrl ?? "/placeholder.svg"}
-                      alt={item.name}
-                      className="w-24 h-24 object-cover rounded-md"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start">
+              cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex gap-4 p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg"
+                >
+                  <img
+                    src={item.imageUrl ?? "/placeholder.svg"}
+                    alt={item.name}
+                    className="w-24 h-24 object-cover rounded-md"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                      <div>
                         <h3 className="text-base font-medium truncate">
                           {item.name}
                         </h3>
-                        <h1 className="text-base font-medium truncate">
-                          {item.size}
-                        </h1>
-                        <button
-                          onClick={() => onRemoveFromCart(item.id)}
-                          className="p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-full ml-2"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+                        <p className="text-sm text-zinc-500">{item.size}</p>
+                        {item.dateRange?.from && item.dateRange?.to && (
+                          <p className="text-xs text-zinc-500 mt-1">
+                            {format(item.dateRange.from, "MMM d")} -{" "}
+                            {format(item.dateRange.to, "MMM d, yyyy")}
+                          </p>
+                        )}
                       </div>
+                      <button
+                        onClick={() => onRemoveFromCart(item.id)}
+                        className="p-1.5 hover:bg-zinc-200 dark:hover:bg-zinc-700 rounded-full ml-2"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
-                );
-              })
+                </div>
+              ))
             )}
           </div>
 
@@ -391,47 +373,6 @@ export function CartDrawer({
                         {errors.email}
                       </p>
                     )}
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <Label>Dates</Label>
-                  <div className={cn("grid gap-2")}>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          id="date"
-                          variant={"outline"}
-                          className={cn(
-                            "w-[300px] justify-start text-left font-normal",
-                            !date && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon />
-                          {date?.from ? (
-                            date.to ? (
-                              <>
-                                {format(date.from, "LLL dd, y")} -{" "}
-                                {format(date.to, "LLL dd, y")}
-                              </>
-                            ) : (
-                              format(date.from, "LLL dd, y")
-                            )
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          initialFocus
-                          mode="range"
-                          defaultMonth={date?.from}
-                          selected={date}
-                          onSelect={setDate}
-                          numberOfMonths={2}
-                        />
-                      </PopoverContent>
-                    </Popover>
                   </div>
                 </div>
                 {/* Checkout button */}

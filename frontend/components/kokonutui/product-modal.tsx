@@ -2,15 +2,20 @@
 
 import { motion } from "motion/react";
 import { X } from "lucide-react";
-import { useState } from "react";
-import { AttireWithUrl } from "@/hooks/use-attires";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
+import { useState, useEffect } from "react";
+import type { AttireWithUrl } from "@/hooks/use-attires";
+import { Button } from "@/components/ui/button";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { addDays, parseISO, format } from "date-fns";
+import {
+  CustomCalendar,
+  type DateRange,
+} from "@/components/ui/custom-calendar";
 
 interface AttireModelProps {
   attire: AttireWithUrl;
   onClose: () => void;
-  onAddToCart: (attire: AttireWithUrl) => void;
+  onAddToCart: (attire: AttireWithUrl, dateRange?: DateRange) => void;
 }
 
 export function AttireModel({
@@ -18,7 +23,71 @@ export function AttireModel({
   onClose,
   onAddToCart,
 }: AttireModelProps) {
-  const [quantity, setQuantity] = useState(1);
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [unavailableDates, setUnavailableDates] = useState<Date[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const supabase = createClientComponentClient();
+
+  // Fetch unavailable dates for this attire
+  useEffect(() => {
+    async function fetchUnavailableDates() {
+      setIsLoading(true);
+
+      const { data, error } = await supabase
+        .from("attire_requests")
+        .select("use_start_date, use_end_date")
+        .eq("attire_id", attire.id);
+
+      if (error) {
+        console.error("Error fetching unavailable dates:", error);
+        setIsLoading(false);
+        return;
+      }
+
+      // Process the data to get all dates between start and end dates
+      const allUnavailableDates: Date[] = [];
+
+      data.forEach((booking) => {
+        if (booking.use_start_date && booking.use_end_date) {
+          const startDate = parseISO(booking.use_start_date);
+          const endDate = parseISO(booking.use_end_date);
+
+          // Generate all dates between start and end
+          let currentDate = startDate;
+          while (currentDate <= endDate) {
+            allUnavailableDates.push(new Date(currentDate));
+            currentDate = addDays(currentDate, 1);
+          }
+        }
+      });
+
+      setUnavailableDates(allUnavailableDates);
+      setIsLoading(false);
+    }
+
+    fetchUnavailableDates();
+  }, [attire.id, supabase]);
+
+  // Function to disable unavailable dates in the calendar
+  const disabledDays = (date: Date) => {
+    // Disable past dates
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (date < today) return true;
+
+    // Check if the date is in the unavailable dates array
+    return unavailableDates.some(
+      (unavailableDate) =>
+        unavailableDate.getDate() === date.getDate() &&
+        unavailableDate.getMonth() === date.getMonth() &&
+        unavailableDate.getFullYear() === date.getFullYear()
+    );
+  };
+
+  const handleAddToCart = () => {
+    onAddToCart(attire, dateRange);
+  };
 
   return (
     <>
@@ -31,7 +100,7 @@ export function AttireModel({
       />
       <motion.div
         layoutId={`product-${attire.id}`}
-        className="fixed inset-x-4 bottom-0 md:inset-[25%] z-50 bg-white dark:bg-zinc-900 rounded-t-xl md:rounded-xl overflow-hidden max-h-[80vh] md:max-h-[500px]"
+        className="fixed inset-x-4 bottom-0 md:inset-[25%] z-50 bg-white dark:bg-zinc-900 rounded-t-xl md:rounded-xl overflow-hidden max-h-[80vh] md:max-h-[500px] overflow-y-auto"
       >
         <div className="h-full md:flex">
           <div className="relative md:w-2/5">
@@ -58,32 +127,59 @@ export function AttireModel({
                   </p>
                 </div>
                 <p className="text-sm font-medium">{attire.gender}</p>
-                <Badge className="bg-green-500">
-                  {attire.status ?? "Available"}
-                </Badge>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 mb-3">
                 <p className="text-xs text-zinc-600 dark:text-zinc-300">
                   {attire.size}
                 </p>
               </div>
+
+              {isLoading ? (
+                <div className="flex justify-center py-4">
+                  <div className="animate-spin h-5 w-5 border-2 border-zinc-500 rounded-full border-t-transparent"></div>
+                </div>
+              ) : (
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Select dates:</h3>
+                  <CustomCalendar
+                    selected={dateRange}
+                    onSelect={setDateRange}
+                    disabled={disabledDays}
+                    className="border rounded-md"
+                  />
+
+                  {dateRange?.from && (
+                    <div className="mt-2 p-2 bg-zinc-50 dark:bg-zinc-800 rounded-md">
+                      <p className="text-xs">
+                        Selected: {format(dateRange.from, "MMM d, yyyy")}
+                        {dateRange.to
+                          ? ` to ${format(dateRange.to, "MMM d, yyyy")}`
+                          : ""}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
+
             <Button
-              onClick={() => onAddToCart(attire)}
-              disabled={attire.status === "Unavailable"}
+              onClick={handleAddToCart}
+              disabled={!dateRange?.from || !dateRange?.to}
               className={`
-    w-full mt-3 py-2 
-    bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 
-    text-xs font-medium rounded-md 
-    transition-colors
-    ${
-      attire.status === "Unavailable"
-        ? "opacity-50 cursor-not-allowed"
-        : "hover:bg-zinc-800 dark:hover:bg-zinc-100"
-    }
-  `}
+                w-full mt-3 py-2 
+                bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 
+                text-xs font-medium rounded-md 
+                transition-colors
+                ${
+                  !dateRange?.from || !dateRange?.to
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-zinc-800 dark:hover:bg-zinc-100"
+                }
+              `}
             >
-              Add to Cart
+              {!dateRange?.from || !dateRange?.to
+                ? "Select dates to continue"
+                : "Add to Cart"}
             </Button>
           </div>
         </div>

@@ -38,7 +38,7 @@ export default function ViewTable() {
       // 1) fetch rows from your DB
       const { data, error: dbError } = await supabase
         .from<"attires", Attire>("attires")
-        .select("id, name, gender, size, category, file_name, status");
+        .select("id, name, gender, size, category, file_name");
 
       if (dbError) {
         setError(dbError.message);
@@ -60,7 +60,7 @@ export default function ViewTable() {
               ...item,
               imageUrl: null,
               // If status is undefined, provide a default value
-              status: item.status || "Available",
+              // status: item.status || "Available",
             };
           }
 
@@ -76,7 +76,7 @@ export default function ViewTable() {
             ...item,
             imageUrl: urlData.publicUrl,
             // If status is undefined, provide a default value
-            status: item.status || "Available",
+            // status: item.status || "Available",
           };
         })
       );
@@ -100,7 +100,7 @@ export default function ViewTable() {
           <TableHead>Gender</TableHead>
           <TableHead>Size</TableHead>
           <TableHead>Category</TableHead>
-          <TableHead>Status</TableHead>
+          {/* <TableHead>Status</TableHead> */}
           <TableHead>Image</TableHead>
           <TableHead>Actions</TableHead>
         </TableRow>
@@ -112,7 +112,7 @@ export default function ViewTable() {
             <TableCell>{a.gender}</TableCell>
             <TableCell>{a.size}</TableCell>
             <TableCell>{a.category}</TableCell>
-            <TableCell>
+            {/* <TableCell>
               <span
                 className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                   a.status === "Available"
@@ -124,7 +124,7 @@ export default function ViewTable() {
               >
                 {a.status}
               </span>
-            </TableCell>
+            </TableCell> */}
             <TableCell>
               {a.imageUrl ? (
                 <img
@@ -144,9 +144,7 @@ export default function ViewTable() {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Edit Item's Details</DialogTitle>
-                    <DialogDescription>
-                      In Progress
-                    </DialogDescription>
+                    <DialogDescription>In Progress</DialogDescription>
                   </DialogHeader>
                 </DialogContent>
               </Dialog>

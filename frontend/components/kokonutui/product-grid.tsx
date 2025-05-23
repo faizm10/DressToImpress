@@ -30,9 +30,9 @@ export function AttireGrid({ attires, onAttireSelect }: AttireGridProps) {
           <div className="mt-1.5 space-y-0.5">
             <div className="flex justify-between items-center">
               <h3 className="text-xs font-medium truncate">{attire.name}</h3>
-              <h3 className="text-xs font-medium truncate">
+              {/* <h3 className="text-xs font-medium truncate">
                 {attire.status ?? "Available"}
-              </h3>
+              </h3> */}
             </div>
 
             <div className="flex justify-between items-center">
