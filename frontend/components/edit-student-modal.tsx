@@ -172,31 +172,13 @@ export function EditStudentModal({
                   </SelectContent>
                 </Select>
               </div>
-              {/* <div>
-              <Label htmlFor="status">Item's Status</Label>
-              <Select
-                defaultValue={}
-                value={formData.status}
-                onValueChange={(value) => handleSelectChange("status", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select item's status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Available">Available</SelectItem>
-                  <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="Unavailable">Unavailable</SelectItem>
-                </SelectContent>
-              </Select>
-
-              </div> */}
             </div>
-            <div className="border-t pt-4">
+            {/* <div className="border-t pt-4">
               <OrderItemsForm
                 orderItems={orderItems}
                 onChange={setOrderItems}
               />
-            </div>
+            </div> */}
           </div>
           <DialogFooter>
             <Button type="submit" disabled={loading}>

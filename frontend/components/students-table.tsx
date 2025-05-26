@@ -309,8 +309,8 @@ export function StudentsTable() {
                         student.status === "Active"
                           ? "bg-green-100 text-green-800"
                           : student.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-red-100 text-red-800"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
                       }`}
                     >
                       {student.status}
@@ -338,16 +338,6 @@ export function StudentsTable() {
                         >
                           Edit student
                         </DropdownMenuItem>
-                        {/* <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          className="text-red-600"
-                          onClick={() => {
-                            setStudentToDelete(student.id);
-                            setDeleteDialogOpen(true);
-                          }}
-                        >
-                          Delete student
-                        </DropdownMenuItem> */}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
