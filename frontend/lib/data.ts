@@ -1,10 +1,4 @@
-import {
-  IconCamera,
-  IconDashboard,
-  IconFileAi,
-  IconFileDescription,
-  IconRecordMail
-} from "@tabler/icons-react";
+import { Home, Mail, Table } from "lucide-react";
 export const data = {
   user: {
     name: "shadcn",
@@ -15,67 +9,20 @@ export const data = {
     {
       title: "Dashboard",
       url: "/dashboard",
-      icon: IconDashboard,
+      icon: Home,
     },
     {
       title: "Student's Records",
       url: "/students-record",
-      icon: IconRecordMail,
-    },
-    // {
-    //   title: "Calendar View",
-    //   url: "/calendar-view",
-    //   icon: Calendar,
-    // },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
-      isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      icon: Table,
     },
     {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Prompts",
-      icon: IconFileAi,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      title: "Emails",
+      url: "/emails",
+      icon: Mail,
     },
   ],
+  
 };
 
 export const shoppingCategories = [
