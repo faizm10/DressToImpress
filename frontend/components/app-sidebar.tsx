@@ -1,13 +1,6 @@
 "use client";
 
 import * as React from "react";
-import {
-  IconCamera,
-  IconDashboard,
-  IconFileAi,
-  IconFileDescription,
-} from "@tabler/icons-react";
-
 import { NavMain } from "@/components/nav-main";
 import {
   Sidebar,

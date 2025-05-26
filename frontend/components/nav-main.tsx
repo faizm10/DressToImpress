@@ -10,6 +10,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { LucideProps } from "lucide-react";
+import { ComponentType } from "react";
 
 export function NavMain({
   items,
@@ -17,7 +19,8 @@ export function NavMain({
   items: {
     title: string;
     url: string;
-    icon?: Icon;
+      icon?: ComponentType<LucideProps>;  // covers forward‐ref icon components
+
   }[];
 }) {
   return (
@@ -26,16 +29,15 @@ export function NavMain({
         <SidebarMenu></SidebarMenu>
         <SidebarMenu>
           {items.map((item) => (
-  <a key={item.url || item.title} href={item.url}>
-    <SidebarMenuItem>
-      <SidebarMenuButton tooltip={item.title}>
-        {item.icon && <item.icon />}
-        <span>{item.title}</span>
-      </SidebarMenuButton>
-    </SidebarMenuItem>
-  </a>
-))}
-
+            <a key={item.url || item.title} href={item.url}>
+              <SidebarMenuItem>
+                <SidebarMenuButton tooltip={item.title}>
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </a>
+          ))}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
