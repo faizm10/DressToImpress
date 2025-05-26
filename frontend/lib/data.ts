@@ -1,4 +1,4 @@
-import { Home, Mail, Table } from "lucide-react";
+import { Clipboard, Home, Mail, Table } from "lucide-react";
 export const data = {
   user: {
     name: "shadcn",
@@ -21,8 +21,12 @@ export const data = {
       url: "/emails",
       icon: Mail,
     },
+    {
+      title: "Documentation",
+      url: "/docs",
+      icon: Clipboard,
+    },
   ],
-  
 };
 
 export const shoppingCategories = [
