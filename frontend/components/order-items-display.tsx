@@ -10,17 +10,31 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Package } from "lucide-react";
-import Image from "next/image";
 import type { OrderItem } from "@/types/students";
-
+import Image from "next/image";
+import { useAttires, type AttireWithUrl } from "@/hooks/use-attires";
 interface OrderItemsDisplayProps {
   orderItems: OrderItem[];
 }
-
 export function OrderItemsDisplay({ orderItems }: OrderItemsDisplayProps) {
+  const { attires, loading, error } = useAttires();
+
   if (!orderItems || orderItems.length === 0) {
     return <span className="text-muted-foreground text-sm">No items</span>;
   }
+  // Function to find the matching attire for an order item
+  const findAttireForOrderItem = (
+    orderItem: OrderItem
+  ): AttireWithUrl | null => {
+    // Assuming OrderItem has an attire_id field that matches the Attire id
+    // If your OrderItem structure is different, adjust this logic accordingly
+    return (
+      attires.find(
+        (attire) =>
+          attire.id === orderItem.item_id || attire.name === orderItem.item_name
+      ) || null
+    );
+  };
 
   return (
     <Dialog>
@@ -39,40 +53,58 @@ export function OrderItemsDisplay({ orderItems }: OrderItemsDisplayProps) {
         </DialogHeader>
         <ScrollArea className="h-[400px] rounded-md border p-4">
           <div className="space-y-4">
-            {Array.isArray(orderItems) &&
-              orderItems.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex items-start space-x-4 rounded-lg border p-4"
-                >
-                  {/* <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border">
-                    {item.file ? (
-                      <Image
-                        src={`/api/file-proxy?file=${encodeURIComponent(
-                          item.file
-                        )}`}
-                        alt={item.item_name}
-                        width={64}
-                        height={64}
-                        className="h-full w-full object-cover object-center"
+            {loading ? (
+              <div className="text-center text-muted-foreground">
+                Loading items...
+              </div>
+            ) : error ? (
+              <div className="text-center text-red-500">
+                Error loading items: {error}
+              </div>
+            ) : (
+              Array.isArray(orderItems) &&
+              orderItems.map((item, index) => {
+                const matchingAttire = findAttireForOrderItem(item);
+
+                return (
+                  <div
+                    key={index}
+                    className="flex items-start space-x-4 rounded-lg border p-4"
+                  >
+                    <div className="relative h-20 w-16 flex-shrink-0">
+                      <img
+                        src={
+                          matchingAttire?.imageUrl ||
+                          "/placeholder.svg?height=80&width=64"
+                        }
+                        alt={`${item.item_name} image`}
+                        className="rounded-md object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "/placeholder.svg?height=80&width=64";
+                        }}
                       />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-gray-100">
-                        <Package className="h-8 w-8 text-gray-400" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium">{item.item_name}</h4>
+                      <div className="mt-1 flex items-center space-x-2">
+                        <Badge variant="outline">{item.size}</Badge>
+                        {matchingAttire?.category && (
+                          <Badge variant="secondary">
+                            {matchingAttire.category}
+                          </Badge>
+                        )}
                       </div>
-                    )}
-                  </div> */}
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium">{item.item_name}</h4>
-                    <div className="mt-1 flex items-center space-x-2">
-                      <Badge variant="outline">{item.size}</Badge>
-                      {/* <span className="text-xs text-muted-foreground">
-                        ID: {item.item_id}
-                      </span> */}
+                      {matchingAttire?.gender && (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {matchingAttire.gender}
+                        </p>
+                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })
+            )}
           </div>
         </ScrollArea>
       </DialogContent>
