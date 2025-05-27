@@ -21,11 +21,11 @@ export const data = {
       url: "/emails",
       icon: Mail,
     },
-    {
-      title: "Documentation",
-      url: "/docs",
-      icon: Clipboard,
-    },
+    // {
+    //   title: "Documentation",
+    //   url: "/docs",
+    //   icon: Clipboard,
+    // },
   ],
 };
 
