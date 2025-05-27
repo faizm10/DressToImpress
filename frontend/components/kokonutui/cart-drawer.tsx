@@ -128,36 +128,34 @@ export function CartDrawer({
       }));
 
       // Step 1: Check if student already exists
+      let studentId: number | null = null;
+
+      // Step 1: Check if student already exists
       const { data: existingStudent, error: lookupError } = await supabase
         .from("students")
-        .select("id")
+        .select("id, first_name, last_name, student_id")
         .eq("email", formData.email)
         .maybeSingle();
 
       if (lookupError) throw lookupError;
-
-      let studentId: number | null = null;
-
       if (existingStudent) {
-        // Step 2a: Update order_items for existing student
-        const { error: updateError } = await supabase
-          .from("students")
-          .update({
-            order_items: cart.map((item) => ({
-              item_id: item.id,
-              item_name: item.name,
-              size: item.size,
-              file: item.file_name,
-            })),
-            status: "pending",
-          })
-          .eq("id", existingStudent.id);
-
-        if (updateError) throw updateError;
-
         studentId = existingStudent.id;
+        if (
+          existingStudent.first_name !== formData.firstName ||
+          existingStudent.last_name !== formData.lastName ||
+          existingStudent.student_id !== formData.studentId
+        ) {
+          await supabase
+            .from("students")
+            .update({
+              first_name: formData.firstName,
+              last_name: formData.lastName,
+              student_id: formData.studentId,
+            })
+            .eq("id", studentId);
+        }
       } else {
-        // Step 2b: Insert new student
+        // 🟢 New student — insert into students table
         const { data: studentData, error: insertError } = await supabase
           .from("students")
           .insert([
@@ -166,12 +164,6 @@ export function CartDrawer({
               last_name: formData.lastName,
               student_id: formData.studentId,
               email: formData.email,
-              order_items: cart.map((item) => ({
-                item_id: item.id,
-                item_name: item.name,
-                size: item.size,
-                file: item.file_name,
-              })),
             },
           ])
           .select();
@@ -182,6 +174,8 @@ export function CartDrawer({
       }
 
       if (!studentId) throw new Error("Student ID not available");
+
+      // Step 2: Insert new attire_requests (always done)
 
       // Step 3: Insert attire_requests
       const attireRequests = cart.map((item) => ({
