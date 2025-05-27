@@ -1,4 +1,4 @@
-import { Clipboard, Home, Mail, Table } from "lucide-react";
+import { Calendar, Clipboard, Home, Mail, Table } from "lucide-react";
 export const data = {
   user: {
     name: "shadcn",
@@ -26,6 +26,11 @@ export const data = {
     //   url: "/docs",
     //   icon: Clipboard,
     // },
+    {
+      title: "Calendar View",
+      url: "/calendar",
+      icon: Calendar,
+    },
   ],
 };
 
