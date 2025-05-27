@@ -13,7 +13,7 @@ export const data = {
     },
     {
       title: "Student's Records",
-      url: "/students-record",
+      url: "/students",
       icon: Table,
     },
     {
