@@ -233,7 +233,6 @@ export function StudentsTable() {
               <TableHead>Email</TableHead>
               <TableHead>Order Items</TableHead>
               <TableHead>Status</TableHead>
-
               <TableHead>Start Date</TableHead>
               <TableHead>End Date</TableHead>
 
@@ -300,7 +299,10 @@ export function StudentsTable() {
                   <TableCell>{student.last_name}</TableCell>
                   <TableCell>{student.email}</TableCell>
                   <TableCell>
-                    <OrderItemsDisplay orderItems={student.order_items || []} />
+                    <OrderItemsDisplay
+                      orderItems={student.order_items || []}
+                      // studentId={student.student_id}
+                    />
                   </TableCell>
                   <TableCell>
                     <span
