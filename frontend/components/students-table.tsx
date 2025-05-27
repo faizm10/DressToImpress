@@ -12,17 +12,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Search,
   ChevronLeft,
   ChevronRight,
-  PlusCircle,
-  Trash2,
   MoreHorizontal,
-  Download,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -73,8 +69,20 @@ export function StudentsTable() {
       const from = (page - 1) * limit;
       const to = from + limit - 1;
 
-      // Build query
-      let query = supabase.from("students").select("*", { count: "exact" });
+      // Build query with attire_requests join
+      let query = supabase.from("students").select(
+        `
+    *,
+    attire_requests (
+      id,
+      attire_id,
+      use_start_date,
+      use_end_date,
+      status
+    )
+  `,
+        { count: "exact" }
+      );
 
       // Add search if provided
       if (searchQuery) {
@@ -225,9 +233,10 @@ export function StudentsTable() {
               <TableHead>Email</TableHead>
               <TableHead>Order Items</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Created At</TableHead>
-              {/* <TableHead>Start Date</TableHead>
-              <TableHead>End Date</TableHead> */}
+
+              <TableHead>Start Date</TableHead>
+              <TableHead>End Date</TableHead>
+
               <TableHead className="w-[80px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -256,6 +265,9 @@ export function StudentsTable() {
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-4 w-[80px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[100px]" />
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-4 w-[100px]" />
@@ -303,10 +315,24 @@ export function StudentsTable() {
                       {student.status}
                     </span>
                   </TableCell>
-                  
+
                   <TableCell>
-                    {new Date(student.created_at).toLocaleDateString()}
+                    {student.attire_requests &&
+                    student.attire_requests.length > 0
+                      ? new Date(
+                          student.attire_requests[0].use_start_date
+                        ).toLocaleDateString()
+                      : "N/A"}
                   </TableCell>
+                  <TableCell>
+                    {student.attire_requests &&
+                    student.attire_requests.length > 0
+                      ? new Date(
+                          student.attire_requests[0].use_end_date
+                        ).toLocaleDateString()
+                      : "N/A"}
+                  </TableCell>
+
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -333,7 +359,7 @@ export function StudentsTable() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="h-24 text-center">
+                <TableCell colSpan={12} className="h-24 text-center">
                   No students found.
                 </TableCell>
               </TableRow>
