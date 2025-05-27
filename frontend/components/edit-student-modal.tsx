@@ -1,6 +1,6 @@
-"use client"
-import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
+"use client";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 import {
   Dialog,
@@ -9,42 +9,57 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { toast } from "sonner"
-import * as React from "react"
-import { format } from "date-fns"
-import { CalendarIcon, Mail, Package } from "lucide-react"
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+import * as React from "react";
+import { format } from "date-fns";
+import { CalendarIcon, Mail, Package } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Separator } from "@/components/ui/separator"
-import type { OrderItem, Student } from "@/types/students"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
+import type { OrderItem, Student } from "@/types/students";
 
 interface EditStudentModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  student: Student
-  onSuccess?: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  student: Student;
+  onSuccess?: () => void;
 }
 
-export function EditStudentModal({ open, onOpenChange, student, onSuccess }: EditStudentModalProps) {
-  const supabase = createClient()
-  const [loading, setLoading] = useState(false)
+export function EditStudentModal({
+  open,
+  onOpenChange,
+  student,
+  onSuccess,
+}: EditStudentModalProps) {
+  const supabase = createClient();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     student_id: "",
     email: "",
     status: "",
-  })
-  const [orderItems, setOrderItems] = useState<OrderItem[]>([])
-  const [pickupDate, setPickupDate] = React.useState<Date>()
-  const [dropoffDate, setDropoffDate] = React.useState<Date>()
+  });
+  const [orderItems, setOrderItems] = useState<OrderItem[]>([]);
+  const [pickupDate, setPickupDate] = React.useState<Date>();
+  const [dropoffDate, setDropoffDate] = React.useState<Date>();
 
   // Set initial form data when student prop changes
   useEffect(() => {
@@ -55,14 +70,14 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
         student_id: student.student_id,
         email: student.email,
         status: student.status,
-      })
-      setOrderItems(student.order_items || [])
+      });
+      setOrderItems(student.order_items || []);
     }
-  }, [student])
+  }, [student]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     try {
       const { error } = await supabase
@@ -72,39 +87,39 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
           order_items: orderItems,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", student.id)
+        .eq("id", student.id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      toast.success("Student updated successfully")
+      toast.success("Student updated successfully");
 
-      onOpenChange(false)
-      if (onSuccess) onSuccess()
+      onOpenChange(false);
+      if (onSuccess) onSuccess();
     } catch (error: any) {
-      toast.error(error.message)
+      toast.error(error.message);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSendPickupEmail = () => {
     // TODO: Implement pickup email functionality
-    toast.success("Pickup email sent successfully")
-  }
+    toast.success("Pickup email sent successfully");
+  };
 
   const handleSendDropoffEmail = () => {
     // TODO: Implement dropoff email functionality
-    toast.success("Dropoff email sent successfully")
-  }
+    toast.success("Dropoff email sent successfully");
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -112,7 +127,9 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
         <form onSubmit={handleSubmit}>
           <DialogHeader className="space-y-3">
             <DialogTitle className="text-xl">Edit Student</DialogTitle>
-            <DialogDescription>Update the student details and manage pickup/dropoff schedules.</DialogDescription>
+            <DialogDescription>
+              Update the student details and manage pickup/dropoff schedules.
+            </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6 py-6">
@@ -174,12 +191,14 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
 
               <div className="space-y-2">
                 <Label htmlFor="status">Student Status</Label>
-                <Select value={formData.status} onValueChange={(value) => handleSelectChange("status", value)}>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleSelectChange("status", value)}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    
                     <SelectItem value="Approved">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full" />
@@ -198,7 +217,7 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
                         Suspended
                       </div>
                     </SelectItem>
-                     <SelectItem value="Inactive">
+                    <SelectItem value="Inactive">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-gray-500 rounded-full" />
                         Inactive
@@ -213,7 +232,9 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
 
             {/* Schedule Section */}
             <div className="space-y-4">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Schedule Management</h3>
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                Schedule Management
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Pickup Date</Label>
@@ -223,15 +244,22 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
                         variant="outline"
                         className={cn(
                           "w-full justify-start text-left font-normal",
-                          !pickupDate && "text-muted-foreground",
+                          !pickupDate && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {pickupDate ? format(pickupDate, "PPP") : "Select pickup date"}
+                        {pickupDate
+                          ? format(pickupDate, "PPP")
+                          : "Select pickup date"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={pickupDate} onSelect={setPickupDate} initialFocus />
+                      <Calendar
+                        mode="single"
+                        selected={pickupDate}
+                        onSelect={setPickupDate}
+                        initialFocus
+                      />
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -244,15 +272,22 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
                         variant="outline"
                         className={cn(
                           "w-full justify-start text-left font-normal",
-                          !dropoffDate && "text-muted-foreground",
+                          !dropoffDate && "text-muted-foreground"
                         )}
                       >
                         <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dropoffDate ? format(dropoffDate, "PPP") : "Select dropoff date"}
+                        {dropoffDate
+                          ? format(dropoffDate, "PPP")
+                          : "Select dropoff date"}
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar mode="single" selected={dropoffDate} onSelect={setDropoffDate} initialFocus />
+                      <Calendar
+                        mode="single"
+                        selected={dropoffDate}
+                        onSelect={setDropoffDate}
+                        initialFocus
+                      />
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -263,13 +298,25 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
 
             {/* Email Actions Section */}
             <div className="space-y-4">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Email Notifications</h3>
+              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+                Email Notifications
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <Button type="button" variant="outline" onClick={handleSendPickupEmail} className="h-11">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleSendPickupEmail}
+                  className="h-11"
+                >
                   <Package className="mr-2 h-4 w-4" />
                   Send Pickup Email
                 </Button>
-                <Button type="button" variant="outline" onClick={handleSendDropoffEmail} className="h-11">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleSendDropoffEmail}
+                  className="h-11"
+                >
                   <Mail className="mr-2 h-4 w-4" />
                   Send Dropoff Email
                 </Button>
@@ -278,7 +325,12 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
           </div>
 
           <DialogFooter className="gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              disabled={loading}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
@@ -288,5 +340,5 @@ export function EditStudentModal({ open, onOpenChange, student, onSuccess }: Edi
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

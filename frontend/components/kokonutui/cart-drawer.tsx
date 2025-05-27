@@ -127,60 +127,32 @@ export function CartDrawer({
         file: item.file_name,
       }));
 
-      // Step 1: Check if student already exists
-      let studentId: number | null = null;
-
-      // Step 1: Check if student already exists
-      const { data: existingStudent, error: lookupError } = await supabase
+      //insert student's data
+      const { data: studentData, error: studentError } = await supabase
         .from("students")
-        .select("id, first_name, last_name, student_id")
-        .eq("email", formData.email)
-        .maybeSingle();
+        .insert([
+          {
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            student_id: formData.studentId,
+            email: formData.email,
+            order_items: orderItems,
+          },
+        ])
+        .select();
 
-      if (lookupError) throw lookupError;
-      if (existingStudent) {
-        studentId = existingStudent.id;
-        if (
-          existingStudent.first_name !== formData.firstName ||
-          existingStudent.last_name !== formData.lastName ||
-          existingStudent.student_id !== formData.studentId
-        ) {
-          await supabase
-            .from("students")
-            .update({
-              first_name: formData.firstName,
-              last_name: formData.lastName,
-              student_id: formData.studentId,
-            })
-            .eq("id", studentId);
-        }
-      } else {
-        // 🟢 New student — insert into students table
-        const { data: studentData, error: insertError } = await supabase
-          .from("students")
-          .insert([
-            {
-              first_name: formData.firstName,
-              last_name: formData.lastName,
-              student_id: formData.studentId,
-              email: formData.email,
-            },
-          ])
-          .select();
+      if (studentError) throw studentError;
 
-        if (insertError) throw insertError;
+      // fetch the student ID so we can map the attires to student id when inserting with the dates
+      const studentId = studentData?.[0]?.id;
 
-        studentId = studentData?.[0]?.id;
-      }
+      if (!studentId) throw new Error("Failed to get student ID");
 
-      if (!studentId) throw new Error("Student ID not available");
-
-      // Step 2: Insert new attire_requests (always done)
-
-      // Step 3: Insert attire_requests
+      //create the request for each attires by user's ID
       const attireRequests = cart.map((item) => ({
         student_id: studentId,
         attire_id: item.id,
+        // status: "pending",
         use_start_date: item.dateRange?.from
           ? format(item.dateRange.from, "yyyy-MM-dd")
           : null,
@@ -189,11 +161,23 @@ export function CartDrawer({
           : null,
       }));
 
+      // Insert attire requests
       const { error: attireRequestError } = await supabase
         .from("attire_requests")
         .insert(attireRequests);
 
       if (attireRequestError) throw attireRequestError;
+
+      // Update attire status
+      // const updates = await Promise.all(
+      //   cart.map((item) => supabase.from("attires").update({ status: "pending" }).eq("file_name", item.file_name)),
+      // )
+
+      // const updateErrors = updates.filter((res: any) => res.error)
+      // if (updateErrors.length > 0) {
+      //   console.error("One or more updates failed:", updateErrors)
+      //   throw new Error("Failed to update item statuses")
+      // }
 
       setIsSubmitted(true);
       cart.forEach((item) => onRemoveFromCart(item.id));

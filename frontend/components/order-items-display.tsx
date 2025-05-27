@@ -11,7 +11,6 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Package } from "lucide-react";
 import type { OrderItem } from "@/types/students";
-import Image from "next/image";
 import { useAttires, type AttireWithUrl } from "@/hooks/use-attires";
 interface OrderItemsDisplayProps {
   orderItems: OrderItem[];
@@ -26,8 +25,6 @@ export function OrderItemsDisplay({ orderItems }: OrderItemsDisplayProps) {
   const findAttireForOrderItem = (
     orderItem: OrderItem
   ): AttireWithUrl | null => {
-    // Assuming OrderItem has an attire_id field that matches the Attire id
-    // If your OrderItem structure is different, adjust this logic accordingly
     return (
       attires.find(
         (attire) =>

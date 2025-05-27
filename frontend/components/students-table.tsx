@@ -203,27 +203,6 @@ export function StudentsTable() {
             Search
           </Button>
         </div>
-        {/* <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-9"
-            onClick={() => setBulkDeleteDialogOpen(true)}
-            disabled={selectedStudents.length === 0}
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            Delete Selected
-          </Button>
-         
-          <Button
-            size="sm"
-            className="h-9"
-            onClick={() => setAddModalOpen(true)}
-          >
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Student
-          </Button>
-        </div> */}
       </div>
 
       <div className="rounded-md border">
@@ -247,6 +226,8 @@ export function StudentsTable() {
               <TableHead>Order Items</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created At</TableHead>
+              {/* <TableHead>Start Date</TableHead>
+              <TableHead>End Date</TableHead> */}
               <TableHead className="w-[80px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -280,6 +261,12 @@ export function StudentsTable() {
                     <Skeleton className="h-4 w-[100px]" />
                   </TableCell>
                   <TableCell>
+                    <Skeleton className="h-4 w-[100px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[100px]" />
+                  </TableCell>
+                  <TableCell>
                     <Skeleton className="h-8 w-8 rounded-full" />
                   </TableCell>
                 </TableRow>
@@ -306,7 +293,7 @@ export function StudentsTable() {
                   <TableCell>
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        student.status === "Active"
+                        student.status === "Approved"
                           ? "bg-green-100 text-green-800"
                           : student.status === "pending"
                             ? "bg-yellow-100 text-yellow-800"
@@ -316,6 +303,7 @@ export function StudentsTable() {
                       {student.status}
                     </span>
                   </TableCell>
+                  
                   <TableCell>
                     {new Date(student.created_at).toLocaleDateString()}
                   </TableCell>

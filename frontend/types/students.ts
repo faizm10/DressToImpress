@@ -4,6 +4,8 @@ export interface OrderItem {
   item_id: string
   item_name: string
   status: string
+  startDate: string
+  endDate: string
 }
 
 export interface Student {
