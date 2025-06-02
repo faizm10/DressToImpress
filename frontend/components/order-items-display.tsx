@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Package } from "lucide-react";
+import { Package, Calendar, Clock, ArrowRight } from "lucide-react";
 import type { OrderItem } from "@/types/students";
 import {
   useAttires,
@@ -48,7 +48,12 @@ export function OrderItemsDisplay({
 
   // If no order items at all
   if (!orderItems || orderItems.length === 0) {
-    return <span className="text-muted-foreground text-sm">No items</span>;
+    return (
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Package className="h-4 w-4" />
+        <span className="text-sm">No items</span>
+      </div>
+    );
   }
 
   // Find the AttireWithUrl for a given orderItem
@@ -77,29 +82,45 @@ export function OrderItemsDisplay({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Package className="mr-2 h-4 w-4" />
-          {orderItems.length} {orderItems.length === 1 ? "item" : "items"}
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2 hover:bg-accent/50 transition-colors"
+        >
+          <Package className="h-4 w-4" />
+          <span className="font-medium">{orderItems.length}</span>
+          <span className="text-muted-foreground">
+            {orderItems.length === 1 ? "item" : "items"}
+          </span>
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>Order Items</DialogTitle>
-          <DialogDescription>
-            List of items ordered by this student.
+      <DialogContent className="sm:max-w-[700px] max-h-[80vh]">
+        <DialogHeader className="space-y-3">
+          <DialogTitle className="flex items-center gap-2 text-xl">
+            <Package className="h-5 w-5 text-primary" />
+            Order Items
+          </DialogTitle>
+          <DialogDescription className="text-base">
+            Detailed view of all items ordered by this student with dates and
+            specifications.
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="h-[400px] rounded-md border p-4">
-          <div className="space-y-4">
+        <ScrollArea className="h-[500px] pr-4">
+          <div className="space-y-6">
             {loading ? (
-              <div className="text-center text-muted-foreground">
-                Loading items...
+              <div className="flex flex-col items-center justify-center py-12 space-y-3">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <p className="text-muted-foreground">Loading items...</p>
               </div>
             ) : error ? (
-              <div className="text-center text-red-500">
-                Error loading items: {error}
+              <div className="flex flex-col items-center justify-center py-12 space-y-3">
+                <div className="rounded-full bg-red-100 p-3">
+                  <Package className="h-6 w-6 text-red-600" />
+                </div>
+                <p className="text-red-600 font-medium">Error loading items</p>
+                <p className="text-sm text-muted-foreground">{error}</p>
               </div>
             ) : (
               orderItems.map((item, index) => {
@@ -109,86 +130,148 @@ export function OrderItemsDisplay({
                 return (
                   <div
                     key={index}
-                    className="flex items-start space-x-4 rounded-lg border p-4"
+                    className="group relative overflow-hidden rounded-xl border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md hover:border-border"
                   >
-                    {/* Image */}
-                    <div className="relative h-20 w-16 flex-shrink-0">
-                      <img
-                        src={
-                          matchingAttire?.imageUrl ||
-                          "/placeholder.svg?height=80&width=64"
-                        }
-                        alt={`${item.item_name} image`}
-                        className="rounded-md object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            "/placeholder.svg?height=80&width=64";
-                        }}
-                      />
-                    </div>
-
-                    {/* Details */}
-                    <div className="flex-1">
-                      {/* Item name */}
-                      <h4 className="text-sm font-medium">{item.item_name}</h4>
-
-                      {/* Size & Category badges */}
-                      <div className="mt-1 flex items-center space-x-2">
-                        <Badge variant="outline">{item.size}</Badge>
-                        {matchingAttire?.category && (
-                          <Badge variant="secondary">
-                            {matchingAttire.category}
-                          </Badge>
-                        )}
+                    <div className="flex gap-6">
+                      {/* Enhanced Image Section */}
+                      <div className="relative flex-shrink-0">
+                        <div className="relative h-32 w-24 overflow-hidden rounded-lg bg-muted shadow-md border border-border">
+                          <img
+                            src={
+                              matchingAttire?.imageUrl ||
+                              "/placeholder.svg?height=128&width=96" ||
+                              "/placeholder.svg"
+                            }
+                            alt={`${item.item_name} image`}
+                            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                            onError={(e) => {
+                              e.currentTarget.src =
+                                "/placeholder.svg?height=128&width=96";
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
                       </div>
 
-                      {/* Gender */}
-                      {matchingAttire?.gender && (
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {matchingAttire.gender}
-                        </p>
-                      )}
+                      {/* Enhanced Details Section */}
+                      <div className="flex-1 space-y-4">
+                        {/* Header */}
+                        <div className="space-y-2">
+                          <h4 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {item.item_name}
+                          </h4>
 
-                      {matchingDates ? (
-                        <div className="mt-2 space-y-1 text-xs text-muted-foreground">
-                          <p>
-                            <strong>Use Start:</strong>{" "}
-                            {matchingDates.use_start_date
-                              ? new Date(
-                                  matchingDates.use_start_date
-                                ).toLocaleDateString()
-                              : "TBD"}
-                          </p>
-                          <p>
-                            <strong>Use End:</strong>{" "}
-                            {matchingDates.use_end_date
-                              ? new Date(
-                                  matchingDates.use_end_date
-                                ).toLocaleDateString()
-                              : "TBD"}
-                          </p>
-                          <p>
-                            <strong>Pick Up:</strong>{" "}
-                            {matchingDates.pickup_date
-                              ? new Date(
-                                  matchingDates.pickup_date
-                                ).toLocaleDateString()
-                              : "TBD"}
-                          </p>
-                          <p>
-                            <strong>Return:</strong>{" "}
-                            {matchingDates.return_date
-                              ? new Date(
-                                  matchingDates.return_date
-                                ).toLocaleDateString()
-                              : "TBD"}
-                          </p>
+                          {/* Enhanced Badges */}
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge
+                              variant="default"
+                              className="bg-primary/10 text-primary border-primary/20"
+                            >
+                              Size {item.size}
+                            </Badge>
+                            {matchingAttire?.category && (
+                              <Badge
+                                variant="secondary"
+                                className="bg-secondary/50"
+                              >
+                                {matchingAttire.category}
+                              </Badge>
+                            )}
+                            {matchingAttire?.gender && (
+                              <Badge variant="outline" className="text-xs">
+                                {matchingAttire.gender}
+                              </Badge>
+                            )}
+                          </div>
                         </div>
-                      ) : (
-                        <p className="mt-2 text-xs text-muted-foreground">
-                          No request dates found.
-                        </p>
-                      )}
+
+                        {/* Enhanced Dates Section */}
+                        {matchingDates ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2 text-sm">
+                                <Calendar className="h-4 w-4 text-green-600" />
+                                <span className="font-medium text-green-700">
+                                  Usage Period
+                                </span>
+                              </div>
+                              <div className="pl-6 space-y-1">
+                                <div className="flex items-center gap-2 text-sm">
+                                  <span className="text-muted-foreground">
+                                    Start:
+                                  </span>
+                                  <span className="font-medium">
+                                    {matchingDates.use_start_date
+                                      ? new Date(
+                                          matchingDates.use_start_date
+                                        ).toLocaleDateString()
+                                      : "TBD"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm">
+                                  <span className="text-muted-foreground">
+                                    End:
+                                  </span>
+                                  <span className="font-medium">
+                                    {matchingDates.use_end_date
+                                      ? new Date(
+                                          matchingDates.use_end_date
+                                        ).toLocaleDateString()
+                                      : "TBD"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2 text-sm">
+                                <Clock className="h-4 w-4 text-blue-600" />
+                                <span className="font-medium text-blue-700">
+                                  Logistics
+                                </span>
+                              </div>
+                              <div className="pl-6 space-y-1">
+                                <div className="flex items-center gap-2 text-sm">
+                                  <span className="text-muted-foreground">
+                                    Pick up:
+                                  </span>
+                                  <span className="font-medium">
+                                    {matchingDates.pickup_date
+                                      ? new Date(
+                                          matchingDates.pickup_date
+                                        ).toLocaleDateString()
+                                      : "TBD"}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm">
+                                  <span className="text-muted-foreground">
+                                    Return:
+                                  </span>
+                                  <span className="font-medium">
+                                    {matchingDates.return_date
+                                      ? new Date(
+                                          matchingDates.return_date
+                                        ).toLocaleDateString()
+                                      : "TBD"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-dashed">
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm text-muted-foreground">
+                              No request dates available
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Subtle hover indicator */}
+                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ArrowRight className="h-4 w-4 text-muted-foreground" />
                     </div>
                   </div>
                 );
