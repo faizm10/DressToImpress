@@ -349,81 +349,6 @@ export function AttireCalendar() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Summary Stats */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <CalendarIcon className="h-5 w-5 text-primary" />
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Total Requests
-                </p>
-                <p className="text-2xl font-bold">{attireRequests.length}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <div className="h-3 w-3 rounded-full bg-green-500"></div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Approved
-                </p>
-                <p className="text-2xl font-bold">
-                  {
-                    attireRequests.filter(
-                      (r) => r.status.toLowerCase() === "approved"
-                    ).length
-                  }
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Pending
-                </p>
-                <p className="text-2xl font-bold">
-                  {
-                    attireRequests.filter(
-                      (r) => r.status.toLowerCase() === "pending"
-                    ).length
-                  }
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center space-x-2">
-              <div className="h-3 w-3 rounded-full bg-blue-500"></div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Active Today
-                </p>
-                <p className="text-2xl font-bold">
-                  {getEventsForDay(new Date()).length}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div> */}
-
-      {/* All Students List */}
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
@@ -477,12 +402,7 @@ export function AttireCalendar() {
                                 request.use_end_date
                               ).toLocaleDateString()}
                             </span>
-                            {/* <Badge
-                              className={getStatusColor(request.status)}
-                              variant="outline"
-                            >
-                              {request.status}
-                            </Badge> */}
+                           
                           </div>
                         </div>
                       ))}

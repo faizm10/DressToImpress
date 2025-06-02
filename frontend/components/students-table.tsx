@@ -294,7 +294,11 @@ export function StudentsTable() {
                     <TableCell>{student.last_name}</TableCell>
                     <TableCell>{student.email}</TableCell>
                     <TableCell>
-                      <OrderItemsDisplay orderItems={student.order_items || []} />
+                      <OrderItemsDisplay
+  studentId={student.id}
+  orderItems={student.order_items || []}
+/>
+
                     </TableCell>
                     <TableCell>
                       <Select

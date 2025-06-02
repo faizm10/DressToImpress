@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -8,7 +10,6 @@ export interface Attire {
   size: string;
   category: string;
   file_name: string;
-  // status: string;
 }
 
 export interface AttireWithUrl extends Attire {
@@ -65,42 +66,74 @@ export function useAttires() {
     load();
   }, [supabase]);
 
+  return { attires, loading, error };
+}
+
+
+/**
+ * Interface for the relevant fields in the "attire_requests" table.
+ */
+export interface AttireRequestDate {
+  id: string;
+  student_id: string;
+  attire_id: string;
+  use_start_date: string;
+  use_end_date: string;
+  pickup_date: string;
+  return_date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * A hook that fetches all rows from "attire_requests"
+ * and returns the date fields (and related IDs).
+ */
+export function useAttireRequestDates() {
+  const supabase = createClient();
+  const [requests, setRequests] = useState<AttireRequestDate[]>([]);
+  const [loadingRequests, setLoadingRequests] = useState(true);
+  const [errorRequests, setErrorRequests] = useState<string | null>(null);
+
   useEffect(() => {
-    async function fetchAttires() {
-      const { data, error: dbError } = await supabase
-        .from<"attires", Attire>("attires")
-        .select("id, name, gender, size, category, file_name");
+    async function loadDates() {
+      setLoadingRequests(true);
+      try {
+        // Fetch the date‐related columns from "attire_requests"
+        const { data, error: dbError } = await supabase
+          .from<"attire_requests", AttireRequestDate>("attire_requests")
+          .select(
+            `
+            id,
+            student_id,
+            attire_id,
+            use_start_date,
+            use_end_date,
+            pickup_date,
+            return_date,
+            created_at,
+            updated_at
+          `
+          );
 
-      if (dbError) {
-        setError(dbError.message);
-        setLoading(false);
-        return;
+        if (dbError) {
+          setErrorRequests(dbError.message);
+          setLoadingRequests(false);
+          return;
+        }
+
+        setRequests(data ?? []);
+      } catch (err) {
+        setErrorRequests(
+          err instanceof Error ? err.message : "Unknown error while loading"
+        );
+      } finally {
+        setLoadingRequests(false);
       }
-
-      const attiresWithUrls = await Promise.all(
-        (data || []).map(async (item) => {
-          const { data: files } = await supabase.storage
-            .from("attires")
-            .list(item.file_name);
-
-          const firstImage = files?.[0]?.name;
-          const { data: urlData } = supabase.storage
-            .from("attires")
-            .getPublicUrl(`${item.file_name}/${firstImage}`);
-
-          return {
-            ...item,
-            imageUrl: urlData?.publicUrl ?? null,
-          };
-        })
-      );
-
-      setAttires(attiresWithUrls);
-      setLoading(false);
     }
 
-    fetchAttires();
+    loadDates();
   }, [supabase]);
 
-  return { attires, loading, error };
+  return { requests, loadingRequests, errorRequests };
 }
