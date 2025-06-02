@@ -1,5 +1,6 @@
 //view the table of items from the supabase as well as options of what to do with it (delete, edit)
 "use client";
+import { Loader2 } from "lucide-react";
 
 import { useState, useEffect } from "react";
 import {
@@ -88,7 +89,15 @@ export default function ViewTable() {
     load();
   }, [supabase]);
 
-  if (loading) return <p className="text-center py-4">Loading…</p>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-4">
+        <Loader2 className="h-6 w-6 animate-spin mr-2 text-gray-600" />
+        <span>Loading…</span>
+      </div>
+    );
+  }
+
   if (error) return <p className="text-center py-4 text-red-600">{error}</p>;
 
   return (

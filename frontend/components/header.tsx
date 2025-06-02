@@ -68,102 +68,16 @@ export const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
-            {/* <div className="relative group">
-              <button
-                onClick={() => handleDropdown("men")}
-                className="flex items-center gap-1 px-3 py-2 text-sm font-medium hover:text-[#E51937] transition-colors"
-                aria-expanded={activeDropdown === "men"}
-              >
-                Men
-                <ChevronDown
-                  size={16}
-                  className={`transition-transform ${
-                    activeDropdown === "men" ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              <AnimatePresence>
-                {activeDropdown === "men" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute left-0 mt-1 w-48 bg-white dark:bg-zinc-900 shadow-lg rounded-md border border-zinc-200 dark:border-zinc-800 py-2"
-                  >
-                    {categories.men.map((item) => (
-                      <Link
-                        key={item}
-                        href={`/category/men/${item.toLowerCase()}`}
-                        className="block px-4 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-[#E51937]"
-                      >
-                        {item}
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div> */}
-            <div className="relative group">
+            <div className="relative group ß">
               <a href="/browse">Browse</a>
             </div>
-            {/* <div className="relative group">
-              <button
-                onClick={() => handleDropdown("women")}
-                className="flex items-center gap-1 px-3 py-2 text-sm font-medium hover:text-[#E51937] transition-colors"
-                aria-expanded={activeDropdown === "women"}
-              >
-                Women
-                <ChevronDown
-                  size={16}
-                  className={`transition-transform ${
-                    activeDropdown === "women" ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              <AnimatePresence>
-                {activeDropdown === "women" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute left-0 mt-1 w-48 bg-white dark:bg-zinc-900 shadow-lg rounded-md border border-zinc-200 dark:border-zinc-800 py-2"
-                  >
-                    {categories.women.map((item) => (
-                      <Link
-                        key={item}
-                        href={`/category/women/${item.toLowerCase()}`}
-                        className="block px-4 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-[#E51937]"
-                      >
-                        {item}
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div> */}
-
-            {/* <Link
-              href="/how-it-works"
-              className="px-3 py-2 text-sm font-medium hover:text-[#E51937] transition-colors"
-            >
-              How It Works
-            </Link>
-            <Link
-              href="/about"
-              className="px-3 py-2 text-sm font-medium hover:text-[#E51937] transition-colors"
-            >
-              About Us
-            </Link> */}
           </nav>
 
           {/* Right side actions */}
           <div className="flex items-center gap-5">
-            {/* <ModeToggle /> */}
-            <Link href="/auth/login">
+            {/* <Link href="/auth/logißn">
               <Button className="bg-[#E51937]">Admin Dashboard</Button>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
@@ -180,85 +94,13 @@ export const Header = () => {
           >
             <div className="container mx-auto px-4 py-4 space-y-4">
               <div className="space-y-1">
-                {/* <div className="border-b border-zinc-200 dark:border-zinc-800 pb-2">
-                  <button
-                    onClick={() => handleDropdown("mobile-women")}
-                    className="flex items-center justify-between w-full py-2 text-sm font-medium"
-                  >
-                    Women
-                    <ChevronDown
-                      size={16}
-                      className={`transition-transform ${
-                        activeDropdown === "mobile-women" ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {activeDropdown === "mobile-women" && (
-                    <div className="pl-4 space-y-2 mt-2">
-                      {categories.women.map((item) => (
-                        <Link
-                          key={item}
-                          href={`/category/women/${item.toLowerCase()}`}
-                          className="block py-1 text-sm hover:text-[#E51937]"
-                        >
-                          {item}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div> */}
-                {/* 
-                <div className="border-b border-zinc-200 dark:border-zinc-800 pb-2">
-                  <button
-                    onClick={() => handleDropdown("mobile-men")}
-                    className="flex items-center justify-between w-full py-2 text-sm font-medium"
-                  >
-                    Men
-                    <ChevronDown
-                      size={16}
-                      className={`transition-transform ${
-                        activeDropdown === "mobile-men" ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {activeDropdown === "mobile-men" && (
-                    <div className="pl-4 space-y-2 mt-2">
-                      {categories.men.map((item) => (
-                        <Link
-                          key={item}
-                          href={`/category/men/${item.toLowerCase()}`}
-                          className="block py-1 text-sm hover:text-[#E51937]"
-                        >
-                          {item}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div> */}
-
-                {/* <Link
-                  href="/how-it-works"
-                  className="block py-2 text-sm font-medium border-b border-zinc-200 dark:border-zinc-800"
+                <Link
+                  href="/explore"
+                  className="block py-2 text-sm font-medium"
                 >
-                  How It Works
+                  Explore
                 </Link>
-                <Link href="/about" className="block py-2 text-sm font-medium">
-                  About Us
-                </Link> */}
               </div>
-
-              {/* <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800">
-                <div className="flex items-center">
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="flex-1 p-2 text-sm bg-zinc-100 dark:bg-zinc-800 rounded-l-md focus:outline-none"
-                  />
-                  <button className="p-2 bg-[#E51937] text-white rounded-r-md">
-                    <Search size={18} />
-                  </button>
-                </div>
-              </div> */}
             </div>
           </motion.div>
         )}

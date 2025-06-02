@@ -35,16 +35,6 @@ export default async function StudentsRecord() {
                 <h1 className="text-2xl font-bold tracking-tight">
                   Students Record
                 </h1>
-                {/* <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" className="h-9">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete Selected
-                  </Button>
-                  <Button size="sm" className="h-9">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Add Student
-                  </Button>
-                </div> */}
               </div>
               <StudentsTable />
             </div>

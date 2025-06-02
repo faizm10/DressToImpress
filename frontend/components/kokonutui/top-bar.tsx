@@ -67,7 +67,7 @@ export function TopBar({ cartItemCount, onCartClick, onSearch }: TopBarProps) {
               {category}
             </button>
           ))}
-          <a href="/">Home</a>
+          {/* <a href="/">Home</a> */}
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0">
@@ -131,9 +131,9 @@ export function TopBar({ cartItemCount, onCartClick, onSearch }: TopBarProps) {
               </motion.span>
             )}
           </button>
-          <Link href="/auth/login">
+          {/* <Link href="/auth/login">
             <Button className="bg-[#E51937]">Admin Dashboard</Button>
-          </Link>
+          </Link> */}
         </div>
       </div>
     </div>

@@ -217,16 +217,7 @@ export function StudentsTable() {
         <Table>
           <TableHeader>
             <TableRow>
-              {/* <TableHead className="w-[50px]">
-                <Checkbox
-                  checked={
-                    selectedStudents.length === students.length &&
-                    students.length > 0
-                  }
-                  onCheckedChange={handleSelectAll}
-                  aria-label="Select all students"
-                />
-              </TableHead> */}
+             
               <TableHead className="w-[80px]">Student ID</TableHead>
               <TableHead>First Name</TableHead>
               <TableHead>Last Name</TableHead>
@@ -241,7 +232,7 @@ export function StudentsTable() {
           </TableHeader>
           <TableBody>
             {loading ? (
-              // Loading skeleton
+
               Array.from({ length: limit }).map((_, index) => (
                 <TableRow key={`loading-${index}`}>
                   <TableCell>
@@ -306,20 +297,10 @@ export function StudentsTable() {
                       <OrderItemsDisplay orderItems={student.order_items || []} />
                     </TableCell>
                     <TableCell>
-                      {/* <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          student.status === "Approved"
-                            ? "bg-green-100 text-green-800"
-                            : student.status === "pending"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {student.status}
-                      </span> */}
                       <Select
                         value={student.status || "Pending"}
                         onValueChange={(value) => handleSelectChange("status", value, student.id)}
+                        
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Pending" />
