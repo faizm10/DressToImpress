@@ -20,6 +20,8 @@ import {
   TrendingUp,
   Clock,
   CheckCircle,
+  Plus,
+  List,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -107,103 +109,128 @@ export default async function ProtectedPage() {
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              {/* Navigation Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 mb-6">
-                <Link href="/calendar">
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        Calendar View
-                      </CardTitle>
-                      <CalendarIcon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">Schedule</div>
-                      <CardDescription className="text-xs text-muted-foreground">
-                        View attire request schedules and availability
-                      </CardDescription>
-                    </CardContent>
-                  </Card>
-                </Link>
+          <div className="@container/main flex flex-1 flex-col gap-4 p-6">
+            {/* Welcome Section */}
+            <div className="mb-6">
+              <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
+              <p className="text-muted-foreground">Manage your Dress for Success program</p>
+            </div>
 
-                <Link href="/students">
-                  <Card className="hover:shadow-lg transition-shadow cursor-pointer group">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">
-                        Student Records
-                      </CardTitle>
-                      <Users className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">Manage</div>
-                      <CardDescription className="text-xs text-muted-foreground">
-                        View and manage student information and requests
-                      </CardDescription>
-                    </CardContent>
-                  </Card>
-                </Link>
+            {/* Quick Actions */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <Link href="/calendar">
+                <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:-translate-y-1">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Calendar View</CardTitle>
+                    <CalendarIcon className="h-4 w-4 text-muted-foreground group-hover:text-[#E51937] transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">Schedule</div>
+                    <CardDescription className="text-xs text-muted-foreground">
+                      View and manage attire schedules
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link href="/students">
+                <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:-translate-y-1">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Student Records</CardTitle>
+                    <Users className="h-4 w-4 text-muted-foreground group-hover:text-[#E51937] transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">Manage</div>
+                    <CardDescription className="text-xs text-muted-foreground">
+                      View and manage student information
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link href="/attire/add">
+                <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:-translate-y-1">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Add Attire</CardTitle>
+                    <Plus className="h-4 w-4 text-muted-foreground group-hover:text-[#E51937] transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">Upload</div>
+                    <CardDescription className="text-xs text-muted-foreground">
+                      Add new items to inventory
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link href="/attire/list">
+                <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:-translate-y-1">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">View Inventory</CardTitle>
+                    <List className="h-4 w-4 text-muted-foreground group-hover:text-[#E51937] transition-colors" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">Browse</div>
+                    <CardDescription className="text-xs text-muted-foreground">
+                      View all available attire
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+
+            {/* Statistics Overview */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Program Overview</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total Students</CardTitle>
+                    <Users className="h-4 w-4 text-[#E51937]" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stats.totalStudents}</div>
+                    <CardDescription className="text-xs text-muted-foreground">
+                      Registered students
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Available Attire</CardTitle>
+                    <Package className="h-4 w-4 text-[#E51937]" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stats.totalAttire}</div>
+                    <CardDescription className="text-xs text-muted-foreground">
+                      Items in inventory
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Total Requests</CardTitle>
+                    <TrendingUp className="h-4 w-4 text-[#E51937]" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-bold">{stats.totalRequests}</div>
+                    <CardDescription className="text-xs text-muted-foreground">
+                      All-time requests
+                    </CardDescription>
+                  </CardContent>
+                </Card>
               </div>
+            </div>
 
-              {/* Statistics Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {/* Request Status */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Request Status</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Total Students
-                    </CardTitle>
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {stats.totalStudents}
-                    </div>
-                    <CardDescription className="text-xs text-muted-foreground">
-                      Registered students in the system
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Available Attire
-                    </CardTitle>
-                    <Package className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {stats.totalAttire}
-                    </div>
-                    <CardDescription className="text-xs text-muted-foreground">
-                      Total attire items in inventory
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Total Requests
-                    </CardTitle>
-                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {stats.totalRequests}
-                    </div>
-                    <CardDescription className="text-xs text-muted-foreground">
-                      All-time attire requests submitted
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Pending Requests
-                    </CardTitle>
+                    <CardTitle className="text-sm font-medium">Pending</CardTitle>
                     <Clock className="h-4 w-4 text-yellow-600" />
                   </CardHeader>
                   <CardContent>
@@ -211,16 +238,14 @@ export default async function ProtectedPage() {
                       {stats.pendingRequests}
                     </div>
                     <CardDescription className="text-xs text-muted-foreground">
-                      Requests awaiting approval
+                      Awaiting approval
                     </CardDescription>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Approved Requests
-                    </CardTitle>
+                    <CardTitle className="text-sm font-medium">Approved</CardTitle>
                     <CheckCircle className="h-4 w-4 text-green-600" />
                   </CardHeader>
                   <CardContent>
@@ -228,16 +253,14 @@ export default async function ProtectedPage() {
                       {stats.approvedRequests}
                     </div>
                     <CardDescription className="text-xs text-muted-foreground">
-                      Requests that have been approved
+                      Approved requests
                     </CardDescription>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Active Today
-                    </CardTitle>
+                    <CardTitle className="text-sm font-medium">Active Today</CardTitle>
                     <CalendarIcon className="h-4 w-4 text-blue-600" />
                   </CardHeader>
                   <CardContent>
@@ -245,14 +268,23 @@ export default async function ProtectedPage() {
                       {stats.activeRequests}
                     </div>
                     <CardDescription className="text-xs text-muted-foreground">
-                      Attire currently in use today
+                      Currently in use
                     </CardDescription>
                   </CardContent>
                 </Card>
               </div>
+            </div>
 
-              <AttireUploadForm />
+            {/* Recent Activity */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
               <ViewTable />
+            </div>
+
+            {/* Add Attire Form */}
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Add New Attire</h2>
+              <AttireUploadForm />
             </div>
           </div>
         </div>

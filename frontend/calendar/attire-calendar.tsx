@@ -11,6 +11,7 @@ import {
   CalendarIcon,
   User,
   Package,
+  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { AttireRequest } from "@/types/students";
@@ -195,57 +196,75 @@ export function AttireCalendar() {
   const currentYear = currentDate.getFullYear();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border">
         <div className="flex items-center space-x-4">
-          <CalendarIcon className="h-8 w-8 text-primary" />
+          <div className="p-3 bg-gradient-to-br from-[#E51937]/10 to-[#E51937]/5 rounded-xl">
+            <CalendarIcon className="h-8 w-8 text-[#E51937]" />
+          </div>
           <div>
-            <h1 className="text-3xl font-bold">Attire Calendar</h1>
-            <p className="text-muted-foreground">
-              View attire request schedules
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-[#E51937] to-[#E51937]/80 bg-clip-text text-transparent">
+              Attire Calendar
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              View and manage attire request schedules
             </p>
           </div>
         </div>
-        <Button onClick={goToToday} variant="outline">
+        <Button 
+          onClick={goToToday} 
+          variant="outline" 
+          size="lg" 
+          className="gap-2 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
+        >
+          <CalendarIcon className="h-4 w-4" />
           Today
         </Button>
       </div>
 
       {/* Calendar Navigation */}
-      <Card>
-        <CardHeader>
+      <Card className="border-none shadow-lg rounded-xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-50/50 dark:from-gray-900 dark:to-gray-900/50 border-b px-6 py-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl">
+            <CardTitle className="text-2xl font-semibold">
               {monthNames[currentMonth]} {currentYear}
             </CardTitle>
             <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" onClick={previousMonth}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={previousMonth} 
+                className="h-9 w-9 p-0 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
+              >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
-              <Button variant="outline" size="sm" onClick={nextMonth}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={nextMonth} 
+                className="h-9 w-9 p-0 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
+              >
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           {loading ? (
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                <p className="mt-2 text-muted-foreground">
-                  Loading calendar...
-                </p>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E51937] mx-auto"></div>
+                <p className="mt-2 text-muted-foreground">Loading calendar...</p>
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-2">
               {/* Day headers */}
               {dayNames.map((day) => (
                 <div
                   key={day}
-                  className="p-2 text-center font-medium text-muted-foreground border-b"
+                  className="p-3 text-center font-medium text-muted-foreground border-b"
                 >
                   {day}
                 </div>
@@ -254,47 +273,44 @@ export function AttireCalendar() {
               {/* Calendar days */}
               {calendarDays.map((day, index) => {
                 const isCurrentMonth = day.getMonth() === currentMonth;
-                const isToday =
-                  day.toDateString() === new Date().toDateString();
+                const isToday = day.toDateString() === new Date().toDateString();
                 const events = getEventsForDay(day);
 
                 return (
                   <div
                     key={index}
-                    className={`min-h-[120px] p-1 border border-border ${
-                      isCurrentMonth ? "bg-background" : "bg-muted/30"
-                    } ${isToday ? "ring-2 ring-primary" : ""}`}
+                    className={`min-h-[140px] p-2 border border-border rounded-lg transition-all duration-200 ${
+                      isCurrentMonth ? "bg-white dark:bg-gray-900" : "bg-gray-50/50 dark:bg-gray-900/50"
+                    } ${isToday ? "ring-2 ring-[#E51937] shadow-sm" : "hover:shadow-sm"}`}
                   >
                     <div
-                      className={`text-sm font-medium mb-1 ${
-                        isCurrentMonth
-                          ? "text-foreground"
-                          : "text-muted-foreground"
-                      } ${isToday ? "text-primary font-bold" : ""}`}
+                      className={`text-sm font-medium mb-2 ${
+                        isCurrentMonth ? "text-foreground" : "text-muted-foreground"
+                      } ${isToday ? "text-[#E51937] font-bold" : ""}`}
                     >
                       {day.getDate()}
                     </div>
 
-                    <div className="space-y-1">
+                    <div className="space-y-1.5">
                       {events.slice(0, 3).map((event) => (
                         <div
                           key={`${event.id}-${day.toISOString()}`}
-                          className={`text-xs p-1 rounded border ${getStatusColor(event.status)} truncate`}
+                          className={`text-xs p-2 rounded-lg border ${getStatusColor(event.status)} hover:shadow-sm transition-all duration-200`}
                           title={`${event.student} - ${event.attireName} (${event.status})`}
                         >
-                          <div className="flex items-center space-x-1">
-                            <User className="h-3 w-3 flex-shrink-0" />
-                            <span className="truncate">{event.student}</span>
+                          <div className="flex items-center space-x-1.5">
+                            <User className="h-3.5 w-3.5 flex-shrink-0" />
+                            <span className="truncate font-medium">{event.student}</span>
                           </div>
-                          <div className="flex items-center space-x-1 mt-0.5">
-                            <Package className="h-3 w-3 flex-shrink-0" />
+                          <div className="flex items-center space-x-1.5 mt-1">
+                            <Package className="h-3.5 w-3.5 flex-shrink-0" />
                             <span className="truncate">{event.attireName}</span>
                           </div>
                         </div>
                       ))}
 
                       {events.length > 3 && (
-                        <div className="text-xs text-muted-foreground p-1">
+                        <div className="text-xs text-muted-foreground p-1.5 bg-gray-50 dark:bg-gray-800 rounded-lg">
                           +{events.length - 3} more
                         </div>
                       )}
@@ -308,54 +324,38 @@ export function AttireCalendar() {
       </Card>
 
       {/* Legend */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Status Legend</CardTitle>
+      <Card className="border-none shadow-lg rounded-xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-50/50 dark:from-gray-900 dark:to-gray-900/50 border-b px-6 py-4">
+          <CardTitle className="text-lg font-semibold">Status Legend</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center space-x-2">
-              <Badge className="bg-green-100 text-green-800 border-green-200">
-                Approved
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                Request approved
-              </span>
+        <CardContent className="p-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-800 dark:to-gray-800/50 rounded-lg">
+              <Badge className="bg-green-100 text-green-800 border-green-200">Approved</Badge>
+              <span className="text-sm text-muted-foreground">Request approved</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
-                Pending
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                Awaiting approval
-              </span>
+            <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-800 dark:to-gray-800/50 rounded-lg">
+              <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Pending</Badge>
+              <span className="text-sm text-muted-foreground">Awaiting approval</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Badge className="bg-red-100 text-red-800 border-red-200">
-                Rejected
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                Request rejected
-              </span>
+            <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-800 dark:to-gray-800/50 rounded-lg">
+              <Badge className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>
+              <span className="text-sm text-muted-foreground">Request rejected</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Badge className="bg-blue-100 text-blue-800 border-blue-200">
-                Returned
-              </Badge>
-              <span className="text-sm text-muted-foreground">
-                Attire returned
-              </span>
+            <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-800 dark:to-gray-800/50 rounded-lg">
+              <Badge className="bg-blue-100 text-blue-800 border-blue-200">Returned</Badge>
+              <span className="text-sm text-muted-foreground">Attire returned</span>
             </div>
           </div>
         </CardContent>
       </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">
-            All Students & Attire Requests
-          </CardTitle>
+
+      {/* Students List */}
+      <Card className="border-none shadow-lg rounded-xl overflow-hidden">
+        <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-50/50 dark:from-gray-900 dark:to-gray-900/50 border-b px-6 py-4">
+          <CardTitle className="text-lg font-semibold">All Students & Attire Requests</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="space-y-4">
             {allStudents.map((student) => {
               const studentRequests = attireRequests.filter(
@@ -363,14 +363,21 @@ export function AttireCalendar() {
               );
 
               return (
-                <div key={student.id} className="border rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4 text-primary" />
-                      <span className="font-medium">
-                        {student.first_name} {student.last_name}
-                      </span>
-                      <Badge variant="outline">{student.student_id}</Badge>
+                <div 
+                  key={student.id} 
+                  className="border rounded-lg p-4 hover:shadow-md transition-all duration-200 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-900/50"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-gradient-to-br from-[#E51937]/10 to-[#E51937]/5 rounded-lg">
+                        <User className="h-4 w-4 text-[#E51937]" />
+                      </div>
+                      <div>
+                        <span className="font-medium">
+                          {student.first_name} {student.last_name}
+                        </span>
+                        <Badge variant="outline" className="ml-2">{student.student_id}</Badge>
+                      </div>
                     </div>
                     <Badge className={getStatusColor(student.status)}>
                       {student.status}
@@ -382,27 +389,23 @@ export function AttireCalendar() {
                       {studentRequests.map((request) => (
                         <div
                           key={request.id}
-                          className="flex items-center justify-between bg-muted/50 rounded p-2"
+                          className="flex items-center justify-between bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-800 dark:to-gray-800/50 rounded-lg p-3 hover:shadow-sm transition-all duration-200"
                         >
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center space-x-3">
                             <Package className="h-4 w-4 text-muted-foreground" />
                             <span className="font-medium">
                               {request.attires.name}
                             </span>
                           </div>
                           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                            <Clock className="h-3.5 w-3.5" />
                             <span>
-                              {new Date(
-                                request.use_start_date
-                              ).toLocaleDateString()}
+                              {new Date(request.use_start_date).toLocaleDateString()}
                             </span>
                             <span>-</span>
                             <span>
-                              {new Date(
-                                request.use_end_date
-                              ).toLocaleDateString()}
+                              {new Date(request.use_end_date).toLocaleDateString()}
                             </span>
-                           
                           </div>
                         </div>
                       ))}
