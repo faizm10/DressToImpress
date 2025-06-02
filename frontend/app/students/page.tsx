@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { StudentsTable } from "@/components/students-table";
+import { StudentsTable } from "@/components/students/students-table";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Trash2 } from "lucide-react";
 

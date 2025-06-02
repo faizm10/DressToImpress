@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AttireUpload } from "./attire-upload1";
+import { AttireUpload } from "./attire-upload";
 import { menCategories, womenCategories } from "@/lib/data";
 export default function AttireUploadForm() {
   const supabase = createClient();

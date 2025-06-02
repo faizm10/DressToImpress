@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
-import { OrderItemsForm } from "./order-items-form"
+import { OrderItemsForm } from "../order-items-form"
 import type { OrderItem } from "@/types/students"
 
 interface AddStudentModalProps {

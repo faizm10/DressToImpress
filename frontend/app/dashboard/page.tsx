@@ -4,8 +4,8 @@ import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import AttireUploadForm from "@/components/add-attire";
-import ViewTable from "@/components/view-table";
+import AttireUploadForm from "@/components/attires/add-attire";
+import ViewTable from "@/components/attires/view-table";
 import {
   Card,
   CardContent,

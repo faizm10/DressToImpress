@@ -17,8 +17,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Skeleton } from "@/components/ui/skeleton"
-import { AddStudentModal } from "./students/add-student-modal"
-import { EditStudentModal } from "./students/edit-student-modal"
+import { AddStudentModal } from "./add-student-modal"
+import { EditStudentModal } from "./edit-student-modal"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,7 +30,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
-import { OrderItemsDisplay } from "./order-items-display"
+import { OrderItemsDisplay } from "../order-items-display"
 import type { Student } from "@/types/students"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
