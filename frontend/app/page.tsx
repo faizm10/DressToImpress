@@ -19,7 +19,7 @@ export default function Home() {
                   <p className="text-[#E51937] font-medium">Exclusive for Lang Students</p>
                 </div>
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                  Dress for <span className="text-[#E51937]">Success</span>
+                  Dress for <span className="text-[#E51937]">Impress</span>
                 </h1>
                 <p className="text-xl md:text-2xl mb-8 text-gray-700 dark:text-gray-300 leading-relaxed">
                   Elevate your professional presence with our sustainable fashion program. 
