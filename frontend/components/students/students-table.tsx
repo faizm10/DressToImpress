@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search, ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react"
+import { Search, ChevronLeft, ChevronRight, MoreHorizontal, UserPlus, Trash2, Edit2 } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,9 +30,10 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
-import { OrderItemsDisplay } from "./order-items-display"
+import { OrderItemsDisplay } from "../order-items-display"
 import type { Student } from "@/types/students"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
 export function StudentsTable() {
   const supabase = createClient()
   const [students, setStudents] = useState<Student[]>([])
@@ -194,30 +195,43 @@ export function StudentsTable() {
   const endItem = Math.min(page * limit, totalCount)
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+    <div className="space-y-6">
+      {/* Search and Actions Bar */}
+      <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border">
+        <div className="flex items-center space-x-4 flex-1">
           <form onSubmit={handleSearch} className="relative flex-1 max-w-sm">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Search students..."
-              className="pl-8"
+              className="pl-9 h-10 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-[#E51937] focus:ring-[#E51937]/20"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </form>
-          <Button type="submit" variant="outline" onClick={handleSearch}>
+          <Button 
+            type="submit" 
+            variant="outline" 
+            onClick={handleSearch}
+            className="h-10 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
+          >
             Search
           </Button>
         </div>
+        <Button 
+          onClick={() => setAddModalOpen(true)}
+          className="h-10 bg-[#E51937] hover:bg-[#E51937]/90 text-white transition-colors"
+        >
+          <UserPlus className="h-4 w-4 mr-2" />
+          Add Student
+        </Button>
       </div>
 
-      <div className="rounded-md border">
+      {/* Table */}
+      <div className="rounded-xl border shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow>
-             
+            <TableRow className="bg-gray-50 dark:bg-gray-900/50 hover:bg-gray-50 dark:hover:bg-gray-900/50">
               <TableHead className="w-[80px]">Student ID</TableHead>
               <TableHead>First Name</TableHead>
               <TableHead>Last Name</TableHead>
@@ -226,56 +240,26 @@ export function StudentsTable() {
               <TableHead>Status</TableHead>
               <TableHead>Start Date</TableHead>
               <TableHead>End Date</TableHead>
-
               <TableHead className="w-[80px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-
               Array.from({ length: limit }).map((_, index) => (
-                <TableRow key={`loading-${index}`}>
-                  <TableCell>
-                    <Skeleton className="h-4 w-4" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[100px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[120px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[120px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[180px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-8 w-[100px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[80px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[100px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[100px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[100px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-[100px]" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-8 w-8 rounded-full" />
-                  </TableCell>
+                <TableRow key={`loading-${index}`} className="animate-pulse">
+                  <TableCell><Skeleton className="h-4 w-4" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[180px]" /></TableCell>
+                  <TableCell><Skeleton className="h-8 w-[100px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                  <TableCell><Skeleton className="h-8 w-8 rounded-full" /></TableCell>
                 </TableRow>
               ))
             ) : students.length > 0 ? (
               students.map((student) => {
-                // Compute earliest start & latest end
                 const reqs = student.attire_requests || []
                 let earliestStart: Date | null = null
                 let latestEnd: Date | null = null
@@ -288,25 +272,26 @@ export function StudentsTable() {
                 }
 
                 return (
-                  <TableRow key={student.id}>
-                    <TableCell>{student.student_id}</TableCell>
+                  <TableRow 
+                    key={student.id}
+                    className="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
+                  >
+                    <TableCell className="font-medium">{student.student_id}</TableCell>
                     <TableCell>{student.first_name}</TableCell>
                     <TableCell>{student.last_name}</TableCell>
-                    <TableCell>{student.email}</TableCell>
+                    <TableCell className="text-muted-foreground">{student.email}</TableCell>
                     <TableCell>
                       <OrderItemsDisplay
-  studentId={student.id}
-  orderItems={student.order_items || []}
-/>
-
+                        studentId={student.id}
+                        orderItems={student.order_items || []}
+                      />
                     </TableCell>
                     <TableCell>
                       <Select
                         value={student.status || "Pending"}
                         onValueChange={(value) => handleSelectChange("status", value, student.id)}
-                        
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-[120px]">
                           <SelectValue placeholder="Pending" />
                         </SelectTrigger>
                         <SelectContent>
@@ -337,17 +322,25 @@ export function StudentsTable() {
                         </SelectContent>
                       </Select>
                     </TableCell>
-                    <TableCell>{earliestStart ? earliestStart.toLocaleDateString() : "N/A"}</TableCell>
-                    <TableCell>{latestEnd ? latestEnd.toLocaleDateString() : "N/A"}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {earliestStart ? earliestStart.toLocaleDateString() : "N/A"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {latestEnd ? latestEnd.toLocaleDateString() : "N/A"}
+                    </TableCell>
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
+                          <Button 
+                            variant="ghost" 
+                            size="icon"
+                            className="h-8 w-8 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
+                          >
                             <MoreHorizontal className="h-4 w-4" />
                             <span className="sr-only">Open menu</span>
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="w-[160px]">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
@@ -355,9 +348,21 @@ export function StudentsTable() {
                               setCurrentStudent(student)
                               setEditModalOpen(true)
                             }}
+                            className="cursor-pointer hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
                           >
+                            <Edit2 className="h-4 w-4 mr-2" />
                             Edit student
                           </DropdownMenuItem>
+                          {/* <DropdownMenuItem
+                            onClick={() => {
+                              setStudentToDelete(student.id)
+                              setDeleteDialogOpen(true)
+                            }}
+                            className="cursor-pointer text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+                          >
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete student
+                          </DropdownMenuItem> */}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
@@ -366,7 +371,7 @@ export function StudentsTable() {
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={12} className="h-24 text-center">
+                <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
                   No students found.
                 </TableCell>
               </TableRow>
@@ -377,19 +382,31 @@ export function StudentsTable() {
 
       {/* Pagination */}
       {!loading && totalPages > 0 && (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border">
           <p className="text-sm text-muted-foreground">
             Showing <strong>{startItem}</strong> to <strong>{endItem}</strong> of <strong>{totalCount}</strong> students
           </p>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page === 1}>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setPage(page - 1)} 
+              disabled={page === 1}
+              className="h-8 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
+            >
               <ChevronLeft className="h-4 w-4" />
               <span className="sr-only">Previous page</span>
             </Button>
             <div className="text-sm font-medium">
               Page {page} of {totalPages}
             </div>
-            <Button variant="outline" size="sm" onClick={() => setPage(page + 1)} disabled={page === totalPages}>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setPage(page + 1)} 
+              disabled={page === totalPages}
+              className="h-8 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
+            >
               <ChevronRight className="h-4 w-4" />
               <span className="sr-only">Next page</span>
             </Button>
@@ -421,7 +438,10 @@ export function StudentsTable() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction 
+              onClick={confirmDelete} 
+              className="bg-red-600 hover:bg-red-700 text-white transition-colors"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -439,7 +459,10 @@ export function StudentsTable() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmBulkDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction 
+              onClick={confirmBulkDelete} 
+              className="bg-red-600 hover:bg-red-700 text-white transition-colors"
+            >
               Delete Selected
             </AlertDialogAction>
           </AlertDialogFooter>

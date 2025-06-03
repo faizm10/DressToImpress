@@ -4,7 +4,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
-import { AttireCalendar } from "@/calendar/attire-calendar";
+import { AttireCalendar } from "@/components/calendar/attire-calendar";
 
 export default async function ProtectedPage() {
   const supabase = await createClient();
