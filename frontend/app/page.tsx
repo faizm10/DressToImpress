@@ -190,10 +190,10 @@ export default function Home() {
         <section className="py-24 bg-[#E51937] text-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl font-bold mb-8">Contribute to the Program</h2>
-              <p className="text-xl mb-12 text-white/90">
+              <h2 className="text-4xl font-bold mb-8">Looking to Donate Clothes to the Program?</h2>
+              {/* <p className="text-xl mb-12 text-white/90">
                 Help fellow Lang students succeed by donating your professional attire
-              </p>
+              </p> */}
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 inline-block">
                 <div className="flex items-center gap-4">
                   <Mail className="h-6 w-6" />

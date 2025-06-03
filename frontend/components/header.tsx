@@ -58,20 +58,20 @@ export const Header = () => {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/logos/logo4.png"
+              src="/logos/wino.png"
               alt="Dress for Success Logo"
-              width={150}
-              height={24}
+              width={200}
+              height={30}
               className="dark:invert"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          {/* <nav className="hidden md:flex items-center gap-1">
             <div className="relative group ß">
               <a href="/browse">Browse</a>
             </div>
-          </nav>
+          </nav> */}
 
           {/* Right side actions */}
           <div className="flex items-center gap-5">
