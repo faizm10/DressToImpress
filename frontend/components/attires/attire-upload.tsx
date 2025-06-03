@@ -11,9 +11,10 @@ import { v4 as uuidv4 } from "uuid";
 
 interface AttireUploadProps {
   onFileUpload: (fileName: string, file: File | null) => void;
+  reset?: boolean;
 }
 
-export function AttireUpload({ onFileUpload }: AttireUploadProps) {
+export function AttireUpload({ onFileUpload, reset }: AttireUploadProps) {
   const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
 
   // Initialize the hook with the proper configuration
@@ -28,7 +29,16 @@ export function AttireUpload({ onFileUpload }: AttireUploadProps) {
     path: uploadedFileName || "",
   });
 
-  const { files, isSuccess, successes } = dropzoneProps;
+  const { files, isSuccess, successes, setFiles } = dropzoneProps;
+
+  // Handle reset from parent
+  useEffect(() => {
+    if (reset) {
+      setUploadedFileName(null);
+      setFiles([]);
+      onFileUpload("", null);
+    }
+  }, [reset, setFiles, onFileUpload]);
 
   // Generate a unique filename when a file is selected
   useEffect(() => {
