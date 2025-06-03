@@ -19,11 +19,10 @@ export default function Home() {
                   <p className="text-[#E51937] font-medium">Exclusive for Lang Students</p>
                 </div>
                 <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                  Dress for <span className="text-[#E51937]">Impress</span>
+                  Dress to <span className="text-[#E51937]">Impress</span>
                 </h1>
                 <p className="text-xl md:text-2xl mb-8 text-gray-700 dark:text-gray-300 leading-relaxed">
-                  Elevate your professional presence with our sustainable fashion program. 
-                  Perfect for interviews, presentations, and career events.
+                This sustainable program allows Lang students to borrow business casual attire for all of their academic and job search needs. This initiative helps B.Comm students put their best foot forward, thanks to generous clothing donations from the Lang community.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
                   <a href="/browse">
