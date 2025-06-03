@@ -1,4 +1,38 @@
+# Dress For Success Platform
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Tech Stack
+
+- **Framework:** [Next.js](https://nextjs.org) (App Router)
+- **Languages:** TypeScript, JavaScript
+- **Styling:** Tailwind CSS (utility-first CSS framework)
+- **UI:** Custom React components, Lucide icons
+- **Backend/Database:** [Supabase](https://supabase.com) (auth, storage, database)
+- **Package Management:** npm
+- **Other:** PostCSS, ESLint, [Geist font](https://vercel.com/font)
+
+## Project Structure
+
+```
+frontend/
+├── app/              # Next.js app directory (routes, pages, layouts)
+│   ├── auth/         # Authentication pages (login, signup, etc.)
+│   ├── dashboard/    # Main dashboard and related pages
+│   └── ...
+├── components/       # Reusable React components (UI, forms, etc.)
+├── hooks/            # Custom React hooks
+├── lib/              # Library code (e.g., Supabase client)
+├── public/           # Static assets (images, logos, etc.)
+├── types/            # TypeScript type definitions
+├── node_modules/     # Installed dependencies
+├── package.json      # Project metadata and dependencies
+├── tsconfig.json     # TypeScript configuration
+├── next.config.ts    # Next.js configuration
+├── postcss.config.mjs# PostCSS configuration
+├── eslint.config.mjs # ESLint configuration
+└── README.md         # Project documentation
+```
 
 ## Getting Started
 
