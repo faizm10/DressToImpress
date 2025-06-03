@@ -31,7 +31,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { AttireWithUrl } from "@/hooks/use-attires"
 import { menCategories, womenCategories } from "@/lib/data"
-import { AttireUpload } from "./attire-upload"
+import { AttireUpload } from "./attire-upload1"
 import { toast } from "sonner"
 
 const sizes = ["S", "M", "L", "XL", "No Size"] as const
@@ -187,6 +187,8 @@ export default function ViewTable() {
       toast.error(errorMessage)
     } finally {
       setSaving(false)
+      // Reset the upload component after a short delay to ensure the form is closed
+      setTimeout(() => setEditResetUpload(false), 100)
     }
   }, [editItem, editForm, supabase, loadAttires])
 
