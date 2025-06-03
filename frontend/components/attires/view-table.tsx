@@ -70,25 +70,19 @@ export default function ViewTable() {
         throw new Error(dbError.message)
       }
 
-      // 2) for each row, list the storage folder and build a public URL
+      // 2) for each row, build a public URL directly from the file name
       const withUrls = await Promise.all(
         (data || []).map(async (item) => {
           try {
-            // list files in the folder named item.file_name
-            const { data: files, error: listError } = await supabase.storage.from("attires").list(item.file_name)
-
-            if (listError || !files || files.length === 0) {
+            if (!item.file_name) {
               return {
                 ...item,
                 imageUrl: null,
               }
             }
 
-            // pick the first file in that folder
-            const fileInFolder = files[0].name
-
-            // build a public URL
-            const { data: urlData } = supabase.storage.from("attires").getPublicUrl(`${item.file_name}/${fileInFolder}`)
+            // build a public URL directly using the file name
+            const { data: urlData } = supabase.storage.from("attires").getPublicUrl(item.file_name)
 
             return {
               ...item,

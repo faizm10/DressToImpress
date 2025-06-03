@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+
 import { useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Upload, Check, AlertCircle } from "lucide-react";
@@ -23,33 +24,29 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AttireUpload } from "./attire-upload";
+import { AttireUpload } from "./attire-upload1";
 import { menCategories, womenCategories } from "@/lib/data";
-
-const sizes = ["S", "M", "L", "XL", "No Size"] as const;
-const genders = ["Men", "Female"] as const;
-
 export default function AttireUploadForm() {
   const supabase = createClient();
 
   const [name, setName] = useState("");
-  const [size, setSize] = useState<string>("");
-  const [gender, setGender] = useState<string>("");
+  const [size, setSize] = useState("");
+  const [gender, setGender] = useState("");
   const [category, setCategory] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
   const [uploading, setUploading] = useState(false);
   const [msg, setMsg] = useState("");
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
-  const [resetUpload, setResetUpload] = useState(false);
-
   const categoryOptions = useMemo(() => {
     if (gender === "Men") return menCategories;
     if (gender === "Female") return womenCategories;
     return [];
   }, [gender]);
-
-  const handleFileUpload = (uploadedFileName: string, uploadedFile: File | null) => {
+  const handleFileUpload = (
+    uploadedFileName: string,
+    uploadedFile: File | null
+  ) => {
     setFileName(uploadedFileName);
     setFile(uploadedFile);
   };
@@ -67,134 +64,139 @@ export default function AttireUploadForm() {
     setMsg("");
     setStatus("idle");
 
-    try {
-      // Upload file to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from("attires")
-        .upload(fileName, file);
+    // Insert metadata - the file is already being uploaded by the Dropzone component
+    const { error: insertError } = await supabase.from("attires").insert({
+      name,
+      size,
+      file_name: fileName,
+      gender,
+      category,
+    });
 
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      // Insert metadata into database
-      const { error: insertError } = await supabase.from("attires").insert({
-        name,
-        size,
-        file_name: fileName,
-        gender,
-        category,
-      });
-
-      if (insertError) {
-        throw insertError;
-      }
-
-      // Success!
-      setMsg("Upload successful!");
-      setStatus("success");
-      setName("");
-      setSize("");
-      setCategory("");
-      setGender("");
-      setFile(null);
-      setFileName("");
-      setResetUpload(true);
-      // Reset the reset flag after a short delay
-      setTimeout(() => setResetUpload(false), 100);
-    } catch (error) {
-      console.error(error);
-      setMsg("Upload failed. Please try again.");
+    if (insertError) {
+      console.error(insertError.message);
+      setMsg("Database insert failed");
       setStatus("error");
-    } finally {
       setUploading(false);
+      return;
     }
+
+    // Success!
+    setMsg("Upload successful!");
+    setStatus("success");
+    setName("");
+    setSize("");
+    setCategory("");
+    setGender("");
+    setFile(null);
+    setFileName("");
+    setUploading(false);
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="max-w-2xl w-full mx-auto">
       <CardHeader>
-        <CardTitle>Add New Attire</CardTitle>
-        <CardDescription>Upload a new attire to the collection</CardDescription>
+        <CardTitle>Upload Attire</CardTitle>
+        <CardDescription>
+          Add a new attire item with image to your collection
+        </CardDescription>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">Item Name</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter attire name"
+              placeholder="Enter item name"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="size">Size</Label>
-            <Select value={size} onValueChange={setSize} required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select size" />
-              </SelectTrigger>
-              <SelectContent>
-                {sizes.map((s) => (
-                  <SelectItem key={s} value={s}>
-                    {s}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            <div className="flex space-x-2">
+              <Label htmlFor="size">Size</Label>
+              <Select value={size} onValueChange={setSize} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select size" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="S">Small (S)</SelectItem>
+                  <SelectItem value="M">Medium (M)</SelectItem>
+                  <SelectItem value="L">Large (L)</SelectItem>
+                  <SelectItem value="XL">Extra Large (XL)</SelectItem>
+                  <SelectItem value="No Size">No Size</SelectItem>
+                </SelectContent>
+              </Select>
+              <Label htmlFor="gender">Gender</Label>
+              <Select
+                value={gender}
+                onValueChange={(val) => {
+                  setGender(val);
+                  setCategory(""); // reset category whenever gender changes
+                }}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Men">Men</SelectItem>
+                  <SelectItem value="Female">Female</SelectItem>
+                </SelectContent>
+              </Select>
 
-          <div className="space-y-2">
-            <Label htmlFor="gender">Gender</Label>
-            <Select value={gender} onValueChange={setGender} required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select gender" />
-              </SelectTrigger>
-              <SelectContent>
-                {genders.map((g) => (
-                  <SelectItem key={g} value={g}>
-                    {g}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
-            <Select
-              value={category}
-              onValueChange={setCategory}
-              disabled={!gender}
-              required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categoryOptions.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              <Label htmlFor="category">Category</Label>
+              <Select
+                // id="category"
+                value={category}
+                onValueChange={setCategory}
+                required
+                disabled={!gender} // optional: disable until gender is picked
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={
+                      gender ? "Select Category" : "Pick gender first"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {categoryOptions.map((opt) => (
+                    <SelectItem key={opt} value={opt}>
+                      {opt}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">
             <Label>Image</Label>
-            <AttireUpload onFileUpload={handleFileUpload} reset={resetUpload} />
+            <AttireUpload onFileUpload={handleFileUpload} />
+            {fileName && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Selected file: {fileName}
+              </p>
+            )}
           </div>
 
-          {msg && (
-            <Alert variant={status === "error" ? "destructive" : "default"}>
-              <AlertCircle className="h-4 w-4" />
+          {status !== "idle" && (
+            <Alert variant={status === "success" ? "default" : "destructive"}>
+              {status === "success" ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <AlertCircle className="h-4 w-4" />
+              )}
               <AlertDescription>{msg}</AlertDescription>
             </Alert>
           )}
+        </CardContent>
 
+        <CardFooter>
           <Button type="submit" className="w-full" disabled={uploading}>
             {uploading ? (
               <>
@@ -202,14 +204,11 @@ export default function AttireUploadForm() {
                 Uploading...
               </>
             ) : (
-              <>
-                <Upload className="mr-2 h-4 w-4" />
-                Upload Attire
-              </>
+              "Upload Attire"
             )}
           </Button>
-        </form>
-      </CardContent>
+        </CardFooter>
+      </form>
     </Card>
   );
 }

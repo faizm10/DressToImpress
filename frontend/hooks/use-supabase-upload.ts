@@ -135,7 +135,7 @@ const useSupabaseUpload = (options: UseSupabaseUploadOptions) => {
       filesToUpload.map(async (file) => {
         const { error } = await supabase.storage
           .from(bucketName)
-          .upload(!!path ? `${path}/${file.name}` : file.name, file, {
+          .upload(path || file.name, file, {
             cacheControl: cacheControl.toString(),
             upsert,
           });
