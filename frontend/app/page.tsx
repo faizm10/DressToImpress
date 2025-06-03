@@ -26,6 +26,7 @@ export default function Home() {
                   Perfect for interviews, presentations, and career events.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+                  <a href="/browse">
                   <Button
                     size="lg"
                     className="bg-[#E51937] hover:bg-[#E51937]/90 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
@@ -33,10 +34,7 @@ export default function Home() {
                     Browse Collection
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
-                  {/* <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <Sparkles className="h-5 w-5 text-[#FFC429]" />
-                    <span>Free for Lang students</span>
-                  </div> */}
+                  </a>
                 </div>
               </div>
               <div className="md:w-1/2 h-[60vh] md:h-[80vh] relative">
@@ -90,7 +88,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-2xl font-semibold mb-4">Return</h3>
                 <p className="text-gray-600 dark:text-gray-400 text-lg">
-                  Simply return your items - we handle the cleaning for the next student
+                  Simply return your items - we handle the dry cleaning!
                 </p>
               </div>
             </div>
