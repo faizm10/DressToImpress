@@ -1,12 +1,17 @@
 "use client";
 
 import { AnimatePresence } from "motion/react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 import { AttireGrid } from "./product-grid";
 import { CartDrawer } from "./cart-drawer";
 import { AttireModel } from "./product-modal";
 import { TopBar } from "./top-bar";
+import {
+  FilterSortBar,
+  type FilterOptions,
+  type SortOption,
+} from "@/components/filter-sort-bar";
 import type { CartItem } from "./cart-drawer";
 import { useAttires, type AttireWithUrl } from "@/hooks/use-attires";
 import type { DateRange } from "@/components/ui/custom-calendar";
@@ -16,10 +21,18 @@ export default function MinimalShop() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { attires, loading, error } = useAttires();
-
   const [selectedAttire, setSelectedAttire] = useState<AttireWithUrl | null>(
     null
   );
+
+  // Filter and sort states
+  const [filters, setFilters] = useState<FilterOptions>({
+    category: null,
+    gender: null,
+    size: null,
+  });
+  const [sortOption, setSortOption] = useState<SortOption>("name-asc");
+
   const addToCart = (attire: AttireWithUrl, dateRange?: DateRange) => {
     setCart((prev) => {
       const exists = prev.find((item) => item.id === attire.id);
@@ -55,9 +68,68 @@ export default function MinimalShop() {
     setCart((prev) => prev.filter((item) => item.id !== attireID));
   };
 
-  const filteredAttires = attires.filter((attire) =>
-    attire.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Extract unique values for filter options
+  const categories = useMemo(() => {
+    return [...new Set(attires.map((attire) => attire.category))];
+  }, [attires]);
+
+  const genders = useMemo(() => {
+    return [...new Set(attires.map((attire) => attire.gender))];
+  }, [attires]);
+
+  const sizes = useMemo(() => {
+    return [...new Set(attires.map((attire) => attire.size))];
+  }, [attires]);
+
+  // Apply filters and search
+  const filteredAttires = useMemo(() => {
+    return attires.filter((attire) => {
+      // Apply search filter
+      const matchesSearch = attire.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      if (!matchesSearch) return false;
+
+      // Apply category filter
+      if (filters.category && attire.category !== filters.category)
+        return false;
+
+      // Apply gender filter
+      if (filters.gender && attire.gender !== filters.gender) return false;
+
+      // Apply size filter
+      if (filters.size && attire.size !== filters.size) return false;
+
+      return true;
+    });
+  }, [attires, searchQuery, filters]);
+
+  // Apply sorting
+  const sortedAttires = useMemo(() => {
+    return [...filteredAttires].sort((a, b) => {
+      switch (sortOption) {
+        case "name-asc":
+          return a.name.localeCompare(b.name);
+        case "name-desc":
+          return b.name.localeCompare(a.name);
+        // Assuming there's an id or timestamp that could be used for newest/oldest
+        case "newest":
+          return b.id.localeCompare(a.id); // This assumes higher IDs are newer
+        case "oldest":
+          return a.id.localeCompare(b.id); // This assumes lower IDs are older
+        default:
+          return 0;
+      }
+    });
+  }, [filteredAttires, sortOption]);
+
+  const clearFilters = () => {
+    setFilters({
+      category: null,
+      gender: null,
+      size: null,
+    });
+  };
 
   return (
     <div className="h-screen bg-zinc-50 dark:bg-zinc-950">
@@ -67,11 +139,38 @@ export default function MinimalShop() {
         onSearch={setSearchQuery}
       />
 
-      <div className="mx-auto px-2 pt-12 pb-16">
-        <AttireGrid
-          attires={filteredAttires}
-          onAttireSelect={setSelectedAttire}
+      <div className="mx-auto px-4 pt-12 pb-16 max-w-7xl">
+        <FilterSortBar
+          categories={categories}
+          genders={genders}
+          sizes={sizes}
+          filters={filters}
+          sortOption={sortOption}
+          onFilterChange={setFilters}
+          onSortChange={setSortOption}
+          onClearFilters={clearFilters}
         />
+
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-muted-foreground">Loading attires...</p>
+          </div>
+        ) : error ? (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-red-500">Error loading attires</p>
+          </div>
+        ) : sortedAttires.length === 0 ? (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-muted-foreground">
+              No attires found matching your criteria
+            </p>
+          </div>
+        ) : (
+          <AttireGrid
+            attires={sortedAttires}
+            onAttireSelect={setSelectedAttire}
+          />
+        )}
       </div>
 
       <AnimatePresence>
