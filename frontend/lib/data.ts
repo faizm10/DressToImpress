@@ -1,10 +1,6 @@
 import { Calendar, Clipboard, Home, Mail, Table } from "lucide-react";
+export const LOGO = "/logos/wino.png"
 export const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -21,11 +17,11 @@ export const data = {
       url: "/emails",
       icon: Mail,
     },
-    // {
-    //   title: "Documentation",
-    //   url: "/docs",
-    //   icon: Clipboard,
-    // },
+    {
+      title: "Documentation",
+      url: "/docs",
+      icon: Clipboard,
+    },
     {
       title: "Calendar View",
       url: "/calendar",

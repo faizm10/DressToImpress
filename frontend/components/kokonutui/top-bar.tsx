@@ -4,7 +4,7 @@ import { Search, ShoppingBag, X } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { motion } from "motion/react";
 import Link from "next/link";
-import { shoppingCategories } from "@/lib/data";
+import { LOGO, shoppingCategories } from "@/lib/data";
 import Image from "next/image";
 import { Button } from "../ui/button";
 interface TopBarProps {
@@ -45,7 +45,7 @@ export function TopBar({ cartItemCount, onCartClick, onSearch }: TopBarProps) {
       <div className="flex items-center justify-between px-3 h-12">
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/logos/logo4.png"
+            src={LOGO}
             alt="Dress for Success Logo"
             width={150}
             height={24}

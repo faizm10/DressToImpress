@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { usePathname } from "next/navigation";
 // import { categories } from "@/lib/data";
 import { Button } from "./ui/button";
+import { LOGO } from "@/lib/data";
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -58,7 +59,7 @@ export const Header = () => {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/logos/wino.png"
+              src={LOGO}
               alt="Dress for Success Logo"
               width={200}
               height={30}
