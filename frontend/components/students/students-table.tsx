@@ -1,13 +1,28 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { createClient } from "@/lib/supabase/client"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search, ChevronLeft, ChevronRight, MoreHorizontal, UserPlus, Trash2, Edit2 } from "lucide-react"
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  MoreHorizontal,
+  UserPlus,
+  Trash2,
+  Edit2,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,10 +30,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Skeleton } from "@/components/ui/skeleton"
-import { AddStudentModal } from "./add-student-modal"
-import { EditStudentModal } from "./edit-student-modal"
+} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AddStudentModal } from "./add-student-modal";
+import { EditStudentModal } from "./edit-student-modal";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,35 +43,41 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { toast } from "sonner"
-import { OrderItemsDisplay } from "../order-items-display"
-import type { Student } from "@/types/students"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
+import { OrderItemsDisplay } from "../order-items-display";
+import type { Student } from "@/types/students";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function StudentsTable() {
-  const supabase = createClient()
-  const [students, setStudents] = useState<Student[]>([])
-  const [selectedStudents, setSelectedStudents] = useState<string[]>([])
-  const [searchQuery, setSearchQuery] = useState("")
-  const [page, setPage] = useState(1)
-  const [limit] = useState(10)
-  const [totalCount, setTotalCount] = useState(0)
-  const [loading, setLoading] = useState(true)
-  const [addModalOpen, setAddModalOpen] = useState(false)
-  const [editModalOpen, setEditModalOpen] = useState(false)
-  const [currentStudent, setCurrentStudent] = useState<Student | null>(null)
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [studentToDelete, setStudentToDelete] = useState<string | null>(null)
-  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false)
+  const supabase = createClient();
+  const [students, setStudents] = useState<Student[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [currentStudent, setCurrentStudent] = useState<Student | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [studentToDelete, setStudentToDelete] = useState<string | null>(null);
+  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
 
   // Fetch students from Supabase
   const fetchStudents = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
       // Calculate range for pagination
-      const from = (page - 1) * limit
-      const to = from + limit - 1
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
 
       // Build query with attire_requests join
       let query = supabase.from("students").select(
@@ -70,129 +91,138 @@ export function StudentsTable() {
       status
     )
   `,
-        { count: "exact" },
-      )
+        { count: "exact" }
+      );
 
       // Add search if provided
       if (searchQuery) {
         query = query.or(
-          `first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,student_id.ilike.%${searchQuery}%`,
-        )
+          `first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,student_id.ilike.%${searchQuery}%`
+        );
       }
 
       // Add pagination
-      const { data, error, count } = await query.order("created_at", { ascending: false }).range(from, to)
+      const { data, error, count } = await query
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
-      if (error) throw error
+      if (error) throw error;
 
-      setStudents(data as Student[])
-      if (count !== null) setTotalCount(count)
+      setStudents(data as Student[]);
+      if (count !== null) setTotalCount(count);
     } catch (error: any) {
-      toast("Error fetching students")
+      toast("Error fetching students");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Initial fetch and refetch on page/search change
   useEffect(() => {
-    fetchStudents()
-  }, [page, searchQuery])
+    fetchStudents();
+  }, [page, searchQuery]);
 
   // Handle select all checkbox
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedStudents(students.map((student) => student.id))
+      setSelectedStudents(students.map((student) => student.id));
     } else {
-      setSelectedStudents([])
+      setSelectedStudents([]);
     }
-  }
+  };
 
   // Handle individual checkbox selection
   const handleSelectStudent = (studentId: string, checked: boolean) => {
     if (checked) {
-      setSelectedStudents([...selectedStudents, studentId])
+      setSelectedStudents([...selectedStudents, studentId]);
     } else {
-      setSelectedStudents(selectedStudents.filter((id) => id !== studentId))
+      setSelectedStudents(selectedStudents.filter((id) => id !== studentId));
     }
-  }
+  };
 
   // Handle search
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    setPage(1) // Reset to first page on new search
-    fetchStudents()
-  }
+    e.preventDefault();
+    setPage(1); // Reset to first page on new search
+    fetchStudents();
+  };
 
   // Delete a student
   const deleteStudent = async (id: string) => {
     try {
-      const { error } = await supabase.from("students").delete().eq("id", id)
+      const { error } = await supabase.from("students").delete().eq("id", id);
 
-      if (error) throw error
+      if (error) throw error;
 
-      toast("Student deleted successfully")
+      toast("Student deleted successfully");
 
-      fetchStudents()
+      fetchStudents();
     } catch (error: any) {
-      toast("Error deleting student")
+      toast("Error deleting student");
     }
-  }
+  };
 
   // Delete multiple students
   const deleteMultipleStudents = async () => {
     try {
-      const { error } = await supabase.from("students").delete().in("id", selectedStudents)
+      const { error } = await supabase
+        .from("students")
+        .delete()
+        .in("id", selectedStudents);
 
-      if (error) throw error
+      if (error) throw error;
 
-      toast(`${selectedStudents.length} students deleted successfully`)
+      toast(`${selectedStudents.length} students deleted successfully`);
 
-      setSelectedStudents([])
-      fetchStudents()
+      setSelectedStudents([]);
+      fetchStudents();
     } catch (error: any) {
-      toast("Error deleting students")
+      toast("Error deleting students");
     }
-  }
+  };
 
   // Handle delete confirmation
   const confirmDelete = () => {
     if (studentToDelete) {
-      deleteStudent(studentToDelete)
-      setStudentToDelete(null)
-      setDeleteDialogOpen(false)
+      deleteStudent(studentToDelete);
+      setStudentToDelete(null);
+      setDeleteDialogOpen(false);
     }
-  }
+  };
 
   // Handle bulk delete confirmation
   const confirmBulkDelete = () => {
     if (selectedStudents.length > 0) {
-      deleteMultipleStudents()
-      setBulkDeleteDialogOpen(false)
+      deleteMultipleStudents();
+      setBulkDeleteDialogOpen(false);
     }
-  }
+  };
 
   // Handle status change
-  const handleSelectChange = async (field: string, value: string, studentId: string) => {
+  const handleSelectChange = async (
+    field: string,
+    value: string,
+    studentId: string
+  ) => {
     try {
       const { error } = await supabase
         .from("students")
         .update({ [field]: value })
-        .eq("id", studentId)
+        .eq("id", studentId);
 
-      if (error) throw error
+      if (error) throw error;
 
-      toast(`Student ${field} updated successfully`)
-      fetchStudents() // Refresh the table
+      toast(`Student ${field} updated successfully`);
+      fetchStudents(); // Refresh the table
     } catch (error: any) {
-      toast(`Error updating student ${field}`)
+      toast(`Error updating student ${field}`);
     }
-  }
+  };
 
   // Calculate pagination info
-  const totalPages = Math.ceil(totalCount / limit)
-  const startItem = (page - 1) * limit + 1
-  const endItem = Math.min(page * limit, totalCount)
+  const totalPages = Math.ceil(totalCount / limit);
+  const startItem = (page - 1) * limit + 1;
+  const endItem = Math.min(page * limit, totalCount);
 
   return (
     <div className="space-y-6">
@@ -209,16 +239,16 @@ export function StudentsTable() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </form>
-          <Button 
-            type="submit" 
-            variant="outline" 
+          <Button
+            type="submit"
+            variant="outline"
             onClick={handleSearch}
             className="h-10 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
           >
             Search
           </Button>
         </div>
-        <Button 
+        <Button
           onClick={() => setAddModalOpen(true)}
           className="h-10 bg-[#E51937] hover:bg-[#E51937]/90 text-white transition-colors"
         >
@@ -247,39 +277,65 @@ export function StudentsTable() {
             {loading ? (
               Array.from({ length: limit }).map((_, index) => (
                 <TableRow key={`loading-${index}`} className="animate-pulse">
-                  <TableCell><Skeleton className="h-4 w-4" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[120px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[180px]" /></TableCell>
-                  <TableCell><Skeleton className="h-8 w-[100px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
-                  <TableCell><Skeleton className="h-8 w-8 rounded-full" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-4" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[100px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[120px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[180px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-8 w-[100px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[80px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[100px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-[100px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                  </TableCell>
                 </TableRow>
               ))
             ) : students.length > 0 ? (
               students.map((student) => {
-                const reqs = student.attire_requests || []
-                let earliestStart: Date | null = null
-                let latestEnd: Date | null = null
+                const reqs = student.attire_requests || [];
+                let earliestStart: Date | null = null;
+                let latestEnd: Date | null = null;
 
                 if (reqs.length > 0) {
-                  const starts = reqs.map((r) => new Date(r.use_start_date).getTime())
-                  const ends = reqs.map((r) => new Date(r.use_end_date).getTime())
-                  earliestStart = new Date(Math.min(...starts))
-                  latestEnd = new Date(Math.max(...ends))
+                  const starts = reqs.map((r) =>
+                    new Date(r.use_start_date).getTime()
+                  );
+                  const ends = reqs.map((r) =>
+                    new Date(r.use_end_date).getTime()
+                  );
+                  earliestStart = new Date(Math.min(...starts));
+                  latestEnd = new Date(Math.max(...ends));
                 }
 
                 return (
-                  <TableRow 
+                  <TableRow
                     key={student.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
                   >
-                    <TableCell className="font-medium">{student.student_id}</TableCell>
+                    <TableCell className="font-medium">
+                      {student.student_id}
+                    </TableCell>
                     <TableCell>{student.first_name}</TableCell>
                     <TableCell>{student.last_name}</TableCell>
-                    <TableCell className="text-muted-foreground">{student.email}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {student.email}
+                    </TableCell>
                     <TableCell>
                       <OrderItemsDisplay
                         studentId={student.id}
@@ -289,7 +345,9 @@ export function StudentsTable() {
                     <TableCell>
                       <Select
                         value={student.status || "Pending"}
-                        onValueChange={(value) => handleSelectChange("status", value, student.id)}
+                        onValueChange={(value) =>
+                          handleSelectChange("status", value, student.id)
+                        }
                       >
                         <SelectTrigger className="w-[120px]">
                           <SelectValue placeholder="Pending" />
@@ -323,7 +381,9 @@ export function StudentsTable() {
                       </Select>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {earliestStart ? earliestStart.toLocaleDateString() : "N/A"}
+                      {earliestStart
+                        ? earliestStart.toLocaleDateString()
+                        : "N/A"}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {latestEnd ? latestEnd.toLocaleDateString() : "N/A"}
@@ -331,8 +391,8 @@ export function StudentsTable() {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             className="h-8 w-8 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
                           >
@@ -345,8 +405,8 @@ export function StudentsTable() {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             onClick={() => {
-                              setCurrentStudent(student)
-                              setEditModalOpen(true)
+                              setCurrentStudent(student);
+                              setEditModalOpen(true);
                             }}
                             className="cursor-pointer hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
                           >
@@ -367,11 +427,14 @@ export function StudentsTable() {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                )
+                );
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={9}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   No students found.
                 </TableCell>
               </TableRow>
@@ -384,13 +447,14 @@ export function StudentsTable() {
       {!loading && totalPages > 0 && (
         <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border">
           <p className="text-sm text-muted-foreground">
-            Showing <strong>{startItem}</strong> to <strong>{endItem}</strong> of <strong>{totalCount}</strong> students
+            Showing <strong>{startItem}</strong> to <strong>{endItem}</strong>{" "}
+            of <strong>{totalCount}</strong> students
           </p>
           <div className="flex items-center space-x-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setPage(page - 1)} 
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(page - 1)}
               disabled={page === 1}
               className="h-8 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
             >
@@ -400,10 +464,10 @@ export function StudentsTable() {
             <div className="text-sm font-medium">
               Page {page} of {totalPages}
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setPage(page + 1)} 
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPage(page + 1)}
               disabled={page === totalPages}
               className="h-8 hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
             >
@@ -415,7 +479,11 @@ export function StudentsTable() {
       )}
 
       {/* Add Student Modal */}
-      <AddStudentModal open={addModalOpen} onOpenChange={setAddModalOpen} onSuccess={fetchStudents} />
+      <AddStudentModal
+        open={addModalOpen}
+        onOpenChange={setAddModalOpen}
+        onSuccess={fetchStudents}
+      />
 
       {/* Edit Student Modal */}
       {currentStudent && (
@@ -433,13 +501,14 @@ export function StudentsTable() {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the student record.
+              This action cannot be undone. This will permanently delete the
+              student record.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={confirmDelete} 
+            <AlertDialogAction
+              onClick={confirmDelete}
               className="bg-red-600 hover:bg-red-700 text-white transition-colors"
             >
               Delete
@@ -449,18 +518,22 @@ export function StudentsTable() {
       </AlertDialog>
 
       {/* Bulk Delete Confirmation Dialog */}
-      <AlertDialog open={bulkDeleteDialogOpen} onOpenChange={setBulkDeleteDialogOpen}>
+      <AlertDialog
+        open={bulkDeleteDialogOpen}
+        onOpenChange={setBulkDeleteDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete {selectedStudents.length} student records.
+              This action cannot be undone. This will permanently delete{" "}
+              {selectedStudents.length} student records.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={confirmBulkDelete} 
+            <AlertDialogAction
+              onClick={confirmBulkDelete}
               className="bg-red-600 hover:bg-red-700 text-white transition-colors"
             >
               Delete Selected
@@ -469,5 +542,5 @@ export function StudentsTable() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
-  )
+  );
 }

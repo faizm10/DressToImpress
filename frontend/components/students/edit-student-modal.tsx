@@ -294,34 +294,6 @@ export function EditStudentModal({
               </div>
             </div>
 
-            <Separator />
-
-            {/* Email Actions Section */}
-            <div className="space-y-4">
-              <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
-                Email Notifications
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleSendPickupEmail}
-                  className="h-11"
-                >
-                  <Package className="mr-2 h-4 w-4" />
-                  Send Pickup Email
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleSendDropoffEmail}
-                  className="h-11"
-                >
-                  <Mail className="mr-2 h-4 w-4" />
-                  Send Dropoff Email
-                </Button>
-              </div>
-            </div>
           </div>
 
           <DialogFooter className="gap-2">

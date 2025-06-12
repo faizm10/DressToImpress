@@ -13,11 +13,6 @@ export const data = {
       icon: Table,
     },
     {
-      title: "Emails",
-      url: "/emails",
-      icon: Mail,
-    },
-    {
       title: "Documentation",
       url: "/docs",
       icon: Clipboard,
