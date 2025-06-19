@@ -89,7 +89,7 @@ export function ContentEditor() {
     }
   };
 
-  const updateHero = (field: keyof typeof content.hero, value: string) => {
+  const updateHero = (field: keyof HomePageContent['hero'], value: string) => {
     if (!content) return;
     setContent({
       ...content,
@@ -97,8 +97,8 @@ export function ContentEditor() {
     });
   };
 
-  const updateHowItWorks = (
-    field: keyof typeof content.howItWorks,
+   const updateHowItWorks = (
+   field: keyof HomePageContent['howItWorks'],
     value: any
   ) => {
     if (!content) return;
@@ -121,7 +121,7 @@ export function ContentEditor() {
   };
 
   const updateRentalGuidelines = (
-    field: keyof typeof content.rentalGuidelines,
+field: keyof HomePageContent['rentalGuidelines'],
     value: any
   ) => {
     if (!content) return;
@@ -175,7 +175,8 @@ export function ContentEditor() {
     updateRentalGuidelines("rules", updatedRules);
   };
 
-  const updateCTA = (field: keyof typeof content.cta, value: string) => {
+
+  const updateCTA = (field: keyof HomePageContent['cta'], value: string) => {
     if (!content) return;
     setContent({
       ...content,
