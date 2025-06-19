@@ -1,8 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
-const supabase = await createClient();
-
 const DEFAULT_CONTENT = {
   hero: {
     badge: "Exclusive for Lang Students",
@@ -91,6 +89,7 @@ const DEFAULT_CONTENT = {
 };
 
 export async function POST() {
+  const supabase = await createClient();
   try {
     const { error } = await supabase.from("home_page_content").insert({
       content: DEFAULT_CONTENT,
