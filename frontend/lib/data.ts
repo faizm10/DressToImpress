@@ -1,4 +1,4 @@
-import { Calendar, Clipboard, Home, Mail, Table } from "lucide-react";
+import { Calendar, Clipboard, Edit, Home, Mail, Table } from "lucide-react";
 export const LOGO = "/logos/wino.png"
 export const data = {
   navMain: [
@@ -21,6 +21,11 @@ export const data = {
       title: "Calendar View",
       url: "/calendar",
       icon: Calendar,
+    },
+    {
+      title: "Edit",
+      url: "/edit",
+      icon: Edit,
     },
   ],
 };
