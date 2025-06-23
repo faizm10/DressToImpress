@@ -46,7 +46,7 @@ export const Header = () => {
       } border-b border-zinc-200 dark:border-zinc-800`}
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Mobile menu button */}
           <button
             onClick={toggleMenu}

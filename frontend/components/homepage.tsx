@@ -1,12 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
-import { Button } from "@/components/ui/button"
-import { ArrowRight, Mail, Loader2 } from "lucide-react"
-import { Header } from "@/components/header"
+import { Mail, Loader2 } from "lucide-react"
 import type { HomePageContent } from "@/types/content"
 import * as LucideIcons from "lucide-react"
+import { Header } from "./header"
 
 // Helper function to get Lucide icon by name
 function getIconComponent(iconName: string) {
@@ -40,117 +38,123 @@ export function HomePage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-white">
         <div className="flex items-center gap-2">
-          <Loader2 className="h-6 w-6 animate-spin" />
-          <span>Loading...</span>
+          <Loader2 className="h-6 w-6 animate-spin text-[#CC0633]" />
+          <span className="text-gray-700">Loading...</span>
         </div>
       </div>
     )
   }
 
   if (!content) {
-    return <div className="flex items-center justify-center min-h-screen">Failed to load content</div>
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <span className="text-gray-700">Failed to load content</span>
+      </div>
+    )
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Header />
+    <div className="flex flex-col min-h-screen bg-white">
+      {/* Clean Header */}
+      <Header/>
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative min-h-[90vh] flex items-center bg-gradient-to-br from-[#E51937]/5 via-white to-[#FFC429]/5">
-          <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-          <div className="container mx-auto px-4 relative z-10">
-            <div className="flex flex-col md:flex-row items-center gap-16">
-              <div className="md:w-1/2 text-black dark:text-white">
-                <div className="inline-block px-4 py-2 bg-[#E51937]/10 rounded-full mb-6">
-                  <p className="text-[#E51937] font-medium">{content.hero.badge}</p>
-                </div>
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-                  {content.hero.title} <span className="text-[#E51937]">{content.hero.highlightWord}</span>
-                </h1>
-                <p className="text-xl md:text-2xl mb-8 text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {content.hero.description}
+        {/* Hero Section - Green Background */}
+        <section className="bg-gradient-to-r from-[#CC0633] to-[#B8002F] text-white py-24">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-light leading-tight mb-6">
+                {content.hero.title}: {content.hero.highlightWord}
+              </h1>
+              <p className="text-xl md:text-2xl font-light mb-2 opacity-90">{content.hero.description}</p>
+              <p className="text-lg opacity-80">{content.hero.badge}</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Overview Section */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-6">
+            <div className="max-w-4xl">
+              <h2 className="text-3xl font-normal text-gray-900 mb-8">Overview</h2>
+              <div className="prose prose-lg max-w-none">
+                <p className="text-gray-700 leading-relaxed mb-6">
+                  {content.hero.description} We acknowledge that there are many other ways to connect and engage, so we
+                  invite you to share them with us when we come together!
                 </p>
-                <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
-                  <a href={content.hero.buttonLink}>
-                    <Button
-                      size="lg"
-                      className="bg-[#E51937] hover:bg-[#E51937]/90 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
-                    >
-                      {content.hero.buttonText}
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                  </a>
-                </div>
-              </div>
-              <div className="md:w-1/2 h-[60vh] md:h-[80vh] relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#E51937]/20 to-[#FFC429]/20 rounded-3xl transform rotate-3"></div>
-                <Image
-                  src="/hero.svg"
-                  alt="Business attire for Lang students"
-                  fill
-                  priority
-                  className="object-contain drop-shadow-2xl"
-                />
+                <p className="text-gray-700 leading-relaxed mb-6">
+                  Are you someone who identifies as part of our community and is currently approaching the completion of
+                  post-secondary education? If you answered yes to this question, then this opportunity may be just for
+                  you! Our program is a tailored experience that enhances the professional development experience by
+                  providing a culturally welcoming and supportive environment.
+                </p>
+                <p className="text-gray-700 leading-relaxed">
+                  Embracing a spirit of growth and learning, our program will support you for the first two years of
+                  full-time employment and offers additional one-on-one support.
+                </p>
               </div>
             </div>
           </div>
         </section>
 
         {/* How It Works Section */}
-        <section className="py-24 bg-white dark:bg-gray-900">
-          <div className="container mx-auto px-4">
-            <div className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-4xl font-bold mb-6">{content.howItWorks.title}</h2>
-              <p className="text-xl text-gray-600 dark:text-gray-400">{content.howItWorks.subtitle}</p>
-            </div>
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-6">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-normal text-gray-900 mb-4">{content.howItWorks.title}</h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">{content.howItWorks.subtitle}</p>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {content.howItWorks.steps.map((step) => {
-                const IconComponent = getIconComponent(step.icon)
-                return (
-                  <div
-                    key={step.id}
-                    className="group p-8 rounded-2xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <div className="w-16 h-16 bg-[#E51937]/10 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#E51937]/20 transition-colors">
-                      <IconComponent className="h-8 w-8 text-[#E51937]" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {content.howItWorks.steps.map((step, index) => {
+                  const IconComponent = getIconComponent(step.icon)
+                  return (
+                    <div key={step.id} className="bg-white rounded-lg p-8 shadow-sm border border-gray-100">
+                      <div className="flex items-center mb-6">
+                        <div className="w-12 h-12 bg-[#CC0633]/10 rounded-lg flex items-center justify-center mr-4">
+                          <IconComponent className="h-6 w-6 text-[#CC0633]" />
+                        </div>
+                        <div className="w-8 h-8 bg-[#FFCC00] text-gray-900 rounded-full flex items-center justify-center text-sm font-semibold">
+                          {index + 1}
+                        </div>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900 mb-3">{step.title}</h3>
+                      <p className="text-gray-600 leading-relaxed">{step.description}</p>
                     </div>
-                    <h3 className="text-2xl font-semibold mb-4">{step.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-lg">{step.description}</p>
-                  </div>
-                )
-              })}
+                  )
+                })}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Rental Rules Section */}
-        <section className="py-24 bg-gray-50 dark:bg-gray-800">
-          <div className="container mx-auto px-4">
-            <div className="max-w-5xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold mb-6">{content.rentalGuidelines.title}</h2>
-                <p className="text-xl text-gray-600 dark:text-gray-400">{content.rentalGuidelines.subtitle}</p>
+        {/* Guidelines Section */}
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-6">
+            <div className="max-w-6xl mx-auto">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-normal text-gray-900 mb-4">{content.rentalGuidelines.title}</h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">{content.rentalGuidelines.subtitle}</p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
                 {content.rentalGuidelines.rules.map((rule) => {
                   const IconComponent = getIconComponent(rule.icon)
                   return (
-                    <div key={rule.id} className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg">
-                      <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 bg-[#E51937]/10 rounded-xl flex items-center justify-center">
-                          <IconComponent className="h-6 w-6 text-[#E51937]" />
+                    <div key={rule.id} className="border border-gray-200 rounded-lg p-8">
+                      <div className="flex items-center mb-6">
+                        <div className="w-12 h-12 bg-[#CC0633]/10 rounded-lg flex items-center justify-center mr-4">
+                          <IconComponent className="h-6 w-6 text-[#CC0633]" />
                         </div>
-                        <h3 className="text-2xl font-semibold">{rule.title}</h3>
+                        <h3 className="text-xl font-semibold text-gray-900">{rule.title}</h3>
                       </div>
-                      <ul className="space-y-4">
+                      <ul className="space-y-3">
                         {rule.items.map((item, index) => (
-                          <li key={index} className="flex items-start gap-3">
-                            <span className="text-[#E51937] mt-1">•</span>
-                            <span>{item}</span>
+                          <li key={index} className="flex items-start">
+                            <span className="text-[#CC0633] mr-3 mt-1">•</span>
+                            <span className="text-gray-700">{item}</span>
                           </li>
                         ))}
                       </ul>
@@ -163,18 +167,18 @@ export function HomePage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-24 bg-[#E51937] text-white">
-          <div className="container mx-auto px-4">
+        <section className="py-16 bg-[#CC0633] text-white">
+          <div className="container mx-auto px-6">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl font-bold mb-8">{content.cta.title}</h2>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 inline-block">
-                <div className="flex items-center gap-4">
+              <h2 className="text-3xl font-light mb-8">{content.cta.title}</h2>
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8 inline-block">
+                <div className="flex items-center justify-center gap-4">
                   <Mail className="h-6 w-6" />
                   <p className="text-lg">
                     {content.cta.emailLabel}{" "}
                     <a
                       href={`mailto:${content.cta.email}`}
-                      className="underline hover:text-[#FFC429] transition-colors"
+                      className="underline hover:text-white/80 transition-colors font-medium"
                     >
                       {content.cta.email}
                     </a>
@@ -185,6 +189,8 @@ export function HomePage() {
           </div>
         </section>
       </main>
+
+      
     </div>
   )
 }

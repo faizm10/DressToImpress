@@ -196,6 +196,7 @@ field: keyof HomePageContent['rentalGuidelines'],
   }
 
   return (
+    <>
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Home Page Content Editor</h1>
@@ -493,5 +494,26 @@ field: keyof HomePageContent['rentalGuidelines'],
         </TabsContent>
       </Tabs>
     </div>
+        <div className="max-w-6xl mx-auto p-6 space-y-6">
+           <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold">Edit Images</h1>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleReset}
+            variant="outline"
+            disabled={isResetting}
+          >
+            {isResetting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <RotateCcw className="h-4 w-4 mr-2" />
+            )}
+            Reset to Default
+          </Button>
+        </div>
+      </div>
+        </div>
+
+    </>
   );
 }
