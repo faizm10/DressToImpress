@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ViewTable from "@/components/attires/view-table";
 
-export default async function List() {
+export default async function View() {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.getUser();
