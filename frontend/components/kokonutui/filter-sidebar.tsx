@@ -14,8 +14,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { genderOptions, sizeOptions } from "@/lib/data"
 import type { FilterOptions, SortOption } from "@/components/filter-sort-bar"
 
 interface FilterSidebarProps {
@@ -44,9 +43,12 @@ export function FilterSidebar({
   resultCount,
 }: FilterSidebarProps) {
   const handleFilterChange = (key: keyof FilterOptions, value: string | null) => {
+    // Convert "all" to null to clear the filter
+    const filterValue = value === "all" ? null : value
+
     onFilterChange({
       ...filters,
-      [key]: value,
+      [key]: filterValue,
     })
   }
 
@@ -109,82 +111,70 @@ export function FilterSidebar({
 
         <SidebarSeparator className="my-4" />
 
-        {/* Category Filter */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="mb-3">Category</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <RadioGroup
-              value={filters.category || ""}
-              onValueChange={(value) => handleFilterChange("category", value || null)}
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="" id="category-all" />
-                <Label htmlFor="category-all" className="text-sm font-normal">
-                  All Categories
-                </Label>
-              </div>
-              {categories.map((category) => (
-                <div key={category} className="flex items-center space-x-2">
-                  <RadioGroupItem value={category} id={`category-${category}`} />
-                  <Label htmlFor={`category-${category}`} className="text-sm font-normal capitalize">
-                    {category}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator className="my-4" />
-
-        {/* Gender Filter */}
+        {/* Gender Filter - First */}
         <SidebarGroup>
           <SidebarGroupLabel className="mb-3">Gender</SidebarGroupLabel>
           <SidebarGroupContent>
-            <RadioGroup
-              value={filters.gender || ""}
-              onValueChange={(value) => handleFilterChange("gender", value || null)}
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="" id="gender-all" />
-                <Label htmlFor="gender-all" className="text-sm font-normal">
-                  All Genders
-                </Label>
-              </div>
-              {genders.map((gender) => (
-                <div key={gender} className="flex items-center space-x-2">
-                  <RadioGroupItem value={gender} id={`gender-${gender}`} />
-                  <Label htmlFor={`gender-${gender}`} className="text-sm font-normal capitalize">
-                    {gender}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
+            <Select value={filters.gender || ""} onValueChange={(value) => handleFilterChange("gender", value || null)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="All Genders" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Genders</SelectItem>
+                {genderOptions.map((gender) => (
+                  <SelectItem key={gender.value} value={gender.value}>
+                    {gender.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </SidebarGroupContent>
         </SidebarGroup>
 
         <SidebarSeparator className="my-4" />
 
-        {/* Size Filter */}
+        {/* Category Filter - Second */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="mb-3">Category</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <Select
+              value={filters.category || ""}
+              onValueChange={(value) => handleFilterChange("category", value || null)}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="All Categories" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    <span className="capitalize">{category}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator className="my-4" />
+
+        {/* Size Filter - Third */}
         <SidebarGroup>
           <SidebarGroupLabel className="mb-3">Size</SidebarGroupLabel>
           <SidebarGroupContent>
-            <RadioGroup value={filters.size || ""} onValueChange={(value) => handleFilterChange("size", value || null)}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="" id="size-all" />
-                <Label htmlFor="size-all" className="text-sm font-normal">
-                  All Sizes
-                </Label>
-              </div>
-              {sizes.map((size) => (
-                <div key={size} className="flex items-center space-x-2">
-                  <RadioGroupItem value={size} id={`size-${size}`} />
-                  <Label htmlFor={`size-${size}`} className="text-sm font-normal uppercase">
-                    {size}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
+            <Select value={filters.size || ""} onValueChange={(value) => handleFilterChange("size", value || null)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="All Sizes" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Sizes</SelectItem>
+                {sizeOptions.map((size) => (
+                  <SelectItem key={size.value} value={size.value}>
+                    {size.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
