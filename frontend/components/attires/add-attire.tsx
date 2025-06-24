@@ -199,6 +199,7 @@ export default function AttireUploadForm() {
                     <SelectValue placeholder="Select size" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="XS">Extra Small (XS)</SelectItem>
                     <SelectItem value="S">Small (S)</SelectItem>
                     <SelectItem value="M">Medium (M)</SelectItem>
                     <SelectItem value="L">Large (L)</SelectItem>
@@ -217,6 +218,7 @@ export default function AttireUploadForm() {
                   <SelectContent>
                     <SelectItem value="Men">Men</SelectItem>
                     <SelectItem value="Female">Female</SelectItem>
+                    <SelectItem value="Unisex">Unisex</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -87,19 +87,12 @@ export function HomePage() {
             <div
               className={`max-w-5xl transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
             >
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-8 border border-white/20">
-                <CheckCircle className="h-4 w-4 text-[#FFCC00]" />
-                <span className="text-sm font-medium">{content.hero.badge}</span>
-              </div>
+          
 
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-light leading-tight mb-8 tracking-tight">
-                <span className="block">{content.hero.title}:</span>
-                <span className="block text-[#FFCC00] font-medium">{content.hero.highlightWord}</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-light leading-tight mb-8 tracking-tight">
+                <span className="block font-medium ">{content.hero.title}:</span>
+                <span className="block" >{content.hero.highlightWord}</span>
               </h1>
-
-              <p className="text-xl md:text-2xl font-light mb-12 opacity-90 max-w-3xl leading-relaxed">
-                {content.hero.description}
-              </p>
 
               <div className="flex flex-col sm:flex-row gap-4">
                 <a href="/browse" className="group">
@@ -108,50 +101,29 @@ export function HomePage() {
                     <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </a>
-                {/* <Button
-                  variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-full backdrop-blur-sm transition-all duration-300"
-                >
-                  Learn More
-                </Button> */}
               </div>
+              <p className="text-gray-700 leading-relaxed text-l text-lg text-center">{content.hero.description}</p>
             </div>
           </div>
         </section>
 
-        {/* Overview Section - Enhanced */}
-        <section className="py-20 bg-gradient-to-b from-white to-gray-50">
-          <div className="container mx-auto px-6">
-            <div
-              className={`max-w-4xl transition-all duration-1000 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-            >
-              <div className="text-center mb-16">
+        {/* Centered Hero Description Section */}
+        <section className="flex flex-col items-center justify-center min-h-screen">
+           <div
+                className={`text-center transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+              >
                 <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">Overview</h2>
-                <div className="w-24 h-1 bg-gradient-to-r from-[#CC0633] to-[#FFCC00] mx-auto rounded-full"></div>
+                <div className="w-24 h-1 bg-[#FFCC00] mx-auto rounded-full mb-6"></div>
               </div>
-
-              <div className="prose prose-xl max-w-none">
-                <div className="grid md:grid-cols-1 gap-8">
-                  <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300">
-                    <p className="text-gray-700 leading-relaxed mb-6 text-lg">
-                      {content.hero.description} We acknowledge that there are many other ways to connect and engage, so
-                      we invite you to share them with us when we come together!
-                    </p>
-                    <p className="text-gray-700 leading-relaxed mb-6 text-lg">
-                      Are you someone who identifies as part of our community and is currently approaching the
-                      completion of post-secondary education? If you answered yes to this question, then this
-                      opportunity may be just for you!
-                    </p>
-                    <p className="text-gray-700 leading-relaxed text-lg">
-                      Our program is a tailored experience that enhances the professional development experience by
-                      providing a culturally welcoming and supportive environment.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 max-w-3xl w-full">
+            <p className="text-gray-700 leading-relaxed  text-lg text-center">
+              {content.hero.description}
+            </p>
           </div>
         </section>
+
+
+       
 
         {/* How It Works Section - Enhanced */}
         <section className="py-20 bg-gray-50">
@@ -161,7 +133,7 @@ export function HomePage() {
                 className={`text-center mb-16 transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               >
                 <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">{content.howItWorks.title}</h2>
-                <div className="w-24 h-1 bg-gradient-to-r from-[#CC0633] to-[#FFCC00] mx-auto rounded-full mb-6"></div>
+                <div className="w-24 h-1 bg-[#FFCC00] mx-auto rounded-full mb-6"></div>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">{content.howItWorks.subtitle}</p>
               </div>
 
@@ -202,7 +174,7 @@ export function HomePage() {
                 className={`text-center mb-16 transition-all duration-1000 delay-500 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               >
                 <h2 className="text-4xl md:text-5xl font-light text-gray-900 mb-6">{content.rentalGuidelines.title}</h2>
-                <div className="w-24 h-1 bg-gradient-to-r from-[#CC0633] to-[#FFCC00] mx-auto rounded-full mb-6"></div>
+                <div className="w-24 h-1 bg-[#FFCC00] mx-auto rounded-full mb-6"></div>
                 <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                   {content.rentalGuidelines.subtitle}
                 </p>

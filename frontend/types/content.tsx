@@ -5,6 +5,7 @@ export interface HeroContent {
   description: string
   buttonText: string
   buttonLink: string
+  subtitle?: string
 }
 
 export interface HowItWorksStep {
