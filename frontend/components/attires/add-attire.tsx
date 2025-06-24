@@ -13,7 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "@/components/dropzone"
 import { useSupabaseUpload } from "@/hooks/use-supabase-upload"
 import { v4 as uuidv4 } from "uuid"
-import { menCategories, womenCategories } from "@/lib/data"
+import { menCategories, womenCategories,unisexCategories } from "@/lib/data"
 
 export default function AttireUploadForm() {
   const supabase = createClient()
@@ -54,6 +54,7 @@ export default function AttireUploadForm() {
   const categoryOptions = useMemo(() => {
     if (formState.gender === "Men") return menCategories
     if (formState.gender === "Female") return womenCategories
+    if (formState.gender === "Unisex") return unisexCategories
     return []
   }, [formState.gender])
 

@@ -1,4 +1,4 @@
-import { Calendar, Clipboard, Edit, Home, Mail, Table } from "lucide-react";
+import { Calendar, Clipboard, Edit, Home, Mail, Plus, Table, View } from "lucide-react";
 export const LOGO = "/logos/wino.png"
 export const data = {
   navMain: [
@@ -6,6 +6,16 @@ export const data = {
       title: "Dashboard",
       url: "/dashboard",
       icon: Home,
+    },
+    {
+      title: "Add Attires",
+      url: "/add",
+      icon: Plus,
+    },
+    {
+      title: "View Attires",
+      url: "/view",
+      icon: View,
     },
     {
       title: "Student's Records",
@@ -60,7 +70,5 @@ export const womenCategories = [
   "Shoes",
   "Bags",
 ];
-// export const categories = {
-//   women: ["Dresses", "Tops", "Bottoms", "Outerwear", "Accessories"],
-//   men: ["Shirts", "Pants", "Outerwear", "Shoes", "Accessories"],
-// };
+export const unisexCategories =[
+  "Bags"]

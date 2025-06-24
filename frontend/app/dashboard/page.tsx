@@ -148,7 +148,7 @@ export default async function ProtectedPage() {
                 </Card>
               </Link>
 
-              <Link href="/attire/add">
+              <Link href="/add">
                 <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:-translate-y-1">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Add Attire</CardTitle>
@@ -163,7 +163,7 @@ export default async function ProtectedPage() {
                 </Card>
               </Link>
 
-              <Link href="/attire/list">
+              <Link href="/list">
                 <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:-translate-y-1">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">View Inventory</CardTitle>
@@ -276,16 +276,16 @@ export default async function ProtectedPage() {
             </div>
 
             {/* Recent Activity */}
-            <div className="mb-8">
+            {/* <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
               <ViewTable />
-            </div>
+            </div> */}
 
             {/* Add Attire Form */}
-            <div>
+            {/* <div>
               <h2 className="text-xl font-semibold mb-4">Add New Attire</h2>
               <AttireUploadForm />
-            </div>
+            </div> */}
           </div>
         </div>
       </SidebarInset>
