@@ -94,7 +94,10 @@ export function HomePage() {
                 <span className="block" >{content.hero.highlightWord}</span>
               </h1>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              
+              <p className="mt-4 max-w-4xl text-white leading-relaxed text-lg text-left">
+              {content.hero.description}</p>
+              <div className="flex flex-col sm:flex-row gap-4 mt-4">
                 <a href="/browse" className="group">
                   <Button className="bg-[#FFCC00] hover:bg-[#FFD700] text-gray-900 px-8 py-6 text-lg font-semibold rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl group-hover:shadow-[#FFCC00]/25">
                     Browse Now
@@ -102,7 +105,6 @@ export function HomePage() {
                   </Button>
                 </a>
               </div>
-              <p className="text-gray-700 leading-relaxed text-l text-lg text-center">{content.hero.description}</p>
             </div>
           </div>
         </section>
