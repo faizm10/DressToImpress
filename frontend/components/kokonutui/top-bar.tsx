@@ -1,141 +1,45 @@
-"use client";
+"use client"
 
-import { Search, ShoppingBag, X } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
-import { motion } from "motion/react";
-import Link from "next/link";
-import { LOGO, shoppingCategories } from "@/lib/data";
-import Image from "next/image";
-import { Button } from "../ui/button";
+import { Search, ShoppingCart } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { SidebarTrigger } from "@/components/ui/sidebar"
+
 interface TopBarProps {
-  cartItemCount: number;
-  onCartClick: () => void;
-  onSearch: (query: string) => void;
+  cartItemCount: number
+  onCartClick: () => void
+  onSearch: (query: string) => void
 }
 
 export function TopBar({ cartItemCount, onCartClick, onSearch }: TopBarProps) {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [isScrolled, setIsScrolled] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
-      setIsSearchOpen(false);
-      searchInputRef.current?.blur();
-    }
-  };
-
   return (
-    <div
-      className={`sticky top-0 z-40 transition-all duration-200 ${
-        isScrolled
-          ? "bg-white/90 dark:bg-zinc-900/90 shadow-sm"
-          : "bg-white/80 dark:bg-zinc-900/80"
-      } backdrop-blur-sm border-b border-zinc-200 dark:border-zinc-800`}
-    >
-      <div className="flex items-center justify-between px-3 h-12">
-        <Link href="/" className="flex items-center gap-2">
-          <Image
-            src={LOGO}
-            alt="Dress for Success Logo"
-            width={150}
-            height={24}
-            className="dark:invert"
-          />
-        </Link>
-        <div className="flex-1 px-8 overflow-x-auto flex items-center justify-center gap-6 scrollbar-none">
-          {shoppingCategories.map((category) => (
-            <button
-              type="button"
-              key={category}
-              className={`whitespace-nowrap transition-colors ${
-                selectedCategory === category
-                  ? "text-zinc-900 dark:text-white text-sm font-medium"
-                  : "text-zinc-500 dark:text-zinc-400 text-sm hover:text-zinc-900 dark:hover:text-white"
-              }`}
-              onClick={() => setSelectedCategory(category)}
-            >
-              {category}
-            </button>
-          ))}
-          {/* <a href="/">Home</a> */}
+    <header className="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-zinc-800 dark:bg-zinc-950/95 dark:supports-[backdrop-filter]:bg-zinc-950/60">
+      <div className="flex h-14 items-center px-4">
+        <div className="flex items-center gap-4 flex-1">
+          <SidebarTrigger className="h-6 w-6" />
+
+          <div className="flex items-center gap-2">
+            {/* <h1 className="text-xl font-bold">Attire Shop</h1> */}
+          </div>
         </div>
 
-        <div className="flex items-center gap-1.5 shrink-0">
-          <motion.div
-            className="relative overflow-hidden p-1"
-            initial={false}
-            animate={{ width: isSearchOpen ? "auto" : 0 }}
-          >
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Search products..."
-              className={`w-48 sm:w-56 bg-zinc-100 dark:bg-zinc-800 rounded-md text-sm px-3 py-1.5 
-                                focus:outline-none focus:ring-1 focus:ring-zinc-300 dark:focus:ring-zinc-700
-                                transition-all duration-200 ${
-                                  isSearchOpen ? "opacity-100" : "opacity-0"
-                                }`}
-              onChange={(e) => onSearch(e.target.value)}
-              onKeyDown={handleKeyPress}
-            />
-            {isSearchOpen && (
-              <button
-                type="button"
-                onClick={() => {
-                  setIsSearchOpen(false);
-                  onSearch("");
-                }}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 hover:bg-zinc-200 
-                                    dark:hover:bg-zinc-700 rounded-full"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </motion.div>
-          <button
-            type="button"
-            onClick={() => setIsSearchOpen(!isSearchOpen)}
-            className={`p-1.5 rounded-md transition-colors ${
-              isSearchOpen
-                ? "bg-zinc-100 dark:bg-zinc-800"
-                : "hover:bg-zinc-100 dark:hover:bg-zinc-800"
-            } z-10`}
-          >
-            <Search className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            onClick={onCartClick}
-            className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md relative"
-          >
-            <ShoppingBag className="w-4 h-4" />
+        <div className="flex items-center gap-4">
+          <div className="relative max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input placeholder="Search attires..." className="pl-9 w-64" onChange={(e) => onSearch(e.target.value)} />
+          </div>
+
+          <Button variant="outline" size="sm" onClick={onCartClick} className="relative">
+            <ShoppingCart className="h-4 w-4" />
             {cartItemCount > 0 && (
-              <motion.span
-                initial={{ scale: 0.5 }}
-                animate={{ scale: 1 }}
-                className="absolute -top-1 -right-1 bg-zinc-900 dark:bg-white 
-                                    text-white dark:text-zinc-900 text-xs font-medium w-4 h-4 
-                                    flex items-center justify-center rounded-full"
-              >
+              <Badge variant="destructive" className="absolute -right-2 -top-2 h-5 w-5 rounded-full p-0 text-xs">
                 {cartItemCount}
-              </motion.span>
+              </Badge>
             )}
-          </button>
-          {/* <Link href="/auth/login">
-            <Button className="bg-[#E51937]">Admin Dashboard</Button>
-          </Link> */}
+          </Button>
         </div>
       </div>
-    </div>
-  );
+    </header>
+  )
 }
