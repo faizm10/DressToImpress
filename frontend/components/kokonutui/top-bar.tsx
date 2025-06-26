@@ -27,7 +27,7 @@ export function TopBar({ cartItemCount, onCartClick, onSearch }: TopBarProps) {
         <div className="flex items-center gap-4">
           <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search attires..." className="pl-9 w-64" onChange={(e) => onSearch(e.target.value)} />
+            <Input placeholder="Search clothing..." className="pl-9 w-64" onChange={(e) => onSearch(e.target.value)} />
           </div>
 
           <Button variant="outline" size="sm" onClick={onCartClick} className="relative">
