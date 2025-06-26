@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ModeToggle } from "./theme-switcher";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { usePathname } from "next/navigation";
 // import { categories } from "@/lib/data";
@@ -76,9 +76,15 @@ export const Header = () => {
 
           {/* Right side actions */}
           <div className="flex items-center gap-5">
-            {/* <Link href="/auth/logißn">
-              <Button className="bg-[#E51937]">Admin Dashboard</Button>
-            </Link> */}
+            <a href="#how-it-works" className="group">
+              How It Works
+            </a>
+            <a href="#rental-guidelines" className="group">
+              Rental Guidelines
+            </a>
+            <a href="/browse" className="group">
+              Clothing Catelogue
+            </a>
           </div>
         </div>
       </div>
