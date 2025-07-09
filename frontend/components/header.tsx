@@ -75,14 +75,15 @@ export const Header = () => {
             {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <Image
               src={LOGO}
               alt="Dress for Success Logo"
-              width={160}
-              height={24}
-              className="dark:invert sm:w-[200px] sm:h-[30px]"
+              height={40} // Set a reasonable height
+              style={{ width: "auto", height: "40px" }} // Let width scale automatically
+              className="dark:invert sm:h-[40px]"
+              priority
+              width={160} // Set a reasonable width
             />
           </Link>
 

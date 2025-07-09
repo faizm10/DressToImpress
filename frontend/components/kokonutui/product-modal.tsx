@@ -141,7 +141,11 @@ export function AttireModel({
               ) : (
                 <div>
                   <h3 className="text-sm font-medium mb-2">Select dates:</h3>
-                  <p className="text-[11px] text-zinc-500 mb-2">Select a start date, then an end date to choose your rental period.</p>
+                  <p className="text-[11px] text-zinc-500 mb-2">
+                    Select a start date, then an end date to choose your rental period.
+                    <br />
+                    For same day rental, click the same date twice.
+                  </p>
                   <CustomCalendar
                     selected={dateRange}
                     onSelect={setDateRange}
