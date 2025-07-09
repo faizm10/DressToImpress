@@ -281,7 +281,7 @@ export default function ViewTable() {
                       <img
                         src={item.imageUrl || "/placeholder.svg"}
                         alt={item.name}
-                        className="w-50 h-50 object-cover rounded-md border"
+                        className="w-32 h-32 object-contain rounded-md border bg-white"
                         onError={(e) => {
                           e.currentTarget.src = "/placeholder.svg?height=48&width=48"
                         }}
@@ -388,10 +388,11 @@ export default function ViewTable() {
                                 <img
                                   src={editForm.imageUrl || "/placeholder.svg"}
                                   alt="Current"
-                                  className="w-24 h-24 object-cover rounded-md border mb-2"
+                                  className="w-40 h-40 object-contain rounded-md border mb-2 bg-white"
                                 />
                               )}
                               <AttireUpload onFileUpload={handleEditFileUpload} reset={editResetUpload} />
+                              <p className="text-[11px] text-zinc-500 mt-1">To update the image, upload a new file. Leave blank to keep the current image.</p>
                             </div>
                           </div>
                           <DialogFooter>
