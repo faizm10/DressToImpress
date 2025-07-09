@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ModeToggle } from "./theme-switcher";
+
 import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { usePathname } from "next/navigation";
 // import { categories } from "@/lib/data";
 import { Button } from "./ui/button";
 import { LOGO } from "@/lib/data";
+
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,6 +31,24 @@ export const Header = () => {
     setIsMenuOpen(false);
   }, [pathname]);
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isMenuOpen &&
+        !(event.target as Element).closest(".mobile-menu-container")
+      ) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [isMenuOpen]);
+
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
 
@@ -45,46 +64,58 @@ export const Header = () => {
           : "bg-white dark:bg-zinc-900"
       } border-b border-zinc-200 dark:border-zinc-800`}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20">
           {/* Mobile menu button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            className="md:hidden p-2 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <Image
               src={LOGO}
               alt="Dress for Success Logo"
-              width={200}
-              height={30}
-              className="dark:invert"
+              width={160}
+              height={24}
+              className="dark:invert sm:w-[200px] sm:h-[30px]"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          {/* <nav className="hidden md:flex items-center gap-1">
-            <div className="relative group ß">
-              <a href="/browse">Browse</a>
-            </div>
-          </nav> */}
-
-          {/* Right side actions */}
-          <div className="flex items-center gap-5">
-            <a href="#how-it-works" className="group">
+          <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+            <a
+              href="#how-it-works"
+              className="text-sm lg:text-base font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
               How It Works
             </a>
-            <a href="#rental-guidelines" className="group">
+            <a
+              href="#rental-guidelines"
+              className="text-sm lg:text-base font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
               Rental Guidelines
             </a>
-            <a href="/browse" className="group">
-              Clothing Catelogue
+            <a
+              href="/browse"
+              className="text-sm lg:text-base font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
+              Clothing Catalogue
             </a>
+          </nav>
+
+          {/* Right side - Desktop spacing */}
+          <div className="hidden md:block w-8">
+            {/* Empty div for layout balance */}
+          </div>
+
+          {/* Mobile spacing */}
+          <div className="md:hidden w-8">
+            {/* Empty div for layout balance */}
           </div>
         </div>
       </div>
@@ -97,17 +128,32 @@ export const Header = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden border-t border-zinc-200 dark:border-zinc-800"
+            className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 mobile-menu-container"
           >
-            <div className="container mx-auto px-4 py-4 space-y-4">
-              <div className="space-y-1">
-                <Link
-                  href="/explore"
-                  className="block py-2 text-sm font-medium"
+            <div className="container mx-auto px-4 sm:px-6 py-4">
+              <nav className="space-y-1">
+                <a
+                  href="#how-it-works"
+                  className="block py-3 px-2 text-base font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-md transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
                 >
-                  Explore
+                  How It Works
+                </a>
+                <a
+                  href="#rental-guidelines"
+                  className="block py-3 px-2 text-base font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-md transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Rental Guidelines
+                </a>
+                <Link
+                  href="/browse"
+                  className="block py-3 px-2 text-base font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-800 rounded-md transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Clothing Catalogue
                 </Link>
-              </div>
+              </nav>
             </div>
           </motion.div>
         )}
