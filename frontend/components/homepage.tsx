@@ -75,10 +75,10 @@ export function HomePage() {
 
       <main className="flex-1">
         {/* Hero Section - Enhanced with animations */}
-        <section className="relative bg-gradient-to-br from-[#CC0633] via-[#B8002F] to-[#A50028] text-white py-24 lg:py-32 overflow-hidden">
+        <section className="relative bg-[#E51937] text-white py-24 lg:py-32 overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
+            <div className="absolute inset-0 bg-[#E51937] from-white/5 to-transparent"></div>
           </div>
 
           {/* Floating Elements */}
@@ -212,7 +212,7 @@ export function HomePage() {
         </section>
 
         {/* CTA Section - Enhanced */}
-        <section className="py-20 bg-gradient-to-br from-[#CC0633] via-[#B8002F] to-[#A50028] text-white relative overflow-hidden">
+        <section className="py-20 bg-[#E51937] text-white relative overflow-hidden">
           {/* Background Elements */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-10 left-10 w-40 h-40 bg-white rounded-full blur-3xl animate-pulse"></div>
