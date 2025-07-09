@@ -100,14 +100,14 @@ export function AttireModel({
       />
       <motion.div
         layoutId={`product-${attire.id}`}
-        className="fixed inset-x-4 bottom-0 md:inset-[25%] z-50 bg-white dark:bg-zinc-900 rounded-t-xl md:rounded-xl overflow-hidden max-h-[80vh] md:max-h-[500px] overflow-y-auto"
+        className="fixed inset-x-2 bottom-0 md:inset-x-[15vw] md:inset-y-[8vh] z-50 bg-white dark:bg-zinc-900 rounded-t-xl md:rounded-xl overflow-hidden max-h-[92vh] md:max-h-[84vh] overflow-y-auto shadow-2xl"
       >
         <div className="h-full md:flex">
-          <div className="relative md:w-2/5">
+          <div className="relative md:w-1/2 flex items-center justify-center bg-zinc-100 dark:bg-zinc-800">
             <img
               src={attire.imageUrl ?? "/placeholder.png"}
               alt={attire.name}
-              className="w-full h-[200px] md:h-full object-cover"
+              className="w-full max-h-[60vh] md:max-h-[70vh] object-contain rounded-lg shadow-md"
             />
             <button
               onClick={onClose}
@@ -117,7 +117,7 @@ export function AttireModel({
             </button>
           </div>
 
-          <div className="p-3 md:w-3/5 flex flex-col">
+          <div className="p-4 md:w-1/2 flex flex-col">
             <div className="flex-1">
               <div className="flex justify-between items-start mb-2">
                 <div>
@@ -141,6 +141,7 @@ export function AttireModel({
               ) : (
                 <div>
                   <h3 className="text-sm font-medium mb-2">Select dates:</h3>
+                  <p className="text-[11px] text-zinc-500 mb-2">Select a start date, then an end date to choose your rental period.</p>
                   <CustomCalendar
                     selected={dateRange}
                     onSelect={setDateRange}
