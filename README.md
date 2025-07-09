@@ -43,6 +43,8 @@ The Dress For Success platform is designed for the University of Guelph's Lang S
 
 ## 📁 Project Structure
 
+
+
 ```
 frontend/
 ├── app/                    # Next.js app directory (routes & pages)
