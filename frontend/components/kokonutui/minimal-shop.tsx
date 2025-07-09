@@ -13,6 +13,7 @@ import type { CartItem } from "./cart-drawer"
 import { useAttires, type AttireWithUrl } from "@/hooks/use-attires"
 import type { DateRange } from "@/components/ui/custom-calendar"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function MinimalShop() {
   const [cart, setCart] = useState<CartItem[]>([])
@@ -20,6 +21,7 @@ export default function MinimalShop() {
   const [searchQuery, setSearchQuery] = useState("")
   const { attires, loading, error } = useAttires()
   const [selectedAttire, setSelectedAttire] = useState<AttireWithUrl | null>(null)
+  const [showOrderConfirmation, setShowOrderConfirmation] = useState(false)
 
   // Filter and sort states
   const [filters, setFilters] = useState<FilterOptions>({
@@ -182,9 +184,30 @@ export default function MinimalShop() {
 
       <AnimatePresence>
         {isCartOpen && (
-          <CartDrawer cart={cart} onClose={() => setIsCartOpen(false)} onRemoveFromCart={removeFromCart} />
+          <CartDrawer 
+            cart={cart} 
+            onClose={() => setIsCartOpen(false)} 
+            onRemoveFromCart={removeFromCart}
+            onOrderSuccess={() => {
+              setIsCartOpen(false);
+              setShowOrderConfirmation(true);
+            }}
+          />
         )}
       </AnimatePresence>
+
+      <Dialog open={showOrderConfirmation} onOpenChange={setShowOrderConfirmation}>
+        <DialogContent>
+          <div className="flex flex-col items-center text-center gap-3">
+            <span className="text-green-600 text-3xl">✔</span>
+            <h3 className="font-semibold text-lg">Order submitted!</h3>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">
+              Your order is currently pending approval. A member of our team will reach out via email shortly to confirm your order dates and provide pick up instructions.<br />
+              If you would like to make any changes to your order, please email <a href="mailto:langcareers@uoguelph.ca" className="underline">langcareers@uoguelph.ca</a>.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

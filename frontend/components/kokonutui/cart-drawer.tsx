@@ -29,6 +29,7 @@ interface CartDrawerProps {
   cart: CartItem[];
   onClose: () => void;
   onRemoveFromCart: (attireId: string) => void;
+  onOrderSuccess?: () => void;
 }
 
 interface FormData {
@@ -49,6 +50,7 @@ export function CartDrawer({
   cart,
   onClose,
   onRemoveFromCart,
+  onOrderSuccess,
 }: CartDrawerProps) {
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -58,7 +60,7 @@ export function CartDrawer({
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  // Remove isSubmitted state, will be handled by parent
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || "",
@@ -179,8 +181,10 @@ export function CartDrawer({
       //   throw new Error("Failed to update item statuses")
       // }
 
-      setIsSubmitted(true);
       cart.forEach((item) => onRemoveFromCart(item.id));
+      if (typeof onOrderSuccess === "function") {
+        onOrderSuccess();
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     } finally {
@@ -268,20 +272,8 @@ export function CartDrawer({
             onSubmit={handleSubmit}
             className="p-4 border-t border-zinc-200 dark:border-zinc-800"
           >
-            {isSubmitted ? (
-              <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg flex items-center gap-3">
-                <div className="bg-green-100 dark:bg-green-800 rounded-full p-1">
-                  <Check className="w-5 h-5 text-green-600 dark:text-green-300" />
-                </div>
-                <div>
-                  <h3 className="font-medium">Order Submitted</h3>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                    Your order is pending approval
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <>
+            {/* Success message handled by parent modal */}
+            <>
                 <div className="flex space-x-2">
                   <div className="mb-4 w-1/2">
                     <Label
@@ -391,7 +383,7 @@ export function CartDrawer({
                   )}
                 </Button>
               </>
-            )}
+            
           </form>
         </div>
       </motion.div>
