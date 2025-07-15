@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@supabase/supabase-js";
-import { format } from "date-fns";
+import { format, addDays } from "date-fns";
 import type { DateRange } from "@/components/ui/custom-calendar";
+import { toast } from "sonner";
 
 // Update CartItem to include dateRange
 export interface CartItem {
@@ -116,7 +117,16 @@ export function CartDrawer({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm()) return;
+    // Run validation
+    const valid = validateForm();
+    if (!valid) {
+      if (formData.email && !formData.email.endsWith("uoguelph.ca")) {
+        toast.warning("Email address must end with uoguelph.ca");
+      } else {
+        toast.error("Please fill in all required fields correctly.");
+      }
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -151,17 +161,19 @@ export function CartDrawer({
       if (!studentId) throw new Error("Failed to get student ID");
 
       //create the request for each attires by user's ID
-      const attireRequests = cart.map((item) => ({
-        student_id: studentId,
-        attire_id: item.id,
-        // status: "pending",
-        use_start_date: item.dateRange?.from
-          ? format(item.dateRange.from, "yyyy-MM-dd")
-          : null,
-        use_end_date: item.dateRange?.to
-          ? format(item.dateRange.to, "yyyy-MM-dd")
-          : null,
-      }));
+      const attireRequests = cart.map((item) => {
+        const startDate = item.dateRange?.from;
+        const endDate = item.dateRange?.to;
+        // Add a 1-week buffer to the end date
+        const bufferedEndDate = endDate ? addDays(endDate, 7) : null;
+        return {
+          student_id: studentId,
+          attire_id: item.id,
+          // status: "pending",
+          use_start_date: startDate ? format(startDate, "yyyy-MM-dd") : null,
+          use_end_date: bufferedEndDate ? format(bufferedEndDate, "yyyy-MM-dd") : null,
+        };
+      });
 
       // Insert attire requests
       const { error: attireRequestError } = await supabase
@@ -291,11 +303,6 @@ export function CartDrawer({
                         errors.firstName ? "border-red-500" : ""
                       }`}
                     />
-                    {errors.firstName && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.firstName}
-                      </p>
-                    )}
                   </div>
                   <div className="mb-4 w-1/2">
                     <Label
@@ -313,11 +320,6 @@ export function CartDrawer({
                         errors.lastName ? "border-red-500" : ""
                       }`}
                     />
-                    {errors.lastName && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.lastName}
-                      </p>
-                    )}
                   </div>
                 </div>
                 <div className="flex space-x-2">
@@ -337,11 +339,6 @@ export function CartDrawer({
                         errors.studentId ? "border-red-500" : ""
                       }`}
                     />
-                    {errors.studentId && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.studentId}
-                      </p>
-                    )}
                   </div>
 
                   <div className="w-2/3">
@@ -360,17 +357,11 @@ export function CartDrawer({
                         errors.email ? "border-red-500" : ""
                       }`}
                     />
-                    {errors.email && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.email}
-                      </p>
-                    )}
                   </div>
                 </div>
                 {/* Checkout button */}
                 <Button
                   type="submit"
-                  disabled={!isFormValid || isSubmitting}
                   className="w-full py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-base font-medium rounded-lg hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
@@ -382,6 +373,12 @@ export function CartDrawer({
                     "Checkout"
                   )}
                 </Button>
+                {/* Helper message for disabled button */}
+                {(!isFormValid && !isSubmitting) && (
+                  <p className="mt-2 text-xs text-yellow-600 text-center">
+                    Please fill in all fields correctly and use your uoguelph.ca email to enable checkout.
+                  </p>
+                )}
               </>
             
           </form>

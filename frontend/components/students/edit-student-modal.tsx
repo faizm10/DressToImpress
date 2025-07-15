@@ -199,7 +199,7 @@ export function EditStudentModal({
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Approved">
+                    {/* <SelectItem value="Approved">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full" />
                         Approved
@@ -216,7 +216,7 @@ export function EditStudentModal({
                         <div className="w-2 h-2 bg-red-500 rounded-full" />
                         Suspended
                       </div>
-                    </SelectItem>
+                    </SelectItem> */}
                     <SelectItem value="Inactive">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-gray-500 rounded-full" />

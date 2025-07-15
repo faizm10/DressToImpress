@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { AttireRequest } from "@/types/students";
+import { subDays } from "date-fns";
 
 interface AttireRequestWithStudentAndAttire extends AttireRequest {
   students: {
@@ -397,15 +398,19 @@ export function AttireCalendar() {
                               {request.attires.name}
                             </span>
                           </div>
-                          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                            <Clock className="h-3.5 w-3.5" />
-                            <span>
-                              {new Date(request.use_start_date).toLocaleDateString()}
-                            </span>
-                            <span>-</span>
-                            <span>
-                              {new Date(request.use_end_date).toLocaleDateString()}
-                            </span>
+                          <div className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                              <Clock className="h-3.5 w-3.5" />
+                              <span className="font-medium">Rental:</span>
+                              <span>{new Date(request.use_start_date).toLocaleDateString()}</span>
+                              <span>-</span>
+                              <span>{request.use_end_date ? subDays(new Date(request.use_end_date), 7).toLocaleDateString() : "-"}</span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-zinc-400 pl-6 border-l border-zinc-200 dark:border-zinc-700 mt-1">
+                              <CalendarIcon className="h-3 w-3 opacity-70" />
+                              <span>Buffer until</span>
+                              <span className="font-mono">{request.use_end_date ? new Date(request.use_end_date).toLocaleDateString() : "-"}</span>
+                            </div>
                           </div>
                         </div>
                       ))}

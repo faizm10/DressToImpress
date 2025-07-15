@@ -10,6 +10,7 @@ export interface Attire {
   size: string;
   category: string;
   file_name: string;
+  status?: string;
 }
 
 export interface AttireWithUrl extends Attire {

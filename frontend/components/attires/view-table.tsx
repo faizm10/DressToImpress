@@ -36,6 +36,7 @@ import { toast } from "sonner"
 
 const sizes = ["S", "M", "L", "XL", "No Size"] as const
 const genders = ["Men", "Female"] as const
+const itemStatuses = ["Ready to be rented", "Rented", "Waiting to be cleaned"] as const;
 
 export default function ViewTable() {
   const [supabase] = useState(() => createClient())
@@ -51,6 +52,7 @@ export default function ViewTable() {
     fileName: "",
     file: null as File | null,
     imageUrl: "",
+    status: "Ready to be rented",
   })
   const [editResetUpload, setEditResetUpload] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -64,7 +66,7 @@ export default function ViewTable() {
       // 1) fetch rows from your DB
       const { data, error: dbError } = await supabase
         .from("attires")
-        .select("id, name, gender, size, category, file_name")
+        .select("id, name, gender, size, category, file_name, status")
 
       if (dbError) {
         throw new Error(dbError.message)
@@ -120,6 +122,7 @@ export default function ViewTable() {
       fileName: item.file_name,
       file: null,
       imageUrl: item.imageUrl || "",
+      status: item.status || "Ready to be rented",
     })
     setEditResetUpload(false)
   }, [])
@@ -170,6 +173,7 @@ export default function ViewTable() {
           size: editForm.size,
           category: editForm.category,
           file_name: finalFileName, // Use the final file name (original or new)
+          status: editForm.status,
         })
         .eq("id", editItem.id)
 
@@ -251,6 +255,7 @@ export default function ViewTable() {
           <TableHeader>
             <TableRow>
               <TableHead>Item Name</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Gender</TableHead>
               <TableHead>Size</TableHead>
               <TableHead>Category</TableHead>
@@ -269,6 +274,25 @@ export default function ViewTable() {
               attires.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.name}</TableCell>
+                  <TableCell>
+                    <Select
+                      value={item.status || "Ready to be rented"}
+                      onValueChange={async (value) => {
+                        await supabase.from("attires").update({ status: value }).eq("id", item.id);
+                        toast.success("Item status updated");
+                        loadAttires();
+                      }}
+                    >
+                      <SelectTrigger className="w-[160px]">
+                        <SelectValue placeholder="Ready to be rented" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {itemStatuses.map((status) => (
+                          <SelectItem key={status} value={status}>{status}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
                   <TableCell>{item.gender}</TableCell>
                   <TableCell>
                     <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground">
@@ -320,6 +344,23 @@ export default function ViewTable() {
                                 onChange={(e) => handleEditChange("name", e.target.value)}
                                 placeholder="Enter item name"
                               />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="edit-status">Item Status</Label>
+                              <Select
+                                value={editForm.status}
+                                onValueChange={(value) => handleEditChange("status", value)}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {itemStatuses.map((status) => (
+                                    <SelectItem key={status} value={status}>{status}</SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </div>
 
                             <div className="space-y-2">
