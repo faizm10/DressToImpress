@@ -37,11 +37,11 @@ export default async function Docs() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Shirt className="h-8 w-8 text-primary" />
-                <h1 className="text-4xl font-bold tracking-tight">Attire Management System</h1>
+                <h1 className="text-4xl font-bold tracking-tight">Clothing Management System</h1>
                 <Badge variant="secondary">User Guide</Badge>
               </div>
               <p className="text-xl text-muted-foreground max-w-3xl">
-                Complete guide for managing the University of Guelph's attire rental system. 
+                Complete guide for managing the University of Guelph's clothing rental system. 
                 Everything you need to handle clothing inventory, student requests, and daily operations.
               </p>
             </div>
@@ -54,7 +54,7 @@ export default async function Docs() {
                   How to Use the Admin Dashboard
                 </CardTitle>
                 <CardDescription>
-                  The dashboard is your central hub for managing all aspects of the attire rental system. Here's how to use its key features:
+                  The dashboard is your central hub for managing all aspects of the clothing rental system. Here's how to use its key features:
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -95,7 +95,7 @@ export default async function Docs() {
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                This guide is designed for staff members who manage the attire system. No technical knowledge required!
+                This guide is designed for staff members who manage the clothing system. No technical knowledge required!
               </AlertDescription>
             </Alert>
 

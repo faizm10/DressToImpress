@@ -174,8 +174,8 @@ export default function AttireUploadForm() {
   return (
     <Card className="max-w-2xl w-full mx-auto">
       <CardHeader>
-        <CardTitle>Upload Attire</CardTitle>
-        <CardDescription>Add a new attire item with image to your collection</CardDescription>
+        <CardTitle>Upload Clothing</CardTitle>
+        <CardDescription>Add a new clothing item with image to your collection</CardDescription>
       </CardHeader>
 
       <form onSubmit={handleSubmit}>
@@ -272,7 +272,7 @@ export default function AttireUploadForm() {
                 Uploading...
               </>
             ) : (
-              "Upload Attire"
+              "Upload Clothing"
             )}
           </Button>
         </CardFooter>

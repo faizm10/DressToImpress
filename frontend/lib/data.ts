@@ -10,12 +10,12 @@ export const data = {
       icon: Home,
     },
     {
-      title: "Add Attires",
+      title: "Add Clothes",
       url: "/add",
       icon: Plus,
     },
     {
-      title: "View Attires",
+      title: "View Clothes",
       url: "/view",
       icon: View,
     },

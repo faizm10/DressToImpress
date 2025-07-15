@@ -127,7 +127,7 @@ export default async function ProtectedPage() {
                   <CardContent>
                     <div className="text-2xl font-bold">Schedule</div>
                     <CardDescription className="text-xs text-muted-foreground">
-                      View and manage attire schedules
+                      View and manage clothes schedules
                     </CardDescription>
                   </CardContent>
                 </Card>
@@ -136,13 +136,13 @@ export default async function ProtectedPage() {
               <Link href="/students">
                 <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:-translate-y-1">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Student Records</CardTitle>
+                    <CardTitle className="text-sm font-medium">Requests</CardTitle>
                     <Users className="h-4 w-4 text-muted-foreground group-hover:text-[#E51937] transition-colors" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">Manage</div>
                     <CardDescription className="text-xs text-muted-foreground">
-                      View and manage student information
+                      View and manage student's request
                     </CardDescription>
                   </CardContent>
                 </Card>
@@ -151,7 +151,7 @@ export default async function ProtectedPage() {
               <Link href="/add">
                 <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:-translate-y-1">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Add Attire</CardTitle>
+                    <CardTitle className="text-sm font-medium">Add Clothes</CardTitle>
                     <Plus className="h-4 w-4 text-muted-foreground group-hover:text-[#E51937] transition-colors" />
                   </CardHeader>
                   <CardContent>
@@ -172,7 +172,7 @@ export default async function ProtectedPage() {
                   <CardContent>
                     <div className="text-2xl font-bold">Browse</div>
                     <CardDescription className="text-xs text-muted-foreground">
-                      View all available attire
+                      View all available clothes
                     </CardDescription>
                   </CardContent>
                 </Card>
@@ -198,7 +198,7 @@ export default async function ProtectedPage() {
 
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Available Attire</CardTitle>
+                    <CardTitle className="text-sm font-medium">Available Items</CardTitle>
                     <Package className="h-4 w-4 text-[#E51937]" />
                   </CardHeader>
                   <CardContent>
