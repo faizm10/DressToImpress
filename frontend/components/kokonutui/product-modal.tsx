@@ -36,7 +36,7 @@ export function AttireModel({
 
       const { data, error } = await supabase
         .from("attire_requests")
-        .select("use_start_date, use_end_date")
+        .select("use_start_date, use_end_date, buffer")
         .eq("attire_id", attire.id);
 
       if (error) {
@@ -45,17 +45,19 @@ export function AttireModel({
         return;
       }
 
-      // Process the data to get all dates between start and end dates
+      // Process the data to get all dates between start and end dates, including buffer
       const allUnavailableDates: Date[] = [];
 
       data.forEach((booking) => {
         if (booking.use_start_date && booking.use_end_date) {
           const startDate = parseISO(booking.use_start_date);
           const endDate = parseISO(booking.use_end_date);
+          const bufferDays = Number(booking.buffer ?? 7);
+          const bufferEndDate = addDays(endDate, bufferDays);
 
-          // Generate all dates between start and end
+          // Generate all dates between start and end + buffer
           let currentDate = startDate;
-          while (currentDate <= endDate) {
+          while (currentDate <= bufferEndDate) {
             allUnavailableDates.push(new Date(currentDate));
             currentDate = addDays(currentDate, 1);
           }
