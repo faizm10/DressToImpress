@@ -265,10 +265,16 @@ export function StudentsTable() {
                       onValueChange={async (value) => {
                         const supabase = createSupabaseClient()
                         await supabase.from("attire_requests").update({ status: value }).eq("id", req.id)
+                        if (value === "Out for rent") {
+                          await supabase
+                            .from("attires")
+                            .update({ status: "Out for Rent" })
+                            .eq("id", req.attire_id)
+                        }
                         if (value === "Returned") {
                           await supabase
                             .from("attires")
-                            .update({ status: "Waiting to be cleaned" })
+                            .update({ status: "Ready To be Cleaned" })
                             .eq("id", req.attire_id)
                         }
                         toast.success("Rental status updated")

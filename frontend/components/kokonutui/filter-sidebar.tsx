@@ -87,31 +87,6 @@ export function FilterSidebar({
       </SidebarHeader>
 
       <SidebarContent className="p-4">
-        {/* Sort Section */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="flex items-center gap-2 mb-3">
-            <ArrowUpDown className="h-4 w-4" />
-            Sort By
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <Select value={sortOption} onValueChange={onSortChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {sortOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator className="my-4" />
-
-        {/* Gender Filter - First */}
         <SidebarGroup>
           <SidebarGroupLabel className="mb-3">Gender</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -132,8 +107,6 @@ export function FilterSidebar({
         </SidebarGroup>
 
         <SidebarSeparator className="my-4" />
-
-        {/* Category Filter - Second */}
         <SidebarGroup>
           <SidebarGroupLabel className="mb-3">Category</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -171,6 +144,26 @@ export function FilterSidebar({
                 {sizeOptions.map((size) => (
                   <SelectItem key={size.value} value={size.value}>
                     {size.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel className="flex items-center gap-2 mb-3">
+            <ArrowUpDown className="h-4 w-4" />
+            Sort By
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <Select value={sortOption} onValueChange={onSortChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {sortOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
                   </SelectItem>
                 ))}
               </SelectContent>

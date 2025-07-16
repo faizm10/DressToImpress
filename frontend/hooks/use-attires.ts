@@ -12,8 +12,15 @@ export interface Attire {
   file_name: string;
 }
 
-export interface AttireWithUrl extends Attire {
-  imageUrl: string | null;
+export interface AttireWithUrl {
+  id: string;
+  name: string;
+  gender: string;
+  size: string;
+  category: string;
+  file_name: string;
+  imageUrl?: string | null;
+  status?: string;
 }
 
 export function useAttires() {
