@@ -18,6 +18,8 @@ import type { AttireRequest } from "@/types/students";
 import { subDays, addDays } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
 
 interface AttireRequestWithStudentAndAttire extends AttireRequest {
   students: {
@@ -52,6 +54,10 @@ export function AttireCalendar() {
   const [loading, setLoading] = useState(true);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [bufferDaysMap, setBufferDaysMap] = useState<{ [id: string]: number }>({});
+  const [calendarView, setCalendarView] = useState<'rental' | 'rental+buffer'>('rental');
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [studentFilter, setStudentFilter] = useState<string>("");
+  const [attireFilter, setAttireFilter] = useState<string>("");
 
   // Fetch attire requests with student information
   const fetchAttireRequests = async () => {
@@ -196,6 +202,28 @@ export function AttireCalendar() {
     }
   };
 
+  // Helper to determine if a day is a rental or buffer day for an event
+  function getDayTypeForEvent(day: Date, event: CalendarEvent): 'rental' | 'buffer' | null {
+    const rentalStart = new Date(event.start);
+    const rentalEnd = new Date(event.end);
+    const bufferDays = Number(bufferDaysMap[event.id] ?? 7);
+    const bufferStart = new Date(rentalEnd);
+    bufferStart.setDate(bufferStart.getDate() + 1);
+    const bufferEnd = new Date(rentalEnd);
+    bufferEnd.setDate(bufferEnd.getDate() + bufferDays);
+    if (day >= rentalStart && day <= rentalEnd) return 'rental';
+    if (calendarView === 'rental+buffer' && day >= bufferStart && day <= bufferEnd) return 'buffer';
+    return null;
+  }
+
+  // Filter events for calendar based on selected filters
+  const filteredCalendarEvents = calendarEvents.filter(event => {
+    const statusMatch = !statusFilter || event.status === statusFilter;
+    const studentMatch = !studentFilter || event.studentId === studentFilter;
+    const attireMatch = !attireFilter || event.attireId === attireFilter;
+    return statusMatch && studentMatch && attireMatch;
+  });
+
   const monthNames = [
     "January",
     "February",
@@ -218,6 +246,54 @@ export function AttireCalendar() {
 
   return (
     <div className="space-y-8">
+      {/* View Toggle Tabs */}
+      <div className="flex justify-end mb-4">
+        <Tabs value={calendarView} onValueChange={v => setCalendarView(v as 'rental' | 'rental+buffer')}>
+          <TabsList>
+            <TabsTrigger value="rental">Rental Only</TabsTrigger>
+            <TabsTrigger value="rental+buffer">Rental + Buffer</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+      {/* Filter UI */}
+      <div className="flex flex-wrap gap-4 items-center mb-4">
+        <div>
+          <Label>Status</Label>
+          <Select value={statusFilter || undefined} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-32" />
+            <SelectContent>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="rejected">Rejected</SelectItem>
+              <SelectItem value="returned">Returned</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Student</Label>
+          <Select value={studentFilter} onValueChange={setStudentFilter}>
+            <SelectTrigger className="w-40"  />
+            <SelectContent>
+              {allStudents.map(s => (
+                <SelectItem key={s.student_id} value={s.student_id}>
+                  {s.first_name} {s.last_name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label>Attire</Label>
+          <Select value={attireFilter} onValueChange={setAttireFilter}>
+            <SelectTrigger className="w-40"  />
+            <SelectContent>
+              {[...new Set(attireRequests.map(r => r.attires.name))].map(name => (
+                <SelectItem key={name} value={name}>{name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
       {/* Header */}
       <div className="flex items-center justify-between bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border">
         <div className="flex items-center space-x-4">
@@ -245,7 +321,7 @@ export function AttireCalendar() {
       </div>
 
       {/* Calendar Navigation */}
-      {/* <Card className="border-none shadow-lg rounded-xl overflow-hidden">
+      <Card className="border-none shadow-lg rounded-xl overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-50/50 dark:from-gray-900 dark:to-gray-900/50 border-b px-6 py-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-semibold">
@@ -295,7 +371,11 @@ export function AttireCalendar() {
               {calendarDays.map((day, index) => {
                 const isCurrentMonth = day.getMonth() === currentMonth;
                 const isToday = day.toDateString() === new Date().toDateString();
-                const events = getEventsForDay(day);
+                // For each event, check if this day is rental or buffer
+                const eventsForDay = filteredCalendarEvents.map(event => ({
+                  event,
+                  type: getDayTypeForEvent(day, event)
+                })).filter(e => e.type);
 
                 return (
                   <div
@@ -313,11 +393,15 @@ export function AttireCalendar() {
                     </div>
 
                     <div className="space-y-1.5">
-                      {events.slice(0, 3).map((event) => (
+                      {eventsForDay.slice(0, 3).map(({ event, type }) => (
                         <div
                           key={`${event.id}-${day.toISOString()}`}
-                          className={`text-xs p-2 rounded-lg border ${getStatusColor(event.status)} hover:shadow-sm transition-all duration-200`}
-                          title={`${event.student} - ${event.attireName} (${event.status})`}
+                          className={`text-xs p-2 rounded-lg border hover:shadow-sm transition-all duration-200 ${
+                            type === 'rental'
+                              ? 'bg-blue-100 text-blue-800 border-blue-200'
+                              : 'bg-orange-100 text-orange-800 border-orange-200'
+                          }`}
+                          title={`${event.student} - ${event.attireName} (${event.status}) [${type}]`}
                         >
                           <div className="flex items-center space-x-1.5">
                             <User className="h-3.5 w-3.5 flex-shrink-0" />
@@ -327,12 +411,15 @@ export function AttireCalendar() {
                             <Package className="h-3.5 w-3.5 flex-shrink-0" />
                             <span className="truncate">{event.attireName}</span>
                           </div>
+                          <div className="flex items-center space-x-1.5 mt-1 text-xs">
+                            <span>{type === 'rental' ? 'Rental' : 'Buffer'}</span>
+                          </div>
                         </div>
                       ))}
 
-                      {events.length > 3 && (
+                      {eventsForDay.length > 3 && (
                         <div className="text-xs text-muted-foreground p-1.5 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                          +{events.length - 3} more
+                          +{eventsForDay.length - 3} more
                         </div>
                       )}
                     </div>
@@ -342,28 +429,36 @@ export function AttireCalendar() {
             </div>
           )}
         </CardContent> 
-      </Card> */}
+      </Card> 
 
       {/* Legend */}
       <Card className="border-none shadow-lg rounded-xl overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-50/50 dark:from-gray-900 dark:to-gray-900/50 border-b px-6 py-4">
-          <CardTitle className="text-lg font-semibold">Status Legend</CardTitle>
+          <CardTitle className="text-lg font-semibold">Status & Period Legend</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-800 dark:to-gray-800/50 rounded-lg">
+            <div className="flex items-center space-x-3 p-3 bg-blue-100 rounded-lg">
+              <span className="inline-block w-4 h-4 rounded-full bg-blue-400 border border-blue-600" />
+              <span className="text-sm text-blue-800 font-semibold">Rental Period</span>
+            </div>
+            <div className="flex items-center space-x-3 p-3 bg-orange-100 rounded-lg">
+              <span className="inline-block w-4 h-4 rounded-full bg-orange-400 border border-orange-600" />
+              <span className="text-sm text-orange-800 font-semibold">Buffer Period</span>
+            </div>
+            <div className="flex items-center space-x-3 p-3 bg-green-100 rounded-lg">
               <Badge className="bg-green-100 text-green-800 border-green-200">Approved</Badge>
               <span className="text-sm text-muted-foreground">Request approved</span>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-800 dark:to-gray-800/50 rounded-lg">
+            <div className="flex items-center space-x-3 p-3 bg-yellow-100 rounded-lg">
               <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">Pending</Badge>
               <span className="text-sm text-muted-foreground">Awaiting approval</span>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-800 dark:to-gray-800/50 rounded-lg">
+            <div className="flex items-center space-x-3 p-3 bg-red-100 rounded-lg">
               <Badge className="bg-red-100 text-red-800 border-red-200">Rejected</Badge>
               <span className="text-sm text-muted-foreground">Request rejected</span>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-800 dark:to-gray-800/50 rounded-lg">
+            <div className="flex items-center space-x-3 p-3 bg-blue-100 rounded-lg">
               <Badge className="bg-blue-100 text-blue-800 border-blue-200">Returned</Badge>
               <span className="text-sm text-muted-foreground">Attire returned</span>
             </div>
