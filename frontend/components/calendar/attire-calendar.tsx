@@ -15,7 +15,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import type { AttireRequest } from "@/types/students";
-import { subDays } from "date-fns";
+import { subDays, addDays } from "date-fns";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface AttireRequestWithStudentAndAttire extends AttireRequest {
   students: {
@@ -49,6 +51,7 @@ export function AttireCalendar() {
   >([]);
   const [loading, setLoading] = useState(true);
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
+  const [bufferDaysMap, setBufferDaysMap] = useState<{ [id: string]: number }>({});
 
   // Fetch attire requests with student information
   const fetchAttireRequests = async () => {
@@ -135,9 +138,8 @@ export function AttireCalendar() {
   // Get events for a specific day
   const getEventsForDay = (date: Date) => {
     return calendarEvents.filter((event) => {
-      const eventStart = new Date(event.start);
-      const eventEnd = new Date(event.end);
-
+      const eventStart = addDays(new Date(event.start), 1);
+      const eventEnd = addDays(new Date(event.end), 1);
       // Check if the date falls within the event range
       return date >= eventStart && date <= eventEnd;
     });
@@ -206,10 +208,10 @@ export function AttireCalendar() {
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-[#E51937] to-[#E51937]/80 bg-clip-text text-transparent">
-              Attire Calendar
+              Rental Request Calendar
             </h1>
             <p className="text-muted-foreground mt-1">
-              View and manage attire request schedules
+              View and manage rental requests
             </p>
           </div>
         </div>
@@ -225,7 +227,7 @@ export function AttireCalendar() {
       </div>
 
       {/* Calendar Navigation */}
-      <Card className="border-none shadow-lg rounded-xl overflow-hidden">
+      {/* <Card className="border-none shadow-lg rounded-xl overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-50/50 dark:from-gray-900 dark:to-gray-900/50 border-b px-6 py-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-semibold">
@@ -261,7 +263,7 @@ export function AttireCalendar() {
             </div>
           ) : (
             <div className="grid grid-cols-7 gap-2">
-              {/* Day headers */}
+
               {dayNames.map((day) => (
                 <div
                   key={day}
@@ -271,7 +273,7 @@ export function AttireCalendar() {
                 </div>
               ))}
 
-              {/* Calendar days */}
+              
               {calendarDays.map((day, index) => {
                 const isCurrentMonth = day.getMonth() === currentMonth;
                 const isToday = day.toDateString() === new Date().toDateString();
@@ -321,8 +323,8 @@ export function AttireCalendar() {
               })}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </CardContent> 
+      </Card> */}
 
       {/* Legend */}
       <Card className="border-none shadow-lg rounded-xl overflow-hidden">
@@ -354,7 +356,9 @@ export function AttireCalendar() {
       {/* Students List */}
       <Card className="border-none shadow-lg rounded-xl overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-50/50 dark:from-gray-900 dark:to-gray-900/50 border-b px-6 py-4">
-          <CardTitle className="text-lg font-semibold">All Students & Attire Requests</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg font-semibold">All Students & Attire Requests</CardTitle>
+          </div>
         </CardHeader>
         <CardContent className="p-6">
           <div className="space-y-4">
@@ -402,14 +406,28 @@ export function AttireCalendar() {
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Clock className="h-3.5 w-3.5" />
                               <span className="font-medium">Rental:</span>
-                              <span>{new Date(request.use_start_date).toLocaleDateString()}</span>
+                              <span>{request.use_start_date ? addDays(new Date(request.use_start_date), 1).toLocaleDateString() : "-"}</span>
                               <span>-</span>
-                              <span>{request.use_end_date ? subDays(new Date(request.use_end_date), 7).toLocaleDateString() : "-"}</span>
+                              <span>{request.use_end_date ? addDays(new Date(request.use_end_date), 1).toLocaleDateString() : "-"}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs text-zinc-400 pl-6 border-l border-zinc-200 dark:border-zinc-700 mt-1">
                               <CalendarIcon className="h-3 w-3 opacity-70" />
                               <span>Buffer until</span>
-                              <span className="font-mono">{request.use_end_date ? new Date(request.use_end_date).toLocaleDateString() : "-"}</span>
+                              <span className="font-mono">
+                                {request.use_end_date
+                                  ? addDays(new Date(request.use_end_date), bufferDaysMap[request.id] ?? 7).toLocaleDateString()
+                                  : "-"}
+                              </span>
+                              <Label htmlFor={`buffer-days-${request.id}`} className="ml-2">Buffer (days):</Label>
+                              <Input
+                                id={`buffer-days-${request.id}`}
+                                type="number"
+                                min={0}
+                                value={bufferDaysMap[request.id] ?? 7}
+                                onChange={e => setBufferDaysMap(map => ({ ...map, [request.id]: Number(e.target.value) }))}
+                                className="w-16"
+                              />
+                              <span title="Buffer is the number of days after the rental ends." className="ml-1 text-xs text-zinc-400">🛈</span>
                             </div>
                           </div>
                         </div>

@@ -164,14 +164,11 @@ export function CartDrawer({
       const attireRequests = cart.map((item) => {
         const startDate = item.dateRange?.from;
         const endDate = item.dateRange?.to;
-        // Add a 1-week buffer to the end date
-        const bufferedEndDate = endDate ? addDays(endDate, 7) : null;
         return {
           student_id: studentId,
           attire_id: item.id,
-          // status: "pending",
           use_start_date: startDate ? format(startDate, "yyyy-MM-dd") : null,
-          use_end_date: bufferedEndDate ? format(bufferedEndDate, "yyyy-MM-dd") : null,
+          use_end_date: endDate ? format(endDate, "yyyy-MM-dd") : null,
         };
       });
 
@@ -375,11 +372,11 @@ export function CartDrawer({
                   )}
                 </Button>
                 {/* Helper message for disabled button */}
-                {(!isFormValid && !isSubmitting) && (
+                {/* {(!isFormValid && !isSubmitting) && (
                   <p className="mt-2 text-xs text-yellow-600 text-center">
                     Please fill in all fields correctly and use your uoguelph.ca email to enable checkout.
                   </p>
-                )}
+                )} */}
               </>
             
           </form>

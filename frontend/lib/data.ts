@@ -20,7 +20,7 @@ export const data = {
       icon: View,
     },
     {
-      title: "Student's Records",
+      title: "Student Requests",
       url: "/students",
       icon: Table,
     },
