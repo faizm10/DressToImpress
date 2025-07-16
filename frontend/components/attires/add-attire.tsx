@@ -36,7 +36,6 @@ export default function AttireUploadForm() {
   // Form submission state
   const [uploading, setUploading] = useState(false)
   const [msg, setMsg] = useState("")
-  const [status, setStatus] = useState<"idle" | "success" | "error">("idle")
 
   // Initialize the Supabase upload hook
   const dropzoneProps = useSupabaseUpload({
@@ -75,7 +74,6 @@ export default function AttireUploadForm() {
     // Clear the success message after a short delay
     setTimeout(() => {
       setMsg("")
-      setStatus("idle")
     }, 2000)
 
     // Reset the resetUpload flag after a short delay
@@ -137,13 +135,11 @@ export default function AttireUploadForm() {
 
     if (!name || !size || !fileName || !file || !gender || !category) {
       setMsg("Please fill all fields and upload an image.")
-      setStatus("error")
       return
     }
 
     setUploading(true)
     setMsg("")
-    setStatus("idle")
 
     // Insert metadata - the file is already being uploaded by the Dropzone component
     const { error: insertError } = await supabase.from("attires").insert({
@@ -157,14 +153,12 @@ export default function AttireUploadForm() {
     if (insertError) {
       console.error(insertError.message)
       setMsg("Database insert failed")
-      setStatus("error")
       setUploading(false)
       return
     }
 
     // Success!
     setMsg("Upload successful!")
-    setStatus("success")
     setUploading(false)
 
     // Reset the entire form including the upload component
@@ -256,9 +250,9 @@ export default function AttireUploadForm() {
             {fileName && <p className="text-xs text-muted-foreground mt-1">Selected file: {fileName}</p>}
           </div>
 
-          {status !== "idle" && (
-            <Alert variant={status === "success" ? "default" : "destructive"}>
-              {status === "success" ? <Check className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+          {msg && (
+            <Alert variant="default">
+              <Check className="h-4 w-4" />
               <AlertDescription>{msg}</AlertDescription>
             </Alert>
           )}

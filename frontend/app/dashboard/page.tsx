@@ -163,7 +163,7 @@ export default async function ProtectedPage() {
                 </Card>
               </Link>
 
-              <Link href="/list">
+              <Link href="/view">
                 <Card className="hover:shadow-lg transition-all duration-200 cursor-pointer group hover:-translate-y-1">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">View Inventory</CardTitle>

@@ -36,7 +36,6 @@ import { toast } from "sonner"
 
 const sizes = ["S", "M", "L", "XL", "No Size"] as const
 const genders = ["Men", "Female"] as const
-const itemStatuses = ["Ready to be rented", "Rented", "Waiting to be cleaned"] as const;
 
 export default function ViewTable() {
   const [supabase] = useState(() => createClient())
@@ -52,11 +51,14 @@ export default function ViewTable() {
     fileName: "",
     file: null as File | null,
     imageUrl: "",
-    status: "Ready to be rented",
   })
   const [editResetUpload, setEditResetUpload] = useState(false)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [search, setSearch] = useState("")
+  const [filterGender, setFilterGender] = useState("all")
+  const [filterSize, setFilterSize] = useState("all")
+  const [filterCategory, setFilterCategory] = useState("all")
 
   const loadAttires = useCallback(async () => {
     try {
@@ -66,7 +68,7 @@ export default function ViewTable() {
       // 1) fetch rows from your DB
       const { data, error: dbError } = await supabase
         .from("attires")
-        .select("id, name, gender, size, category, file_name, status")
+        .select("id, name, gender, size, category, file_name")
 
       if (dbError) {
         throw new Error(dbError.message)
@@ -122,7 +124,6 @@ export default function ViewTable() {
       fileName: item.file_name,
       file: null,
       imageUrl: item.imageUrl || "",
-      status: item.status || "Ready to be rented",
     })
     setEditResetUpload(false)
   }, [])
@@ -173,7 +174,6 @@ export default function ViewTable() {
           size: editForm.size,
           category: editForm.category,
           file_name: finalFileName, // Use the final file name (original or new)
-          status: editForm.status,
         })
         .eq("id", editItem.id)
 
@@ -249,13 +249,65 @@ export default function ViewTable() {
 
   return (
     <div className="space-y-4">
+      {/* Search and Filter Controls */}
+      <div className="flex flex-wrap gap-4 items-end mb-2">
+        <div>
+          <Label htmlFor="search">Search</Label>
+          <Input
+            id="search"
+            placeholder="Search by name..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="w-48"
+          />
+        </div>
+        <div>
+          <Label htmlFor="filter-gender">Gender</Label>
+          <Select value={filterGender} onValueChange={setFilterGender}>
+            <SelectTrigger id="filter-gender" className="w-32">
+              <SelectValue placeholder="All" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              {genders.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="filter-size">Size</Label>
+          <Select value={filterSize} onValueChange={setFilterSize}>
+            <SelectTrigger id="filter-size" className="w-32">
+              <SelectValue placeholder="All" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              {sizes.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="filter-category">Category</Label>
+          <Select value={filterCategory} onValueChange={setFilterCategory}>
+            <SelectTrigger id="filter-category" className="w-40">
+              <SelectValue placeholder="All" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              {[...new Set((filterGender === "Men" ? menCategories : filterGender === "Female" ? womenCategories : [...menCategories, ...womenCategories]))].map(c => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button variant="outline" onClick={() => { setSearch(""); setFilterGender("all"); setFilterSize("all"); setFilterCategory("all"); }}>Clear</Button>
+      </div>
+      {/* Table */}
       <div className="rounded-md border">
         <Table>
           <TableCaption>Attire Inventory Management</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Item Name</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead>Gender</TableHead>
               <TableHead>Size</TableHead>
               <TableHead>Category</TableHead>
@@ -264,35 +316,26 @@ export default function ViewTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {attires.length === 0 ? (
+            {(attires.filter(item =>
+              (!search || item.name.toLowerCase().includes(search.toLowerCase())) &&
+              (filterGender === "all" || item.gender === filterGender) &&
+              (filterSize === "all" || item.size === filterSize) &&
+              (filterCategory === "all" || item.category === filterCategory)
+            ).length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
                   No attires found.
                 </TableCell>
               </TableRow>
             ) : (
-              attires.map((item) => (
+              attires.filter(item =>
+                (!search || item.name.toLowerCase().includes(search.toLowerCase())) &&
+                (filterGender === "all" || item.gender === filterGender) &&
+                (filterSize === "all" || item.size === filterSize) &&
+                (filterCategory === "all" || item.category === filterCategory)
+              ).map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.name}</TableCell>
-                  <TableCell>
-                    <Select
-                      value={item.status || "Ready to be rented"}
-                      onValueChange={async (value) => {
-                        await supabase.from("attires").update({ status: value }).eq("id", item.id);
-                        toast.success("Item status updated");
-                        loadAttires();
-                      }}
-                    >
-                      <SelectTrigger className="w-[160px]">
-                        <SelectValue placeholder="Ready to be rented" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {itemStatuses.map((status) => (
-                          <SelectItem key={status} value={status}>{status}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
                   <TableCell>{item.gender}</TableCell>
                   <TableCell>
                     <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-secondary text-secondary-foreground">
@@ -344,23 +387,6 @@ export default function ViewTable() {
                                 onChange={(e) => handleEditChange("name", e.target.value)}
                                 placeholder="Enter item name"
                               />
-                            </div>
-
-                            <div className="space-y-2">
-                              <Label htmlFor="edit-status">Item Status</Label>
-                              <Select
-                                value={editForm.status}
-                                onValueChange={(value) => handleEditChange("status", value)}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {itemStatuses.map((status) => (
-                                    <SelectItem key={status} value={status}>{status}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
                             </div>
 
                             <div className="space-y-2">
@@ -492,7 +518,7 @@ export default function ViewTable() {
                   </TableCell>
                 </TableRow>
               ))
-            )}
+            ))}
           </TableBody>
         </Table>
       </div>
