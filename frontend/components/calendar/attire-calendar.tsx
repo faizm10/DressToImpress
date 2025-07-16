@@ -65,12 +65,11 @@ export function AttireCalendar() {
 
       if (studentsError) throw studentsError;
 
-      // Then fetch attire requests with student and attire information
+      // Then fetch attire requests with student and attire information, including buffer
       const { data: requestsData, error: requestsError } = await supabase
         .from("attire_requests")
         .select(
-          `
-        *,
+          `*,
         students (
           first_name,
           last_name,
@@ -78,7 +77,8 @@ export function AttireCalendar() {
         ),
         attires (
           name
-        )
+        ),
+        buffer
       `
         )
         .order("use_start_date", { ascending: true });
@@ -102,6 +102,13 @@ export function AttireCalendar() {
       }));
 
       setCalendarEvents(events);
+
+      // 2. Initialize bufferDaysMap from DB
+      const bufferMap: { [id: string]: number } = {};
+      requestsData.forEach((request) => {
+        bufferMap[request.id] = request.buffer ?? 7;
+      });
+      setBufferDaysMap(bufferMap);
     } catch (error: any) {
       toast("Error fetching data");
       console.error("Error:", error);
@@ -113,6 +120,17 @@ export function AttireCalendar() {
   useEffect(() => {
     fetchAttireRequests();
   }, []);
+
+  // Add updateBuffer function
+  const updateBuffer = async (requestId: string, buffer: number) => {
+    const { error } = await supabase
+      .from("attire_requests")
+      .update({ buffer })
+      .eq("id", requestId);
+    if (error) {
+      toast("Failed to update buffer");
+    }
+  };
 
   // Get calendar grid for current month
   const getCalendarDays = () => {
@@ -415,7 +433,7 @@ export function AttireCalendar() {
                               <span>Buffer until</span>
                               <span className="font-mono">
                                 {request.use_end_date
-                                  ? addDays(new Date(request.use_end_date), bufferDaysMap[request.id] ?? 7).toLocaleDateString()
+                                  ? addDays(new Date(request.use_end_date), Number(bufferDaysMap[request.id] ?? 7)).toLocaleDateString()
                                   : "-"}
                               </span>
                               <Label htmlFor={`buffer-days-${request.id}`} className="ml-2">Buffer (days):</Label>
@@ -424,7 +442,11 @@ export function AttireCalendar() {
                                 type="number"
                                 min={0}
                                 value={bufferDaysMap[request.id] ?? 7}
-                                onChange={e => setBufferDaysMap(map => ({ ...map, [request.id]: Number(e.target.value) }))}
+                                onChange={async e => {
+                                  const newBuffer = Number(e.target.value);
+                                  setBufferDaysMap(map => ({ ...map, [request.id]: newBuffer }));
+                                  await updateBuffer(request.id, newBuffer);
+                                }}
                                 className="w-16"
                               />
                               <span title="Buffer is the number of days after the rental ends." className="ml-1 text-xs text-zinc-400">🛈</span>
