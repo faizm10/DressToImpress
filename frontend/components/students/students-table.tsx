@@ -213,14 +213,25 @@ export function StudentsTable() {
 
   const renderStudentRow = (student: Student) => {
     const reqs = student.attire_requests || []
-    let earliestStart: Date | null = null
-    let latestEnd: Date | null = null
+    let earliestStart: string | null = null
+    let latestEnd: string | null = null
 
     if (reqs.length > 0) {
-      const starts = reqs.map((r) => new Date(r.use_start_date).getTime())
-      const ends = reqs.map((r) => new Date(r.use_end_date).getTime())
-      earliestStart = new Date(Math.min(...starts))
-      latestEnd = new Date(Math.max(...ends))
+      // Use raw date strings from Supabase
+      const startDates = reqs.map((r) => r.use_start_date).filter(Boolean)
+      const endDates = reqs.map((r) => r.use_end_date).filter(Boolean)
+      
+      if (startDates.length > 0) {
+        earliestStart = startDates.reduce((earliest, current) => 
+          current < earliest ? current : earliest
+        )
+      }
+      
+      if (endDates.length > 0) {
+        latestEnd = endDates.reduce((latest, current) => 
+          current > latest ? current : latest
+        )
+      }
     }
 
     return (
@@ -304,7 +315,7 @@ export function StudentsTable() {
         <TableCell className="text-center py-4 text-muted-foreground">
           {earliestStart ? (
             <Badge variant="outline" className="text-xs">
-              {earliestStart.toLocaleDateString()}
+              {earliestStart}
             </Badge>
           ) : (
             "N/A"
@@ -313,7 +324,7 @@ export function StudentsTable() {
         <TableCell className="text-center py-4 text-muted-foreground">
           {latestEnd ? (
             <Badge variant="outline" className="text-xs">
-              {latestEnd.toLocaleDateString()}
+              {latestEnd}
             </Badge>
           ) : (
             "N/A"
@@ -342,7 +353,7 @@ export function StudentsTable() {
                 className="cursor-pointer hover:bg-[#E51937]/5 hover:text-[#E51937] transition-colors"
               >
                 <Edit2 className="h-4 w-4 mr-2" />
-                Edit student
+                Edit Rental
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

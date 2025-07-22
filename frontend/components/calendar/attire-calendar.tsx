@@ -162,8 +162,8 @@ export function AttireCalendar() {
   // Get events for a specific day
   const getEventsForDay = (date: Date) => {
     return calendarEvents.filter((event) => {
-      const eventStart = addDays(new Date(event.start), 1);
-      const eventEnd = addDays(new Date(event.end), 1);
+      const eventStart = new Date(event.start);
+      const eventEnd = new Date(event.end);
       // Check if the date falls within the event range
       return date >= eventStart && date <= eventEnd;
     });
@@ -521,7 +521,7 @@ export function AttireCalendar() {
                               <span className="font-medium">Rental:</span>
                               <span>{request.use_start_date ? addDays(new Date(request.use_start_date), 1).toLocaleDateString() : "-"}</span>
                               <span>-</span>
-                              <span>{request.use_end_date ? addDays(new Date(request.use_end_date), 1).toLocaleDateString() : "-"}</span>
+                              <span>{request.use_end_date ? addDays(new Date(request.use_end_date), 3).toLocaleDateString() : "-"}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs text-zinc-400 pl-6 border-l border-zinc-200 dark:border-zinc-700 mt-1">
                               <CalendarIcon className="h-3 w-3 opacity-70" />

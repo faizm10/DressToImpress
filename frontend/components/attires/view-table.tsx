@@ -1,6 +1,6 @@
 "use client"
 
-import { Loader2, Edit2, Trash2, Search, Filter, X, Package, ImageIcon } from "lucide-react"
+import { Loader2, Edit2, Trash2, Search, Filter, X, Package, ImageIcon, ChevronUp, ChevronDown } from "lucide-react"
 import { useState, useEffect, useCallback } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import {
@@ -91,6 +91,8 @@ export default function ViewTable() {
   const [filterCategory, setFilterCategory] = useState("all")
   const [filterStatus, setFilterStatus] = useState("all")
   const [showFilters, setShowFilters] = useState(false)
+  const [sortField, setSortField] = useState<"name" | "status" | "gender" | "size" | "category">("name")
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc")
 
   const loadAttires = useCallback(async () => {
     try {
@@ -228,17 +230,29 @@ export default function ViewTable() {
         setDeleting(true)
         setError(null)
 
+        // First, delete related attire requests
+        const { error: requestsDeleteError } = await supabase
+          .from("attire_requests")
+          .delete()
+          .eq("attire_id", item.id)
+
+        if (requestsDeleteError) {
+          throw new Error(`Failed to delete related requests: ${requestsDeleteError.message}`)
+        }
+
+        // Then delete the attire from the attires table
         const { error: deleteError } = await supabase.from("attires").delete().eq("id", item.id)
 
         if (deleteError) {
           throw new Error(deleteError.message)
         }
 
+        // Finally, delete the file from storage if it exists
         if (item.file_name) {
           await supabase.storage.from("attires").remove([item.file_name])
         }
 
-        toast.success("Item deleted successfully")
+        toast.success("Item and all related requests deleted successfully")
         await loadAttires()
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : "Failed to delete item"
@@ -260,12 +274,44 @@ export default function ViewTable() {
       (filterStatus === "all" || item.status === filterStatus),
   )
 
+  // Sort the filtered attires
+  const sortedAttires = [...filteredAttires].sort((a, b) => {
+    const aValue = a[sortField] || ""
+    const bValue = b[sortField] || ""
+    
+    if (sortDirection === "asc") {
+      return aValue.localeCompare(bValue)
+    } else {
+      return bValue.localeCompare(aValue)
+    }
+  })
+
   const clearFilters = () => {
     setSearch("")
     setFilterGender("all")
     setFilterSize("all")
     setFilterCategory("all")
     setFilterStatus("all")
+  }
+
+  const handleSort = (field: "name" | "status" | "gender" | "size" | "category") => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+    } else {
+      setSortField(field)
+      setSortDirection("asc")
+    }
+  }
+
+  const getSortIcon = (field: "name" | "status" | "gender" | "size" | "category") => {
+    if (sortField !== field) {
+      return <ChevronUp className="h-4 w-4 opacity-30" />
+    }
+    return sortDirection === "asc" ? (
+      <ChevronUp className="h-4 w-4" />
+    ) : (
+      <ChevronDown className="h-4 w-4" />
+    )
   }
 
   const hasActiveFilters = search || filterGender !== "all" || filterSize !== "all" || filterCategory !== "all" || filterStatus !== "all"
@@ -310,8 +356,13 @@ export default function ViewTable() {
         </div>
         <div className="flex items-center space-x-2">
           <Badge variant="outline" className="text-sm">
-            {filteredAttires.length} items
+            {sortedAttires.length} items
           </Badge>
+          {sortField !== "name" && (
+            <Badge variant="secondary" className="text-xs">
+              Sorted by {sortField} ({sortDirection})
+            </Badge>
+          )}
         </div>
       </div>
 
@@ -464,15 +515,31 @@ export default function ViewTable() {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent border-b">
-                <TableHead className="font-semibold">Item</TableHead>
-                <TableHead className="font-semibold">Status</TableHead>
+                <TableHead 
+                  className="font-semibold cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => handleSort("name")}
+                >
+                  <div className="flex items-center space-x-1">
+                    <span>Item</span>
+                    {getSortIcon("name")}
+                  </div>
+                </TableHead>
+                <TableHead 
+                  className="font-semibold cursor-pointer hover:bg-muted/50 transition-colors"
+                  onClick={() => handleSort("status")}
+                >
+                  <div className="flex items-center space-x-1">
+                    <span>Status</span>
+                    {getSortIcon("status")}
+                  </div>
+                </TableHead>
                 <TableHead className="font-semibold">Details</TableHead>
                 <TableHead className="font-semibold">Image</TableHead>
                 <TableHead className="font-semibold text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredAttires.length === 0 ? (
+              {sortedAttires.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="h-32">
                     <div className="flex flex-col items-center justify-center text-center space-y-3">
@@ -492,7 +559,7 @@ export default function ViewTable() {
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredAttires.map((item) => (
+                sortedAttires.map((item) => (
                   <TableRow key={item.id} className="hover:bg-muted/50 transition-colors">
                     <TableCell>
                       <div className="space-y-1">
