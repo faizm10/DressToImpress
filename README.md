@@ -23,7 +23,7 @@ The Dress For Success platform is designed for the University of Guelph's Lang S
 - **Language**: TypeScript
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com) with custom design system
 - **UI Components**: Custom components built with [Radix UI](https://www.radix-ui.com)
-- **Icons**: [Lucide React](https://lucide.dev) and [Tabler Icons](https://tabler-icons.io)
+- **Icons**: [Lucide React](https://lucide.dev)
 - **Animations**: [Motion](https://motion.dev) for smooth interactions
 - **State Management**: React hooks and context
 - **Forms**: Custom form components with validation
