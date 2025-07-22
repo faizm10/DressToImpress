@@ -111,4 +111,4 @@ export const allCategories = [
 // Type definitions
 export type Gender = (typeof genderOptions)[number]["value"];
 export type Size = (typeof sizeOptions)[number]["value"];
-export type Category = string; // Use string instead of literal union since allCategories is dynamic
+export type Category = string;
