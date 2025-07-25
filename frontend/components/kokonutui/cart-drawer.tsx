@@ -179,6 +179,39 @@ export function CartDrawer({
 
       if (attireRequestError) throw attireRequestError;
 
+      // Send email notification
+      try {
+        const notificationResponse = await fetch('/api/notify-attire-request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            student: {
+              first_name: formData.firstName,
+              last_name: formData.lastName,
+              student_id: formData.studentId,
+              email: formData.email,
+            },
+            attireRequests,
+            cartItems: cart.map(item => ({
+              id: item.id,
+              name: item.name,
+              size: item.size,
+              gender: item.gender,
+              category: item.category,
+            })),
+          }),
+        });
+
+        if (!notificationResponse.ok) {
+          console.warn('Failed to send email notification, but order was still processed');
+        }
+      } catch (error) {
+        console.warn('Error sending email notification:', error);
+        // Don't fail the entire order if email notification fails
+      }
+
       // Update attire status
       // const updates = await Promise.all(
       //   cart.map((item) => supabase.from("attires").update({ status: "pending" }).eq("file_name", item.file_name)),

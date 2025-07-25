@@ -9,6 +9,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 - **Styling:** Tailwind CSS (utility-first CSS framework)
 - **UI:** Custom React components, Lucide icons
 - **Backend/Database:** [Supabase](https://supabase.com) (auth, storage, database)
+- **Email Notifications:** Resend/SendGrid/SMTP support
 - **Package Management:** npm
 - **Other:** PostCSS, ESLint, [Geist font](https://vercel.com/font)
 
@@ -62,6 +63,21 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Email Notifications
+
+The system includes automatic email notifications for attire requests. When a user submits an attire request, an email is sent to `fmustans@uoguelph.ca` with details about the request.
+
+### Setup
+
+See [EMAIL_SETUP.md](./EMAIL_SETUP.md) for detailed setup instructions.
+
+### Features
+
+- **Multiple Email Providers:** Support for Resend, SendGrid, and SMTP
+- **Development Mode:** Mock email service for development
+- **Professional Templates:** HTML-formatted emails with student and request details
+- **Error Handling:** Graceful fallback if email service fails
 
 ## Deploy on Vercel
 
