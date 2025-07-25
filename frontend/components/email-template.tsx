@@ -20,7 +20,7 @@ const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
 
     <p>
       Thank you for submitting your clothing rental request through the Dress to
-      Impress program. We’re pleased to confirm that your rental has been
+      Impress program. We're pleased to confirm that your rental has been
       approved for:{" "}
       <strong>
         {rentalStartDate} to {rentalEndDate}
@@ -33,7 +33,7 @@ const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
       Development Centre (MACS 101) on <strong>{pickupDate}</strong>. If this
       date does not work for you, please contact{" "}
       <a href="mailto:langcareers@uoguelph.ca">langcareers@uoguelph.ca</a>. The
-      BCDC is open from 8:30 am–4:30 pm. Please bring your student ID with you
+      BCDC is open from 8:30 am-4:30 pm. Please bring your student ID with you
       when picking up your item(s).
     </p>
 
