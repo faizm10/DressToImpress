@@ -24,11 +24,11 @@ async function testResend() {
     console.log('📧 Sending test email...');
     
     const result = await resend.emails.send({
-      from: 'DressForSuccess <onboarding@resend.dev>',
+      from: 'Dress To Impress <onboarding@resend.dev>',
       to: 'langcareers3@gmail.com', // Use verified email for testing
-      subject: 'Test Email - DressForSuccess Platform',
+      subject: 'Test Email - Dress To Impress Platform',
       html: `
-        <h2>Test Email from DressForSuccess</h2>
+        <h2>Test Email from Dress To Impress</h2>
         <p>This is a test email to verify your Resend configuration.</p>
         <p>If you receive this email, your setup is working correctly!</p>
         <hr>

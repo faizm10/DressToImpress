@@ -32,16 +32,8 @@ export async function POST(request: NextRequest) {
     const body: RequestBody = await request.json();
     const { student, attireRequests, cartItems } = body;
 
-    console.log('Email notification triggered for:', student.first_name, student.last_name);
-    console.log('Environment variables:', {
-      RESEND_API_KEY: process.env.RESEND_API_KEY ? 'Set' : 'Not set',
-      NOTIFICATION_EMAIL: process.env.NOTIFICATION_EMAIL || 'Not set'
-    });
-
     const emailContent = formatEmailContent(student, attireRequests, cartItems);
     const recipientEmail = process.env.NOTIFICATION_EMAIL || 'langcareers3@gmail.com';
-    
-    console.log('Sending email to:', recipientEmail);
     
     const emailResult = await emailService.sendEmail({
       to: recipientEmail,
