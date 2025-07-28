@@ -24,8 +24,8 @@ async function testResend() {
     console.log('📧 Sending test email...');
     
     const result = await resend.emails.send({
-      from: 'DressForSuccess <noreply@resend.dev>',
-      to: 'faizmustansar10@gmail.com', // Use your verified email for testing
+      from: 'DressForSuccess <onboarding@resend.dev>',
+      to: 'langcareers3@gmail.com', // Use verified email for testing
       subject: 'Test Email - DressForSuccess Platform',
       html: `
         <h2>Test Email from DressForSuccess</h2>
@@ -43,7 +43,7 @@ async function testResend() {
 
     console.log('✅ Test email sent successfully!');
     console.log('📧 Check your Resend dashboard for delivery status');
-    console.log('📧 Check faizmustansar10@gmail.com for the test email');
+    console.log('📧 Check langcareers3@gmail.com for the test email');
     
   } catch (error) {
     console.error('❌ Error sending test email:', error);

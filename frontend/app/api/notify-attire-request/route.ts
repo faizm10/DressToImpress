@@ -32,14 +32,19 @@ export async function POST(request: NextRequest) {
     const body: RequestBody = await request.json();
     const { student, attireRequests, cartItems } = body;
 
-    // Format the email content
-    const emailContent = formatEmailContent(student, attireRequests, cartItems);
+    console.log('Email notification triggered for:', student.first_name, student.last_name);
+    console.log('Environment variables:', {
+      RESEND_API_KEY: process.env.RESEND_API_KEY ? 'Set' : 'Not set',
+      NOTIFICATION_EMAIL: process.env.NOTIFICATION_EMAIL || 'Not set'
+    });
 
-    // Send email notification
-    // Note: For production, you need to verify a domain with Resend
-    // to send emails to external domains like uoguelph.ca
+    const emailContent = formatEmailContent(student, attireRequests, cartItems);
+    const recipientEmail = process.env.NOTIFICATION_EMAIL || 'langcareers3@gmail.com';
+    
+    console.log('Sending email to:', recipientEmail);
+    
     const emailResult = await emailService.sendEmail({
-      to: 'fmustans@uoguelph.ca', // This will work once domain is verified
+      to: recipientEmail,
       subject: `New Attire Request - ${student.first_name} ${student.last_name}`,
       html: emailContent,
     });
@@ -103,8 +108,8 @@ function formatEmailContent(
     </head>
     <body>
       <div class="header">
-        <h2>New Attire Request Submitted</h2>
-        <p>A new attire request has been submitted through the DressForSuccess system.</p>
+        <h2>New Clothing Request Submitted</h2>
+        <p>A new clothing request has been submitted through the Dress To Impress system.</p>
       </div>
       
       <div class="content">
@@ -133,7 +138,7 @@ function formatEmailContent(
       </div>
       
       <div class="footer">
-        <p>This is an automated notification from the DressForSuccess system.</p>
+        <p>This is an automated notification from the Dress To Impress.</p>
         <p>Please review and process this request accordingly.</p>
       </div>
     </body>

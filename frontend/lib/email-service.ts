@@ -45,11 +45,14 @@ export class EmailService {
 
   private async sendWithResend(emailData: EmailData) {
     try {
+      console.log('Resend API Key available:', !!process.env.RESEND_API_KEY);
+      console.log('Sending email with Resend to:', emailData.to);
+      
       const { Resend } = await import('resend');
       const resend = new Resend(process.env.RESEND_API_KEY);
       
       const result = await resend.emails.send({
-        from: emailData.from || 'DressForSuccess <noreply@resend.dev>',
+        from: emailData.from || 'DressForSuccess <onboarding@resend.dev>',
         to: emailData.to,
         subject: emailData.subject,
         html: emailData.html,

@@ -22,6 +22,9 @@ Create or update your `.env.local` file in the `frontend` directory:
 ```bash
 # Resend Configuration
 RESEND_API_KEY=re_your_api_key_here
+
+# Email recipient for attire request notifications
+NOTIFICATION_EMAIL=langcareers3@gmail.com
 ```
 
 Replace `re_your_api_key_here` with your actual Resend API key.
@@ -69,6 +72,7 @@ This will send a test email to `fmustans@uoguelph.ca` and show you if the config
 | Variable | Description | Required |
 |----------|-------------|----------|
 | `RESEND_API_KEY` | Your Resend API key | Yes |
+| `NOTIFICATION_EMAIL` | Email address to receive attire request notifications | No (defaults to hardcoded value) |
 
 ## Troubleshooting
 
