@@ -91,21 +91,49 @@ export function AttireCalendar() {
 
       if (requestsError) throw requestsError;
 
+      console.log('Raw database data:', {
+        studentsData,
+        requestsData: requestsData.map(req => ({
+          id: req.id,
+          student_name: `${req.students.first_name} ${req.students.last_name}`,
+          start_date: req.use_start_date,
+          end_date: req.use_end_date,
+          attire_name: req.attires.name,
+          buffer: req.buffer
+        }))
+      });
+
       setAllStudents(studentsData);
       setAttireRequests(requestsData as AttireRequestWithStudentAndAttire[]);
 
       // Convert to calendar events
-      const events: CalendarEvent[] = requestsData.map((request) => ({
-        id: request.id,
-        title: `${request.students.first_name} ${request.students.last_name}`,
-        start: new Date(request.use_start_date),
-        end: new Date(request.use_end_date),
-        student: `${request.students.first_name} ${request.students.last_name}`,
-        studentId: request.students.student_id,
-        attireId: request.attire_id,
-        attireName: request.attires.name,
-        status: request.status,
-      }));
+      const events: CalendarEvent[] = requestsData.map((request) => {
+        // Parse dates and create them at midnight in local timezone
+        const startDate = new Date(request.use_start_date + 'T00:00:00');
+        const endDate = new Date(request.use_end_date + 'T00:00:00');
+        
+        console.log('Creating calendar event:', {
+          requestId: request.id,
+          studentName: `${request.students.first_name} ${request.students.last_name}`,
+          originalStartDate: request.use_start_date,
+          originalEndDate: request.use_end_date,
+          parsedStartDate: startDate.toISOString(),
+          parsedEndDate: endDate.toISOString(),
+          attireName: request.attires.name
+        });
+        
+        return {
+          id: request.id,
+          title: `${request.students.first_name} ${request.students.last_name}`,
+          start: startDate,
+          end: endDate,
+          student: `${request.students.first_name} ${request.students.last_name}`,
+          studentId: request.students.student_id,
+          attireId: request.attire_id,
+          attireName: request.attires.name,
+          status: request.status,
+        };
+      });
 
       setCalendarEvents(events);
 
@@ -162,10 +190,22 @@ export function AttireCalendar() {
   // Get events for a specific day
   const getEventsForDay = (date: Date) => {
     return calendarEvents.filter((event) => {
-      const eventStart = new Date(event.start);
-      const eventEnd = new Date(event.end);
+      // Create dates at midnight in local timezone to avoid timezone issues
+      const eventStart = new Date(event.start.getFullYear(), event.start.getMonth(), event.start.getDate());
+      const eventEnd = new Date(event.end.getFullYear(), event.end.getMonth(), event.end.getDate());
+      const dateAtMidnight = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      
+      console.log('Date comparison:', {
+        date: date.toISOString(),
+        dateAtMidnight: dateAtMidnight.toISOString(),
+        eventStart: eventStart.toISOString(),
+        eventEnd: eventEnd.toISOString(),
+        eventTitle: event.title,
+        isInRange: dateAtMidnight >= eventStart && dateAtMidnight <= eventEnd
+      });
+      
       // Check if the date falls within the event range
-      return date >= eventStart && date <= eventEnd;
+      return dateAtMidnight >= eventStart && dateAtMidnight <= eventEnd;
     });
   };
 
@@ -204,15 +244,33 @@ export function AttireCalendar() {
 
   // Helper to determine if a day is a rental or buffer day for an event
   function getDayTypeForEvent(day: Date, event: CalendarEvent): 'rental' | 'buffer' | null {
-    const rentalStart = new Date(event.start);
-    const rentalEnd = new Date(event.end);
+    // Create dates at midnight in local timezone to avoid timezone issues
+    const rentalStart = new Date(event.start.getFullYear(), event.start.getMonth(), event.start.getDate());
+    const rentalEnd = new Date(event.end.getFullYear(), event.end.getMonth(), event.end.getDate());
     const bufferDays = Number(bufferDaysMap[event.id] ?? 7);
     const bufferStart = new Date(rentalEnd);
     bufferStart.setDate(bufferStart.getDate() + 1);
     const bufferEnd = new Date(rentalEnd);
     bufferEnd.setDate(bufferEnd.getDate() + bufferDays);
-    if (day >= rentalStart && day <= rentalEnd) return 'rental';
-    if (calendarView === 'rental+buffer' && day >= bufferStart && day <= bufferEnd) return 'buffer';
+    
+    // Create day at midnight in local timezone
+    const dayAtMidnight = new Date(day.getFullYear(), day.getMonth(), day.getDate());
+    
+    console.log('Day type calculation:', {
+      day: day.toISOString(),
+      dayAtMidnight: dayAtMidnight.toISOString(),
+      eventTitle: event.title,
+      rentalStart: rentalStart.toISOString(),
+      rentalEnd: rentalEnd.toISOString(),
+      bufferStart: bufferStart.toISOString(),
+      bufferEnd: bufferEnd.toISOString(),
+      bufferDays,
+      isRental: dayAtMidnight >= rentalStart && dayAtMidnight <= rentalEnd,
+      isBuffer: calendarView === 'rental+buffer' && dayAtMidnight >= bufferStart && dayAtMidnight <= bufferEnd
+    });
+    
+    if (dayAtMidnight >= rentalStart && dayAtMidnight <= rentalEnd) return 'rental';
+    if (calendarView === 'rental+buffer' && dayAtMidnight >= bufferStart && dayAtMidnight <= bufferEnd) return 'buffer';
     return null;
   }
 
@@ -519,16 +577,16 @@ export function AttireCalendar() {
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Clock className="h-3.5 w-3.5" />
                               <span className="font-medium">Rental:</span>
-                              <span>{request.use_start_date ? addDays(new Date(request.use_start_date), 1).toLocaleDateString() : "-"}</span>
+                              <span>{request.use_start_date ? new Date(request.use_start_date).toLocaleDateString() : "-"}</span>
                               <span>-</span>
-                              <span>{request.use_end_date ? addDays(new Date(request.use_end_date), 3).toLocaleDateString() : "-"}</span>
+                              <span>{request.use_end_date ? new Date(request.use_end_date).toLocaleDateString() : "-"}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs text-zinc-400 pl-6 border-l border-zinc-200 dark:border-zinc-700 mt-1">
                               <CalendarIcon className="h-3 w-3 opacity-70" />
                               <span>Buffer until</span>
                               <span className="font-mono">
                                 {request.use_end_date
-                                  ? addDays(new Date(request.use_end_date), Number(bufferDaysMap[request.id] ?? 7)).toLocaleDateString()
+                                  ? new Date(new Date(request.use_end_date).getTime() + (Number(bufferDaysMap[request.id] ?? 7) * 24 * 60 * 60 * 1000)).toLocaleDateString()
                                   : "-"}
                               </span>
                               <Label htmlFor={`buffer-days-${request.id}`} className="ml-2">Buffer (days):</Label>
