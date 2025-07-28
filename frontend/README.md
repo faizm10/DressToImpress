@@ -66,7 +66,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Email Notifications
 
-The system includes automatic email notifications for attire requests. When a user submits an attire request, an email is sent to `fmustans@uoguelph.ca` with details about the request.
+The system includes automatic email notifications for attire requests. When a user submits an attire request, an email is sent to `langcareers3@gmail.com` with details about the request.
 
 ### Setup
 
@@ -74,10 +74,11 @@ See [EMAIL_SETUP.md](./EMAIL_SETUP.md) for detailed setup instructions.
 
 ### Features
 
-- **Multiple Email Providers:** Support for Resend, SendGrid, and SMTP
-- **Development Mode:** Mock email service for development
+- **Production Ready:** Fully configured and tested email service
 - **Professional Templates:** HTML-formatted emails with student and request details
 - **Error Handling:** Graceful fallback if email service fails
+- **Reliable Delivery:** Using Resend for high deliverability
+- **Environment Configurable:** Easy to change recipient via environment variables
 
 ## Deploy on Vercel
 
