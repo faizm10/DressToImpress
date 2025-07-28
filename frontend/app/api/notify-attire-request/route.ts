@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     
     const emailResult = await emailService.sendEmail({
       to: recipientEmail,
-      subject: `New Attire Request - ${student.first_name} ${student.last_name}`,
+      subject: `New Clothing Request - ${student.first_name} ${student.last_name}`,
       html: emailContent,
     });
 
