@@ -293,7 +293,7 @@ export function StudentsTable() {
                       }}
                     >
                       <SelectTrigger className="w-[160px] h-8 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                        <SelectValue placeholder="Pending" />
+                        <SelectValue defaultValue={"Pending"} />
                       </SelectTrigger>
                       <SelectContent>
                         {rentalStatuses.map((status) => (

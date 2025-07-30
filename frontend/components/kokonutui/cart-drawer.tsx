@@ -169,6 +169,7 @@ export function CartDrawer({
           attire_id: item.id,
           use_start_date: startDate ? format(startDate, "yyyy-MM-dd") : null,
           use_end_date: endDate ? format(endDate, "yyyy-MM-dd") : null,
+          status: "Pending", // Set default status
         };
       });
 

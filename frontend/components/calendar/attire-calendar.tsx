@@ -577,9 +577,9 @@ export function AttireCalendar() {
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Clock className="h-3.5 w-3.5" />
                               <span className="font-medium">Rental:</span>
-                              <span>{request.use_start_date ? new Date(request.use_start_date).toLocaleDateString() : "-"}</span>
+                              <span>{request.use_start_date}</span>
                               <span>-</span>
-                              <span>{request.use_end_date ? new Date(request.use_end_date).toLocaleDateString() : "-"}</span>
+                              <span>{request.use_end_date}</span>
                             </div>
                             <div className="flex items-center gap-2 text-xs text-zinc-400 pl-6 border-l border-zinc-200 dark:border-zinc-700 mt-1">
                               <CalendarIcon className="h-3 w-3 opacity-70" />

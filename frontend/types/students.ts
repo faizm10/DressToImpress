@@ -15,12 +15,13 @@ export interface AttireRequest {
   id: string;
   student_id: string;
   attire_id: string;
-  status: string;
+  status: string; // Defaults to "Pending"
   use_start_date: string;
   use_end_date: string;
-  pickup_date: string;
-  return_date: string;
-  notes: string;
+  pickup_date?: string;
+  return_date?: string;
+  notes?: string;
+  buffer?: number;
   created_at: string;
   updated_at: string;
 }
