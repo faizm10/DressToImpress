@@ -171,6 +171,19 @@ export function EditStudentModal({
   };
 
   const handleUpdateAttireRequest = async (requestId: string, newAttireId: string) => {
+    // Find the request to check its status
+    const request = attireRequests.find(req => req.id === requestId);
+    if (!request) {
+      toast.error("Request not found");
+      return;
+    }
+
+    // Check if switching is allowed
+    if (!isItemSwitchingAllowed(request.status)) {
+      toast.error("Cannot switch items when rental is active. Only available when status is 'Returned' or student is 'Inactive'");
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from("attire_requests")
@@ -190,7 +203,26 @@ export function EditStudentModal({
     }
   };
 
+  // Check if item switching is allowed based on rental status
+  const isItemSwitchingAllowed = (requestStatus: string) => {
+    // Allow switching if rental status is "Returned" or student status is "Inactive"
+    return requestStatus === "Returned" || formData.status === "Inactive";
+  };
+
   const handleDeleteAttireRequest = async (requestId: string) => {
+    // Find the request to check its status
+    const request = attireRequests.find(req => req.id === requestId);
+    if (!request) {
+      toast.error("Request not found");
+      return;
+    }
+
+    // Check if deletion is allowed
+    if (!isItemSwitchingAllowed(request.status)) {
+      toast.error("Cannot delete item when rental is active. Only available when status is 'Returned' or student is 'Inactive'");
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from("attire_requests")
@@ -435,7 +467,11 @@ export function EditStudentModal({
                             variant="outline"
                             size="sm"
                             onClick={() => handleDeleteAttireRequest(request.id)}
-                            className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                            disabled={!isItemSwitchingAllowed(request.status)}
+                            className={cn(
+                              "h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50",
+                              !isItemSwitchingAllowed(request.status) && "opacity-50 cursor-not-allowed"
+                            )}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -448,9 +484,16 @@ export function EditStudentModal({
                           <Select
                             value={request.attire_id}
                             onValueChange={(value) => handleUpdateAttireRequest(request.id, value)}
+                            disabled={!isItemSwitchingAllowed(request.status)}
                           >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select new clothing" />
+                            <SelectTrigger className={cn(
+                              !isItemSwitchingAllowed(request.status) && "opacity-50 cursor-not-allowed"
+                            )}>
+                              <SelectValue placeholder={
+                                isItemSwitchingAllowed(request.status) 
+                                  ? "Select new clothing" 
+                                  : "Item switching not available"
+                              } />
                             </SelectTrigger>
                             <SelectContent>
                               {/* Search Input */}
@@ -485,6 +528,11 @@ export function EditStudentModal({
                               )}
                             </SelectContent>
                           </Select>
+                          {!isItemSwitchingAllowed(request.status) && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Item switching is only available when rental status is "Returned" or student is "Inactive"
+                            </p>
+                          )}
                         </div>
 
                         <div className="space-y-2">

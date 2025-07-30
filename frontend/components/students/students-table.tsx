@@ -79,6 +79,10 @@ const getStatusIcon = (status: string) => {
   }
 }
 
+const isItemSwitchingAllowed = (rentalStatus: string, studentStatus: string) => {
+  return rentalStatus === "Returned" || studentStatus === "Inactive"
+}
+
 export function StudentsTable() {
   const supabase = createSupabaseClient()
   const [students, setStudents] = useState<Student[]>([])
@@ -264,12 +268,24 @@ export function StudentsTable() {
                       <span className="text-xs font-medium text-gray-900 dark:text-gray-100">
                         {attire ? attire.name : req.attire_id}
                       </span>
-                      <Badge className={`text-xs w-fit ${getStatusColor(req.status || "Pending")}`}>
-                        <span className="flex items-center gap-1">
-                          {getStatusIcon(req.status || "Pending")}
-                          {req.status || "Pending"}
-                        </span>
-                      </Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge className={`text-xs w-fit ${getStatusColor(req.status || "Pending")}`}>
+                          <span className="flex items-center gap-1">
+                            {getStatusIcon(req.status || "Pending")}
+                            {req.status || "Pending"}
+                          </span>
+                        </Badge>
+                        {!isItemSwitchingAllowed(req.status || "Pending", student.status) && (
+                          <Badge variant="outline" className="text-xs bg-orange-50 text-orange-700 border-orange-200">
+                            🔒 Locked
+                          </Badge>
+                        )}
+                        {isItemSwitchingAllowed(req.status || "Pending", student.status) && (
+                          <Badge variant="outline" className="text-xs bg-green-50 text-green-700 border-green-200">
+                            🔓 Available
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     <Select
                       value={req.status || "Pending"}
