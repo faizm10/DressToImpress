@@ -83,6 +83,7 @@ export const menCategories = [
   "Dress Pants",
   "Dress Shirts",
   "Suit Jackets",
+  "Coats",
   "Suits",
   "Shoes",
   "Ties",
