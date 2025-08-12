@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState, useEffect, useMemo, useCallback } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { Upload, Check, AlertCircle } from "lucide-react"
+import { Upload, Check, AlertCircle, Plus, Edit2, Trash2, Save, X } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,6 +24,16 @@ export default function AttireUploadForm() {
     size: "",
     gender: "",
     category: "",
+  })
+
+  // Category management state
+  const [showCategoryManager, setShowCategoryManager] = useState(false)
+  const [editingCategory, setEditingCategory] = useState<string | null>(null)
+  const [newCategoryName, setNewCategoryName] = useState("")
+  const [customCategories, setCustomCategories] = useState({
+    Men: [...menCategories],
+    Female: [...womenCategories],
+    Unisex: [...unisexCategories]
   })
 
   // File upload state
@@ -51,11 +61,11 @@ export default function AttireUploadForm() {
 
   // Available categories based on selected gender
   const categoryOptions = useMemo(() => {
-    if (formState.gender === "Men") return menCategories
-    if (formState.gender === "Female") return womenCategories
-    if (formState.gender === "Unisex") return unisexCategories
+    if (formState.gender === "Men") return customCategories.Men
+    if (formState.gender === "Female") return customCategories.Female
+    if (formState.gender === "Unisex") return customCategories.Unisex
     return []
-  }, [formState.gender])
+  }, [formState.gender, customCategories])
 
   // Reset the form completely
   const resetForm = useCallback(() => {
@@ -90,6 +100,48 @@ export default function AttireUploadForm() {
       return { ...prev, [field]: value }
     })
   }, [])
+
+  // Category management functions
+  const handleAddCategory = useCallback(() => {
+    if (!newCategoryName.trim() || !formState.gender) return
+    
+    setCustomCategories(prev => ({
+      ...prev,
+      [formState.gender]: [...prev[formState.gender as keyof typeof prev], newCategoryName.trim()]
+    }))
+    setNewCategoryName("")
+  }, [newCategoryName, formState.gender])
+
+  const handleEditCategory = useCallback((oldName: string, newName: string) => {
+    if (!newName.trim() || !formState.gender) return
+    
+    setCustomCategories(prev => ({
+      ...prev,
+      [formState.gender]: prev[formState.gender as keyof typeof prev].map(cat => 
+        cat === oldName ? newName.trim() : cat
+      )
+    }))
+    setEditingCategory(null)
+    
+    // Update form state if the edited category was selected
+    if (formState.category === oldName) {
+      setFormState(prev => ({ ...prev, category: newName.trim() }))
+    }
+  }, [formState.gender, formState.category])
+
+  const handleDeleteCategory = useCallback((categoryName: string) => {
+    if (!formState.gender) return
+    
+    setCustomCategories(prev => ({
+      ...prev,
+      [formState.gender]: prev[formState.gender as keyof typeof prev].filter(cat => cat !== categoryName)
+    }))
+    
+    // Clear form category if the deleted category was selected
+    if (formState.category === categoryName) {
+      setFormState(prev => ({ ...prev, category: "" }))
+    }
+  }, [formState.gender, formState.category])
 
   // Generate a unique filename when a file is selected
   useEffect(() => {
@@ -173,73 +225,273 @@ export default function AttireUploadForm() {
       </CardHeader>
 
       <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Item Name</Label>
-            <Input
-              id="name"
-              value={formState.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
-              placeholder="Enter item name"
-              required
-            />
+        <CardContent className="space-y-6">
+          {/* Step 1: Basic Information */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                1
+              </div>
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">Basic Information</h3>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-sm font-medium">
+                  Item Name <span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  value={formState.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  placeholder="e.g., Black Formal Suit, White Dress Shirt"
+                  className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="gender" className="text-sm font-medium">
+                    Gender <span className="text-red-500">*</span>
+                  </Label>
+                  <Select 
+                    value={formState.gender} 
+                    onValueChange={(value) => handleInputChange("gender", value)} 
+                    required
+                  >
+                    <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-blue-500">
+                      <SelectValue placeholder="Choose gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Men" className="cursor-pointer hover:bg-blue-50">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                          Men
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Female" className="cursor-pointer hover:bg-pink-50">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
+                          Women
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="Unisex" className="cursor-pointer hover:bg-purple-50">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          Unisex
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="size" className="text-sm font-medium">
+                    Size <span className="text-red-500">*</span>
+                  </Label>
+                  <Select 
+                    value={formState.size} 
+                    onValueChange={(value) => handleInputChange("size", value)} 
+                    required
+                  >
+                    <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-blue-500">
+                      <SelectValue placeholder="Select size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="XS" className="cursor-pointer">Extra Small (XS)</SelectItem>
+                      <SelectItem value="S" className="cursor-pointer">Small (S)</SelectItem>
+                      <SelectItem value="M" className="cursor-pointer">Medium (M)</SelectItem>
+                      <SelectItem value="L" className="cursor-pointer">Large (L)</SelectItem>
+                      <SelectItem value="XL" className="cursor-pointer">Extra Large (XL)</SelectItem>
+                      <SelectItem value="XXL" className="cursor-pointer">Extra Extra Large (XXL)</SelectItem>
+                      <SelectItem value="No Size" className="cursor-pointer">No Size</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="size">Size</Label>
-                <Select value={formState.size} onValueChange={(value) => handleInputChange("size", value)} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="XS">Extra Small (XS)</SelectItem>
-                    <SelectItem value="S">Small (S)</SelectItem>
-                    <SelectItem value="M">Medium (M)</SelectItem>
-                    <SelectItem value="L">Large (L)</SelectItem>
-                    <SelectItem value="XL">Extra Large (XL)</SelectItem>
-                    <SelectItem value="No Size">No Size</SelectItem>
-                  </SelectContent>
-                </Select>
+          {/* Step 2: Category Selection */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-200 ${
+                formState.gender 
+                  ? 'bg-green-100 text-green-600' 
+                  : 'bg-gray-100 text-gray-400'
+              }`}>
+                2
               </div>
-
-              <div>
-                <Label htmlFor="gender">Gender</Label>
-                <Select value={formState.gender} onValueChange={(value) => handleInputChange("gender", value)} required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Men">Men</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
-                    <SelectItem value="Unisex">Unisex</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label htmlFor="category">Category</Label>
+              <h3 className={`font-medium transition-all duration-200 ${
+                formState.gender 
+                  ? 'text-gray-900 dark:text-gray-100' 
+                  : 'text-gray-400'
+              }`}>
+                Category Selection
+              </h3>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <Label htmlFor="category" className="text-sm font-medium">
+                  Category <span className="text-red-500">*</span>
+                </Label>
                 <Select
                   value={formState.category}
                   onValueChange={(value) => handleInputChange("category", value)}
                   required
                   disabled={!formState.gender}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder={formState.gender ? "Select Category" : "Pick gender first"} />
+                  <SelectTrigger className={`transition-all duration-200 focus:ring-2 focus:ring-blue-500 ${
+                    !formState.gender ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}>
+                    <SelectValue 
+                      placeholder={
+                        !formState.gender 
+                          ? "Please select gender first" 
+                          : `Choose ${formState.gender.toLowerCase()} category`
+                      } 
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    {categoryOptions.map((opt) => (
-                      <SelectItem key={opt} value={opt}>
-                        {opt}
-                      </SelectItem>
-                    ))}
+                    {categoryOptions.length > 0 ? (
+                      categoryOptions.map((opt) => (
+                        <SelectItem key={opt} value={opt} className="cursor-pointer hover:bg-blue-50">
+                          {opt}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="px-3 py-2 text-sm text-gray-500">
+                        No categories available
+                      </div>
+                    )}
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-          </div>
+                                 {!formState.gender && (
+                   <p className="text-xs text-amber-600 dark:text-amber-400">
+                     Please select a gender first to see available categories
+                   </p>
+                 )}
+                 
+                 {/* Category Manager Button */}
+                 {formState.gender && (
+                   <div className="pt-2">
+                     <Button
+                       type="button"
+                       variant="outline"
+                       size="sm"
+                       onClick={() => setShowCategoryManager(!showCategoryManager)}
+                       className="text-xs"
+                     >
+                       <Edit2 className="h-3 w-3 mr-1" />
+                       Manage Categories
+                     </Button>
+                   </div>
+                 )}
+               </div>
+             </div>
+           </div>
+
+           {/* Category Manager */}
+           {showCategoryManager && formState.gender && (
+             <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+               <div className="flex items-center justify-between">
+                 <h4 className="font-medium text-sm">Manage {formState.gender} Categories</h4>
+                 <Button
+                   type="button"
+                   variant="ghost"
+                   size="sm"
+                   onClick={() => setShowCategoryManager(false)}
+                 >
+                   <X className="h-4 w-4" />
+                 </Button>
+               </div>
+               
+               {/* Add New Category */}
+               <div className="flex gap-2">
+                 <Input
+                   placeholder="New category name"
+                   value={newCategoryName}
+                   onChange={(e) => setNewCategoryName(e.target.value)}
+                   className="flex-1"
+                   onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
+                 />
+                 <Button
+                   type="button"
+                   size="sm"
+                   onClick={handleAddCategory}
+                   disabled={!newCategoryName.trim()}
+                 >
+                   <Plus className="h-4 w-4" />
+                 </Button>
+               </div>
+
+               {/* Category List */}
+               <div className="space-y-2">
+                 {categoryOptions.map((category) => (
+                   <div key={category} className="flex items-center justify-between p-2 bg-white dark:bg-gray-700 rounded border">
+                     {editingCategory === category ? (
+                       <div className="flex gap-2 flex-1">
+                         <Input
+                           value={newCategoryName}
+                           onChange={(e) => setNewCategoryName(e.target.value)}
+                           className="flex-1"
+                           onKeyPress={(e) => e.key === 'Enter' && handleEditCategory(category, newCategoryName)}
+                         />
+                         <Button
+                           type="button"
+                           size="sm"
+                           variant="outline"
+                           onClick={() => handleEditCategory(category, newCategoryName)}
+                           disabled={!newCategoryName.trim()}
+                         >
+                           <Save className="h-4 w-4" />
+                         </Button>
+                         <Button
+                           type="button"
+                           size="sm"
+                           variant="outline"
+                           onClick={() => {
+                             setEditingCategory(null)
+                             setNewCategoryName("")
+                           }}
+                         >
+                           <X className="h-4 w-4" />
+                         </Button>
+                       </div>
+                     ) : (
+                       <>
+                         <span className="text-sm">{category}</span>
+                         <div className="flex gap-1">
+                           <Button
+                             type="button"
+                             size="sm"
+                             variant="ghost"
+                             onClick={() => {
+                               setEditingCategory(category)
+                               setNewCategoryName(category)
+                             }}
+                           >
+                             <Edit2 className="h-3 w-3" />
+                           </Button>
+                           <Button
+                             type="button"
+                             size="sm"
+                             variant="ghost"
+                             onClick={() => handleDeleteCategory(category)}
+                             className="text-red-600 hover:text-red-700"
+                           >
+                             <Trash2 className="h-3 w-3" />
+                           </Button>
+                         </div>
+                       </>
+                     )}
+                   </div>
+                 ))}
+               </div>
+             </div>
+           )}
 
           <div className="space-y-2">
             <Label>Image</Label>
