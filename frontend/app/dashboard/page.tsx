@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import Script from "next/script";
 import AttireUploadForm from "@/components/attires/add-attire";
 import ViewTable from "@/components/attires/view-table";
 import {
@@ -22,6 +23,7 @@ import {
   CheckCircle,
   Plus,
   List,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -97,19 +99,26 @@ export default async function ProtectedPage() {
   const stats = await getStatistics();
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-4 p-6">
+    <>
+      <Script 
+        src="https://uptime.betterstack.com/widgets/announcement.js" 
+        data-id="224308" 
+        async 
+        type="text/javascript"
+      />
+      <SidebarProvider
+        style={
+          {
+            "--sidebar-width": "calc(var(--spacing) * 72)",
+            "--header-height": "calc(var(--spacing) * 12)",
+          } as React.CSSProperties
+        }
+      >
+        <AppSidebar variant="inset" />
+        <SidebarInset>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-4 p-6">
             {/* Welcome Section */}
             <div className="mb-6">
               <h1 className="text-3xl font-bold mb-2">Welcome Back</h1>
@@ -274,21 +283,43 @@ export default async function ProtectedPage() {
                 </Card>
               </div>
             </div>
-
-            {/* Recent Activity */}
-            {/* <div className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-              <ViewTable />
-            </div> */}
-
-            {/* Add Attire Form */}
-            {/* <div>
-              <h2 className="text-xl font-semibold mb-4">Add New Attire</h2>
-              <AttireUploadForm />
-            </div> */}
+            <Card className="border-2">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl">Live Status</CardTitle>
+                    {/* <CardDescription>Current system status from BetterStack monitoring</CardDescription> */}
+                  </div>
+                  <Link 
+                    href="https://langdresstoimpress.betteruptime.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    View Full Status Page
+                  </Link>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-center">
+                  
+                  <iframe 
+                    src="https://langdresstoimpress.betteruptime.com/badge?theme=light" 
+                    width="250" 
+                    height="30" 
+                    frameBorder="0" 
+                    scrolling="no" 
+                    style={{ colorScheme: 'normal' }}
+                    title="BetterStack Status Badge"
+                  />
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </SidebarInset>
     </SidebarProvider>
+    </>
   );
 }

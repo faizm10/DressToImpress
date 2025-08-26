@@ -35,12 +35,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* <ApolloClientProvider> */}
           {children}
-
           <Toaster />
-
-          {/* </ApolloClientProvider> */}
         </ThemeProvider>
       </body>
     </html>
