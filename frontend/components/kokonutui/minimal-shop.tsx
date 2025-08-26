@@ -68,8 +68,14 @@ export default function MinimalShop() {
 
   // Extract unique values for filter options
   const categories = useMemo(() => {
+    // If gender filter is applied, only show categories available for that gender
+    if (filters.gender) {
+      const genderFilteredAttires = attires.filter((attire) => attire.gender === filters.gender)
+      return [...new Set(genderFilteredAttires.map((attire) => attire.category))]
+    }
+    // Otherwise show all categories
     return [...new Set(attires.map((attire) => attire.category))]
-  }, [attires])
+  }, [attires, filters.gender])
 
   const genders = useMemo(() => {
     return [...new Set(attires.map((attire) => attire.gender))]
@@ -125,6 +131,15 @@ export default function MinimalShop() {
     })
   }
 
+  // Clear category filter when gender changes (since available categories will change)
+  const handleFilterChange = (newFilters: FilterOptions) => {
+    // If gender is being changed, clear the category filter
+    if (newFilters.gender !== filters.gender) {
+      newFilters.category = null
+    }
+    setFilters(newFilters)
+  }
+
   const activeFilterCount = useMemo(() => {
     return Object.values(filters).filter(Boolean).length
   }, [filters])
@@ -138,7 +153,7 @@ export default function MinimalShop() {
           sizes={sizes}
           filters={filters}
           sortOption={sortOption}
-          onFilterChange={setFilters}
+          onFilterChange={handleFilterChange}
           onSortChange={setSortOption}
           onClearFilters={clearFilters}
           activeFilterCount={activeFilterCount}

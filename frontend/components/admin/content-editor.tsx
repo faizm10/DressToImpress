@@ -201,18 +201,6 @@ field: keyof HomePageContent['rentalGuidelines'],
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Home Page Content Editor</h1>
         <div className="flex gap-2">
-          <Button
-            onClick={handleReset}
-            variant="outline"
-            disabled={isResetting}
-          >
-            {isResetting ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <RotateCcw className="h-4 w-4 mr-2" />
-            )}
-            Reset to Default
-          </Button>
           <Button onClick={handleSave} disabled={isSaving}>
             {isSaving ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -226,26 +214,26 @@ field: keyof HomePageContent['rentalGuidelines'],
 
       <Tabs defaultValue="hero" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="hero">Hero Section</TabsTrigger>
+          <TabsTrigger value="hero">Homepage Section</TabsTrigger>
           <TabsTrigger value="how-it-works">How It Works</TabsTrigger>
           <TabsTrigger value="rental-guidelines">Rental Guidelines</TabsTrigger>
-          <TabsTrigger value="cta">CTA Section</TabsTrigger>
+          <TabsTrigger value="cta">Footer</TabsTrigger>
         </TabsList>
 
         <TabsContent value="hero">
           <Card>
             <CardHeader>
-              <CardTitle>Hero Section</CardTitle>
+              <CardTitle>Homepage Section</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
+              {/* <div>
                 <Label htmlFor="hero-badge">Badge Text</Label>
                 <Input
                   id="hero-badge"
                   value={content.hero.badge}
                   onChange={(e) => updateHero("badge", e.target.value)}
                 />
-              </div>
+              </div> */}
               <div>
                 <Label htmlFor="hero-title">Title</Label>
                 <Input
@@ -461,7 +449,7 @@ field: keyof HomePageContent['rentalGuidelines'],
         <TabsContent value="cta">
           <Card>
             <CardHeader>
-              <CardTitle>CTA Section</CardTitle>
+              <CardTitle>Footer</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>

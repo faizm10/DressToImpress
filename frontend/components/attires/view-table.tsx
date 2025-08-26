@@ -429,25 +429,6 @@ export default function ViewTable() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="filter-size" className="text-sm font-medium">
-                    Size
-                  </Label>
-                  <Select value={filterSize} onValueChange={setFilterSize}>
-                    <SelectTrigger id="filter-size">
-                      <SelectValue placeholder="All Sizes" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Sizes</SelectItem>
-                      {sizes.map((s) => (
-                        <SelectItem key={s} value={s}>
-                          {s}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="filter-category" className="text-sm font-medium">
                     Category
                   </Label>
@@ -474,6 +455,25 @@ export default function ViewTable() {
                   </Select>
                 </div>
 
+                <div className="space-y-2">
+                  <Label htmlFor="filter-size" className="text-sm font-medium">
+                    Size
+                  </Label>
+                  <Select value={filterSize} onValueChange={setFilterSize}>
+                    <SelectTrigger id="filter-size">
+                      <SelectValue placeholder="All Sizes" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Sizes</SelectItem>
+                      {sizes.map((s) => (
+                        <SelectItem key={s} value={s}>
+                          {s}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              
                 <div className="space-y-2">
                   <Label htmlFor="filter-status" className="text-sm font-medium">
                     Status
