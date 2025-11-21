@@ -28,6 +28,7 @@ export default function MinimalShop() {
     category: null,
     gender: null,
     size: null,
+    color: null,
   })
   const [sortOption, setSortOption] = useState<SortOption>("name-asc")
 
@@ -85,6 +86,10 @@ export default function MinimalShop() {
     return [...new Set(attires.map((attire) => attire.size))]
   }, [attires])
 
+  const colors = useMemo(() => {
+    return [...new Set(attires.map((attire) => attire.color).filter(Boolean))]
+  }, [attires])
+
   // Apply filters and search
   const filteredAttires = useMemo(() => {
     return attires.filter((attire) => {
@@ -100,6 +105,9 @@ export default function MinimalShop() {
 
       // Apply size filter
       if (filters.size && attire.size !== filters.size) return false
+
+      // Apply color filter
+      if (filters.color && attire.color !== filters.color) return false
 
       return true
     })
@@ -128,6 +136,7 @@ export default function MinimalShop() {
       category: null,
       gender: null,
       size: null,
+      color: null,
     })
   }
 
@@ -151,6 +160,7 @@ export default function MinimalShop() {
           categories={categories}
           genders={genders}
           sizes={sizes}
+          colors={colors}
           filters={filters}
           sortOption={sortOption}
           onFilterChange={handleFilterChange}

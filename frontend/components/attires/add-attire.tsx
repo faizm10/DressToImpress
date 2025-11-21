@@ -24,6 +24,7 @@ export default function AttireUploadForm() {
     size: "",
     gender: "",
     category: "",
+    color: "",
   })
 
   // Category management state
@@ -35,6 +36,16 @@ export default function AttireUploadForm() {
     Female: [...womenCategories],
     Unisex: [...unisexCategories]
   })
+
+  // Color management state
+  const [showColorManager, setShowColorManager] = useState(false)
+  const [editingColor, setEditingColor] = useState<string | null>(null)
+  const [newColorName, setNewColorName] = useState("")
+  const [customColors, setCustomColors] = useState<string[]>([
+    "Black", "White", "Gray", "Navy", "Brown", "Beige", "Tan", "Burgundy", 
+    "Maroon", "Blue", "Light Blue", "Red", "Pink", "Purple", "Green", 
+    "Olive", "Yellow", "Orange", "Teal", "Cream", "Ivory", "Charcoal", "Other"
+  ])
 
   // File upload state
   const [file, setFile] = useState<File | null>(null)
@@ -74,6 +85,7 @@ export default function AttireUploadForm() {
       size: "",
       gender: "",
       category: "",
+      color: "",
     })
     setFile(null)
     setFileName("")
@@ -143,6 +155,40 @@ export default function AttireUploadForm() {
     }
   }, [formState.gender, formState.category])
 
+  // Color management functions
+  const handleAddColor = useCallback(() => {
+    if (!newColorName.trim()) return
+    
+    setCustomColors(prev => {
+      if (prev.includes(newColorName.trim())) return prev
+      return [...prev, newColorName.trim()]
+    })
+    setNewColorName("")
+  }, [newColorName])
+
+  const handleEditColor = useCallback((oldName: string, newName: string) => {
+    if (!newName.trim()) return
+    
+    setCustomColors(prev => 
+      prev.map(color => color === oldName ? newName.trim() : color)
+    )
+    setEditingColor(null)
+    
+    // Update form state if the edited color was selected
+    if (formState.color === oldName) {
+      setFormState(prev => ({ ...prev, color: newName.trim() }))
+    }
+  }, [formState.color])
+
+  const handleDeleteColor = useCallback((colorName: string) => {
+    setCustomColors(prev => prev.filter(color => color !== colorName))
+    
+    // Clear form color if the deleted color was selected
+    if (formState.color === colorName) {
+      setFormState(prev => ({ ...prev, color: "" }))
+    }
+  }, [formState.color])
+
   // Generate a unique filename when a file is selected
   useEffect(() => {
     if (files.length > 0 && !uploadedFileName) {
@@ -183,9 +229,9 @@ export default function AttireUploadForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const { name, size, gender, category } = formState
+    const { name, size, gender, category, color } = formState
 
-    if (!name || !size || !fileName || !file || !gender || !category) {
+    if (!name || !size || !fileName || !file || !gender || !category || !color) {
       setMsg("Please fill all fields and upload an image.")
       return
     }
@@ -200,6 +246,7 @@ export default function AttireUploadForm() {
       file_name: fileName,
       gender,
       category,
+      color,
     })
 
     if (insertError) {
@@ -308,6 +355,48 @@ export default function AttireUploadForm() {
                       <SelectItem value="No Size" className="cursor-pointer">No Size</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="color" className="text-sm font-medium">
+                  Color <span className="text-red-500">*</span>
+                </Label>
+                <Select
+                  value={formState.color}
+                  onValueChange={(value) => handleInputChange("color", value)}
+                  required
+                >
+                  <SelectTrigger className="transition-all duration-200 focus:ring-2 focus:ring-blue-500">
+                    <SelectValue placeholder="Select color" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customColors.length > 0 ? (
+                      customColors.map((color) => (
+                        <SelectItem key={color} value={color} className="cursor-pointer hover:bg-blue-50">
+                          {color}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="px-3 py-2 text-sm text-gray-500">
+                        No colors available
+                      </div>
+                    )}
+                  </SelectContent>
+                </Select>
+                
+                {/* Color Manager Button */}
+                <div className="pt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowColorManager(!showColorManager)}
+                    className="text-xs"
+                  >
+                    <Edit2 className="h-3 w-3 mr-1" />
+                    Manage Colors
+                  </Button>
                 </div>
               </div>
             </div>
@@ -492,6 +581,106 @@ export default function AttireUploadForm() {
                </div>
              </div>
            )}
+
+          {/* Color Manager */}
+          {showColorManager && (
+            <div className="space-y-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium text-sm">Manage Colors</h4>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowColorManager(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              
+              {/* Add New Color */}
+              <div className="flex gap-2">
+                <Input
+                  placeholder="New color name"
+                  value={newColorName}
+                  onChange={(e) => setNewColorName(e.target.value)}
+                  className="flex-1"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddColor()}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={handleAddColor}
+                  disabled={!newColorName.trim()}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Color List */}
+              <div className="space-y-2">
+                {customColors.map((color) => (
+                  <div key={color} className="flex items-center justify-between p-2 bg-white dark:bg-gray-700 rounded border">
+                    {editingColor === color ? (
+                      <div className="flex gap-2 flex-1">
+                        <Input
+                          value={newColorName}
+                          onChange={(e) => setNewColorName(e.target.value)}
+                          className="flex-1"
+                          onKeyPress={(e) => e.key === 'Enter' && handleEditColor(color, newColorName)}
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditColor(color, newColorName)}
+                          disabled={!newColorName.trim()}
+                        >
+                          <Save className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setEditingColor(null)
+                            setNewColorName("")
+                          }}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <span className="text-sm">{color}</span>
+                        <div className="flex gap-1">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setEditingColor(color)
+                              setNewColorName(color)
+                            }}
+                          >
+                            <Edit2 className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleDeleteColor(color)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label>Image</Label>

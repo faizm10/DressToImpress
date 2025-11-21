@@ -77,6 +77,7 @@ export default function ViewTable() {
     gender: "",
     size: "",
     category: "",
+    color: "",
     fileName: "",
     file: null as File | null,
     imageUrl: "",
@@ -89,6 +90,7 @@ export default function ViewTable() {
   const [filterGender, setFilterGender] = useState("all")
   const [filterSize, setFilterSize] = useState("all")
   const [filterCategory, setFilterCategory] = useState("all")
+  const [filterColor, setFilterColor] = useState("all")
   const [filterStatus, setFilterStatus] = useState("all")
   const [showFilters, setShowFilters] = useState(false)
   const [sortField, setSortField] = useState<"name" | "status" | "gender" | "size" | "category">("name")
@@ -101,7 +103,7 @@ export default function ViewTable() {
 
       const { data, error: dbError } = await supabase
         .from("attires")
-        .select("id, name, gender, size, category, file_name, status")
+        .select("id, name, gender, size, category, color, file_name, status")
 
       if (dbError) {
         throw new Error(dbError.message)
@@ -151,6 +153,7 @@ export default function ViewTable() {
       gender: item.gender,
       size: item.size,
       category: item.category,
+      color: item.color || "",
       fileName: item.file_name,
       file: null,
       imageUrl: item.imageUrl || "",
@@ -200,6 +203,7 @@ export default function ViewTable() {
         gender: editForm.gender,
         size: editForm.size,
         category: editForm.category,
+        color: editForm.color,
         file_name: finalFileName,
         status: editForm.status,
       }
@@ -271,6 +275,7 @@ export default function ViewTable() {
       (filterGender === "all" || item.gender === filterGender) &&
       (filterSize === "all" || item.size === filterSize) &&
       (filterCategory === "all" || item.category === filterCategory) &&
+      (filterColor === "all" || item.color === filterColor) &&
       (filterStatus === "all" || item.status === filterStatus),
   )
 
@@ -291,6 +296,7 @@ export default function ViewTable() {
     setFilterGender("all")
     setFilterSize("all")
     setFilterCategory("all")
+    setFilterColor("all")
     setFilterStatus("all")
   }
 
@@ -314,7 +320,10 @@ export default function ViewTable() {
     )
   }
 
-  const hasActiveFilters = search || filterGender !== "all" || filterSize !== "all" || filterCategory !== "all" || filterStatus !== "all"
+  const hasActiveFilters = search || filterGender !== "all" || filterSize !== "all" || filterCategory !== "all" || filterColor !== "all" || filterStatus !== "all"
+
+  // Extract unique colors from attires
+  const colors = [...new Set(attires.map((item) => item.color).filter(Boolean))].sort()
 
   if (loading) {
     return (
@@ -473,6 +482,25 @@ export default function ViewTable() {
                     </SelectContent>
                   </Select>
                 </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="filter-color" className="text-sm font-medium">
+                    Color
+                  </Label>
+                  <Select value={filterColor} onValueChange={setFilterColor}>
+                    <SelectTrigger id="filter-color">
+                      <SelectValue placeholder="All Colors" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Colors</SelectItem>
+                      {colors.map((c) => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               
                 <div className="space-y-2">
                   <Label htmlFor="filter-status" className="text-sm font-medium">
@@ -580,6 +608,11 @@ export default function ViewTable() {
                         <Badge variant="outline" className="text-xs">
                           {item.size}
                         </Badge>
+                        {item.color && (
+                          <Badge variant="outline" className="text-xs">
+                            {item.color}
+                          </Badge>
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -705,31 +738,54 @@ export default function ViewTable() {
                                 </div>
                               </div>
 
-                              <div className="space-y-2">
-                                <Label htmlFor="edit-category" className="text-sm font-medium">
-                                  Category
-                                </Label>
-                                <Select
-                                  value={editForm.category}
-                                  onValueChange={(value) => handleEditChange("category", value)}
-                                  disabled={!editForm.gender}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select category" />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    {(editForm.gender === "Men"
-                                      ? menCategories
-                                      : editForm.gender === "Female"
-                                        ? womenCategories
-                                        : []
-                                    ).map((category) => (
-                                      <SelectItem key={category} value={category}>
-                                        {category}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="edit-category" className="text-sm font-medium">
+                                    Category
+                                  </Label>
+                                  <Select
+                                    value={editForm.category}
+                                    onValueChange={(value) => handleEditChange("category", value)}
+                                    disabled={!editForm.gender}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {(editForm.gender === "Men"
+                                        ? menCategories
+                                        : editForm.gender === "Female"
+                                          ? womenCategories
+                                          : []
+                                      ).map((category) => (
+                                        <SelectItem key={category} value={category}>
+                                          {category}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+
+                                <div className="space-y-2">
+                                  <Label htmlFor="edit-color" className="text-sm font-medium">
+                                    Color
+                                  </Label>
+                                  <Select
+                                    value={editForm.color}
+                                    onValueChange={(value) => handleEditChange("color", value)}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select color" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {colors.map((c) => (
+                                        <SelectItem key={c} value={c}>
+                                          {c}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                </div>
                               </div>
 
                               <div className="space-y-3">
