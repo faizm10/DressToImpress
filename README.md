@@ -199,3 +199,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - University of Guelph Lang School of Business and Economics
 - Business Career Development Centre (BCDC)
 - Generous clothing donors from the Lang community
+
+
