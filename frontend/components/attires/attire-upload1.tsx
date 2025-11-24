@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Fragment } from "react"
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from "@/components/dropzone"
 import { useSupabaseUpload } from "@/hooks/use-supabase-upload"
 import { v4 as uuidv4 } from "uuid"
@@ -62,8 +62,10 @@ export function AttireUpload({ onFileUpload, reset }: AttireUploadProps) {
 
   return (
     <Dropzone {...dropzoneProps} className="min-h-[150px]" key={reset ? "reset" : "normal"}>
-      <DropzoneEmptyState />
-      <DropzoneContent />
+      <Fragment key="dropzone-children">
+        <DropzoneEmptyState />
+        <DropzoneContent />
+      </Fragment>
     </Dropzone>
   )
 }

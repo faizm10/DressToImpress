@@ -322,8 +322,16 @@ export default function ViewTable() {
 
   const hasActiveFilters = search || filterGender !== "all" || filterSize !== "all" || filterCategory !== "all" || filterColor !== "all" || filterStatus !== "all"
 
-  // Extract unique colors from attires
-  const colors = [...new Set(attires.map((item) => item.color).filter(Boolean))].sort()
+  // Default colors list (same as in add-attire form)
+  const defaultColors = [
+    "Black", "White", "Gray", "Navy", "Brown", "Beige", "Tan", "Burgundy", 
+    "Maroon", "Blue", "Light Blue", "Red", "Pink", "Purple", "Green", 
+    "Olive", "Yellow", "Orange", "Teal", "Cream", "Ivory", "Charcoal", "Other"
+  ]
+
+  // Extract unique colors from attires and combine with default colors
+  const existingColors = [...new Set(attires.map((item) => item.color).filter(Boolean))]
+  const allColors = [...new Set([...defaultColors, ...existingColors])].sort()
 
   if (loading) {
     return (
@@ -493,7 +501,7 @@ export default function ViewTable() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All Colors</SelectItem>
-                      {colors.map((c) => (
+                      {existingColors.map((c) => (
                         <SelectItem key={c} value={c}>
                           {c}
                         </SelectItem>
@@ -771,20 +779,23 @@ export default function ViewTable() {
                                     Color
                                   </Label>
                                   <Select
-                                    value={editForm.color}
+                                    value={editForm.color || undefined}
                                     onValueChange={(value) => handleEditChange("color", value)}
                                   >
                                     <SelectTrigger>
-                                      <SelectValue placeholder="Select color" />
+                                      <SelectValue placeholder={editForm.color || "Select color"} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      {colors.map((c) => (
+                                      {allColors.map((c) => (
                                         <SelectItem key={c} value={c}>
                                           {c}
                                         </SelectItem>
                                       ))}
                                     </SelectContent>
                                   </Select>
+                                  <p className="text-xs text-muted-foreground">
+                                    {!editForm.color ? "Select a color to add it to this item" : "You can update or change the color"}
+                                  </p>
                                 </div>
                               </div>
 
