@@ -23,6 +23,7 @@ export type FilterOptions = {
   category: string | null;
   gender: string | null;
   size: string | null;
+  color: string | null;
 };
 
 export type SortOption = "name-asc" | "name-desc" | "newest" | "oldest";
@@ -31,6 +32,7 @@ interface FilterSortBarProps {
   categories: string[];
   genders: string[];
   sizes: string[];
+  colors: string[];
   filters: FilterOptions;
   sortOption: SortOption;
   onFilterChange: (filters: FilterOptions) => void;
@@ -42,6 +44,7 @@ export function FilterSortBar({
   categories,
   genders,
   sizes,
+  colors,
   filters,
   sortOption,
   onFilterChange,
@@ -53,7 +56,8 @@ export function FilterSortBar({
   const activeFilterCount =
     (filters.category ? 1 : 0) +
     (filters.gender ? 1 : 0) +
-    (filters.size ? 1 : 0);
+    (filters.size ? 1 : 0) +
+    (filters.color ? 1 : 0);
 
   const sortOptions = [
     { value: "name-asc", label: "Name (A-Z)" },
@@ -160,6 +164,31 @@ export function FilterSortBar({
                   </Select>
                 </div>
 
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm">Color</h4>
+                  <Select
+                    value={filters.color || "all-colors"}
+                    onValueChange={(value) =>
+                      onFilterChange({
+                        ...filters,
+                        color: value === "all-colors" ? null : value,
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="All colors" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all-colors">All colors</SelectItem>
+                      {colors.map((color) => (
+                        <SelectItem key={color} value={color}>
+                          {color}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 {activeFilterCount > 0 && (
                   <Button
                     variant="ghost"
@@ -235,6 +264,32 @@ export function FilterSortBar({
                   Size: {filters.size}
                   <button
                     onClick={() => onFilterChange({ ...filters, size: null })}
+                    className="ml-1 rounded-full hover:bg-muted p-0.5"
+                  >
+                    <span className="sr-only">Remove</span>
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 12 12"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M9 3L3 9M3 3L9 9"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                </Badge>
+              )}
+              {filters.color && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  Color: {filters.color}
+                  <button
+                    onClick={() => onFilterChange({ ...filters, color: null })}
                     className="ml-1 rounded-full hover:bg-muted p-0.5"
                   >
                     <span className="sr-only">Remove</span>

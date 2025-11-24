@@ -21,6 +21,7 @@ interface FilterSidebarProps {
   categories: string[]
   genders: string[]
   sizes: string[]
+  colors: string[]
   filters: FilterOptions
   sortOption: SortOption
   onFilterChange: (filters: FilterOptions) => void
@@ -34,6 +35,7 @@ export function FilterSidebar({
   categories,
   genders,
   sizes,
+  colors,
   filters,
   sortOption,
   onFilterChange,
@@ -144,6 +146,28 @@ export function FilterSidebar({
                 {sizeOptions.map((size) => (
                   <SelectItem key={size.value} value={size.value}>
                     {size.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator className="my-4" />
+
+        {/* Color Filter - Fourth */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="mb-3">Color</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <Select value={filters.color || ""} onValueChange={(value) => handleFilterChange("color", value || null)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="All Colors" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Colors</SelectItem>
+                {colors.map((color) => (
+                  <SelectItem key={color} value={color}>
+                    <span className="capitalize">{color}</span>
                   </SelectItem>
                 ))}
               </SelectContent>

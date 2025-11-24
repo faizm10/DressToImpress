@@ -9,6 +9,7 @@ export interface Attire {
   gender: string;
   size: string;
   category: string;
+  color: string;
   file_name: string;
 }
 
@@ -18,6 +19,7 @@ export interface AttireWithUrl {
   gender: string;
   size: string;
   category: string;
+  color: string;
   file_name: string;
   imageUrl?: string | null;
   status?: string;
@@ -34,7 +36,7 @@ export function useAttires() {
       // 1) fetch rows from your DB
       const { data, error: dbError } = await supabase
         .from<"attires", Attire>("attires")
-        .select("id, name, gender, size, category, file_name");
+        .select("id, name, gender, size, category, color, file_name");
 
       if (dbError) {
         setError(dbError.message);
