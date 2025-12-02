@@ -88,9 +88,11 @@ export function StudentsTable() {
   const [students, setStudents] = useState<Student[]>([])
   const [selectedStudents, setSelectedStudents] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
-  const [page, setPage] = useState(1)
+  const [activePage, setActivePage] = useState(1)
+  const [inactivePage, setInactivePage] = useState(1)
   const [limit] = useState(10)
-  const [totalCount, setTotalCount] = useState(0)
+  const [activeTotalCount, setActiveTotalCount] = useState(0)
+  const [inactiveTotalCount, setInactiveTotalCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [addModalOpen, setAddModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
@@ -102,11 +104,50 @@ export function StudentsTable() {
 
   const rentalStatuses = ["Pending", "Waiting for pick-up", "Out for rent", "Returned"] as const
 
+  // Fetch counts for both tabs
+  const fetchCounts = async () => {
+    try {
+      // Fetch active count
+      let activeQuery = supabase
+        .from("students")
+        .select("*", { count: "exact", head: true })
+        .neq("status", "Inactive")
+      
+      if (searchQuery) {
+        activeQuery = activeQuery.or(
+          `first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,student_id.ilike.%${searchQuery}%`,
+        )
+      }
+
+      const { count: activeCount } = await activeQuery
+
+      // Fetch inactive count
+      let inactiveQuery = supabase
+        .from("students")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "Inactive")
+      
+      if (searchQuery) {
+        inactiveQuery = inactiveQuery.or(
+          `first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,student_id.ilike.%${searchQuery}%`,
+        )
+      }
+
+      const { count: inactiveCount } = await inactiveQuery
+
+      if (activeCount !== null) setActiveTotalCount(activeCount)
+      if (inactiveCount !== null) setInactiveTotalCount(inactiveCount)
+    } catch (error: any) {
+      // Silently fail for counts, main fetch will handle errors
+    }
+  }
+
   // Fetch students from Supabase
-  const fetchStudents = async () => {
+  const fetchStudents = async (tab: "active" | "inactive" = activeTab) => {
     setLoading(true)
     try {
-      const from = (page - 1) * limit
+      const currentPage = tab === "active" ? activePage : inactivePage
+      const from = (currentPage - 1) * limit
       const to = from + limit - 1
 
       let query = supabase.from("students").select(
@@ -123,6 +164,13 @@ export function StudentsTable() {
         { count: "exact" },
       )
 
+      // Filter by status based on tab
+      if (tab === "active") {
+        query = query.neq("status", "Inactive")
+      } else {
+        query = query.eq("status", "Inactive")
+      }
+
       if (searchQuery) {
         query = query.or(
           `first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%,student_id.ilike.%${searchQuery}%`,
@@ -134,7 +182,13 @@ export function StudentsTable() {
       if (error) throw error
 
       setStudents(data as Student[])
-      if (count !== null) setTotalCount(count)
+      if (count !== null) {
+        if (tab === "active") {
+          setActiveTotalCount(count)
+        } else {
+          setInactiveTotalCount(count)
+        }
+      }
     } catch (error: any) {
       toast.error("Error fetching students")
     } finally {
@@ -142,14 +196,24 @@ export function StudentsTable() {
     }
   }
 
+  // Fetch counts when search query changes
   useEffect(() => {
-    fetchStudents()
-  }, [page, searchQuery])
+    fetchCounts()
+  }, [searchQuery])
+
+  // Fetch students when page or tab changes
+  useEffect(() => {
+    fetchStudents(activeTab)
+  }, [activePage, inactivePage, activeTab])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    setPage(1)
-    fetchStudents()
+    if (activeTab === "active") {
+      setActivePage(1)
+    } else {
+      setInactivePage(1)
+    }
+    fetchStudents(activeTab)
   }
 
   const deleteStudent = async (id: string) => {
@@ -157,7 +221,7 @@ export function StudentsTable() {
       const { error } = await supabase.from("students").delete().eq("id", id)
       if (error) throw error
       toast.success("Student deleted successfully")
-      fetchStudents()
+      fetchStudents(activeTab)
     } catch (error: any) {
       toast.error("Error deleting student")
     }
@@ -170,7 +234,7 @@ export function StudentsTable() {
       if (error) throw error
       toast.success(`${selectedStudents.length} students deleted successfully`)
       setSelectedStudents([])
-      fetchStudents()
+      fetchStudents(activeTab)
     } catch (error: any) {
       toast.error("Error deleting students")
     }
@@ -200,20 +264,23 @@ export function StudentsTable() {
 
       if (error) throw error
       toast.success(`Student ${field} updated successfully`)
-      fetchStudents()
+      fetchStudents(activeTab)
     } catch (error: any) {
       toast.error(`Error updating student ${field}`)
     }
   }
 
-  const totalPages = Math.ceil(totalCount / limit)
-  const startItem = (page - 1) * limit + 1
-  const endItem = Math.min(page * limit, totalCount)
+  const currentPage = activeTab === "active" ? activePage : inactivePage
+  const currentTotalCount = activeTab === "active" ? activeTotalCount : inactiveTotalCount
+  const totalPages = Math.ceil(currentTotalCount / limit)
+  const startItem = currentTotalCount > 0 ? (currentPage - 1) * limit + 1 : 0
+  const endItem = Math.min(currentPage * limit, currentTotalCount)
 
   const { attires } = useAttires()
 
-  const activeStudents = students.filter((student) => student.status !== "Inactive")
-  const inactiveStudents = students.filter((student) => student.status === "Inactive")
+  // Students are already filtered by the query, so we can use them directly
+  const activeStudents = activeTab === "active" ? students : []
+  const inactiveStudents = activeTab === "inactive" ? students : []
 
   const renderStudentRow = (student: Student) => {
     const reqs = student.attire_requests || []
@@ -305,7 +372,7 @@ export function StudentsTable() {
                             .eq("id", req.attire_id)
                         }
                         toast.success("Rental status updated")
-                        fetchStudents()
+                        fetchStudents(activeTab)
                       }}
                     >
                       <SelectTrigger className="w-[160px] h-8 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
@@ -406,7 +473,7 @@ export function StudentsTable() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Students</p>
-                <p className="text-2xl font-bold">{totalCount}</p>
+                <p className="text-2xl font-bold">{activeTotalCount + inactiveTotalCount}</p>
               </div>
             </div>
           </CardContent>
@@ -419,7 +486,7 @@ export function StudentsTable() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Active Rentals</p>
-                <p className="text-2xl font-bold">{activeStudents.length}</p>
+                <p className="text-2xl font-bold">{activeTotalCount}</p>
               </div>
             </div>
           </CardContent>
@@ -432,7 +499,7 @@ export function StudentsTable() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Inactive</p>
-                <p className="text-2xl font-bold">{inactiveStudents.length}</p>
+                <p className="text-2xl font-bold">{inactiveTotalCount}</p>
               </div>
             </div>
           </CardContent>
@@ -446,7 +513,7 @@ export function StudentsTable() {
               <div>
                 <p className="text-sm text-muted-foreground">Pending</p>
                 <p className="text-2xl font-bold">
-                  {students.reduce((acc, student) => {
+                  {activeStudents.reduce((acc, student) => {
                     const pendingRequests = student.attire_requests?.filter((req) => req.status === "Pending")
                     return acc + (pendingRequests?.length || 0)
                   }, 0)}
@@ -494,13 +561,25 @@ export function StudentsTable() {
       </Card>
 
       {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+      <Tabs 
+        value={activeTab} 
+        onValueChange={(value) => {
+          setActiveTab(value)
+          // Reset to page 1 when switching tabs
+          if (value === "active") {
+            setActivePage(1)
+          } else {
+            setInactivePage(1)
+          }
+        }} 
+        className="space-y-4"
+      >
         <TabsList className="grid w-full grid-cols-2 bg-white dark:bg-gray-900 border shadow-sm">
           <TabsTrigger value="active" className="data-[state=active]:bg-[#E51937] data-[state=active]:text-white">
-            Active Rentals ({activeStudents.length})
+            Active Rentals ({activeTotalCount})
           </TabsTrigger>
           <TabsTrigger value="inactive" className="data-[state=active]:bg-[#E51937] data-[state=active]:text-white">
-            Inactive Rentals ({inactiveStudents.length})
+            Inactive Rentals ({inactiveTotalCount})
           </TabsTrigger>
         </TabsList>
 
@@ -654,15 +733,21 @@ export function StudentsTable() {
             <div className="flex items-center justify-between">
               <p className="text-sm text-muted-foreground">
                 Showing <span className="font-medium">{startItem}</span> to{" "}
-                <span className="font-medium">{endItem}</span> of <span className="font-medium">{totalCount}</span>{" "}
-                students
+                <span className="font-medium">{endItem}</span> of <span className="font-medium">{currentTotalCount}</span>{" "}
+                {activeTab === "active" ? "active" : "inactive"} students
               </p>
               <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setPage(page - 1)}
-                  disabled={page === 1}
+                  onClick={() => {
+                    if (activeTab === "active") {
+                      setActivePage(activePage - 1)
+                    } else {
+                      setInactivePage(inactivePage - 1)
+                    }
+                  }}
+                  disabled={currentPage === 1}
                   className="hover:bg-[#E51937]/5 hover:text-[#E51937] hover:border-[#E51937]/20 transition-colors"
                 >
                   <ChevronLeft className="h-4 w-4" />
@@ -670,14 +755,20 @@ export function StudentsTable() {
                 </Button>
                 <div className="flex items-center gap-1">
                   <span className="text-sm font-medium">
-                    Page {page} of {totalPages}
+                    Page {currentPage} of {totalPages}
                   </span>
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setPage(page + 1)}
-                  disabled={page === totalPages}
+                  onClick={() => {
+                    if (activeTab === "active") {
+                      setActivePage(activePage + 1)
+                    } else {
+                      setInactivePage(inactivePage + 1)
+                    }
+                  }}
+                  disabled={currentPage === totalPages}
                   className="hover:bg-[#E51937]/5 hover:text-[#E51937] hover:border-[#E51937]/20 transition-colors"
                 >
                   Next
