@@ -100,7 +100,7 @@ export function StudentsTable() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [studentToDelete, setStudentToDelete] = useState<string | null>(null)
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false)
-  const [activeTab, setActiveTab] = useState("active")
+  const [activeTab, setActiveTab] = useState<"active" | "inactive">("active")
 
   const rentalStatuses = ["Pending", "Waiting for pick-up", "Out for rent", "Returned"] as const
 
@@ -564,12 +564,14 @@ export function StudentsTable() {
       <Tabs 
         value={activeTab} 
         onValueChange={(value) => {
-          setActiveTab(value)
-          // Reset to page 1 when switching tabs
-          if (value === "active") {
-            setActivePage(1)
-          } else {
-            setInactivePage(1)
+          if (value === "active" || value === "inactive") {
+            setActiveTab(value)
+            // Reset to page 1 when switching tabs
+            if (value === "active") {
+              setActivePage(1)
+            } else {
+              setInactivePage(1)
+            }
           }
         }} 
         className="space-y-4"

@@ -5,8 +5,6 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Script from "next/script";
-import AttireUploadForm from "@/components/attires/add-attire";
-import ViewTable from "@/components/attires/view-table";
 import {
   Card,
   CardContent,
