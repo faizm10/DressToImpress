@@ -99,9 +99,9 @@ export function CartDrawer({
     }
 
     if (!formData.studentId.trim()) {
-      newErrors.studentId = "Student ID is required";
+      newErrors.studentId = "Phone # is required";
     } else if (!/^\d+$/.test(formData.studentId)) {
-      newErrors.studentId = "Student ID must be a number";
+      newErrors.studentId = "Phone # must be a number";
     }
 
     if (!formData.email.trim()) {
@@ -360,13 +360,13 @@ export function CartDrawer({
                       className="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300"
                       htmlFor="studentId"
                     >
-                      Student ID
+                      Phone #
                     </Label>
                     <Input
                       id="studentId"
                       value={formData.studentId}
                       onChange={handleInputChange}
-                      placeholder="uoguelph ID"
+                      placeholder="Enter phone #"
                       className={`w-full ${
                         errors.studentId ? "border-red-500" : ""
                       }`}

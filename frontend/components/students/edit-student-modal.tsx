@@ -294,13 +294,13 @@ export function EditStudentModal({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="student_id">Student ID</Label>
+                  <Label htmlFor="student_id">Phone #</Label>
                   <Input
                     id="student_id"
                     name="student_id"
                     value={formData.student_id}
                     onChange={handleChange}
-                    placeholder="Enter student ID"
+                    placeholder="Enter phone #"
                     required
                   />
                 </div>

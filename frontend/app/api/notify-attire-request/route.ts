@@ -108,7 +108,7 @@ function formatEmailContent(
         <h3>Student Information</h3>
         <ul>
           <li><strong>Name:</strong> ${student.first_name} ${student.last_name}</li>
-          <li><strong>Student ID:</strong> ${student.student_id}</li>
+          <li><strong>Phone #:</strong> ${student.student_id}</li>
           <li><strong>Email:</strong> ${student.email}</li>
         </ul>
         

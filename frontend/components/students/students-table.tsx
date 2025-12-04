@@ -533,7 +533,7 @@ export function StudentsTable() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search by name, email, or student ID..."
+                  placeholder="Search by name, email, or phone #..."
                   className="pl-10 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 focus:border-[#E51937] focus:ring-[#E51937]/20"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -595,7 +595,7 @@ export function StudentsTable() {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-gray-50/50 dark:bg-gray-900/50 hover:bg-gray-50/50 dark:hover:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
-                      <TableHead className="text-center font-semibold py-4">Student ID</TableHead>
+                      <TableHead className="text-center font-semibold py-4">Phone #</TableHead>
                       <TableHead className="text-center font-semibold py-4">First Name</TableHead>
                       <TableHead className="text-center font-semibold py-4">Last Name</TableHead>
                       <TableHead className="text-center font-semibold py-4">Email</TableHead>
@@ -668,7 +668,7 @@ export function StudentsTable() {
                 <Table>
                   <TableHeader>
                     <TableRow className="bg-gray-50/50 dark:bg-gray-900/50 hover:bg-gray-50/50 dark:hover:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
-                      <TableHead className="text-center font-semibold py-4">Student ID</TableHead>
+                      <TableHead className="text-center font-semibold py-4">Phone #</TableHead>
                       <TableHead className="text-center font-semibold py-4">First Name</TableHead>
                       <TableHead className="text-center font-semibold py-4">Last Name</TableHead>
                       <TableHead className="text-center font-semibold py-4">Email</TableHead>

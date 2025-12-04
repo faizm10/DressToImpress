@@ -105,7 +105,7 @@ export function AddStudentModal({ open, onOpenChange, onSuccess }: AddStudentMod
               </div>
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="student_id">Student ID</Label>
+              <Label htmlFor="student_id">Phone #</Label>
               <Input id="student_id" name="student_id" value={formData.student_id} onChange={handleChange} required />
             </div>
             <div className="grid gap-2">
